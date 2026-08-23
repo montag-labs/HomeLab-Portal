@@ -18,10 +18,20 @@ export interface Category {
 export type ThemeMode = "light" | "dark";
 export type Language = "de" | "en";
 
+export interface GrafanaSettings {
+  enabled: boolean;
+  url: string;
+  dashboardUid: string;
+  dashboardSlug: string;
+  timeRange: string;
+  refreshInterval: string;
+}
+
 export interface Settings {
   language: Language;
   theme: ThemeMode;
   accentColor: string;
+  grafana?: GrafanaSettings;
 }
 
 export interface PortalConfig {

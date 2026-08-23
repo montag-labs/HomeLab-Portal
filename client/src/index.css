@@ -204,14 +204,75 @@ button {
 .portal-main {
   flex: 1;
   padding: 2rem;
+  min-width: 0;
 }
 
-.grafana-stub {
+.grafana-panel {
+  min-width: 0;
+}
+
+.grafana-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.grafana-panel-header h2 {
+  margin: 0;
+}
+
+.grafana-panel-header a {
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.grafana-panel-empty {
   border: 1px dashed var(--border);
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
   color: var(--text-muted);
+}
+
+.grafana-panel-empty h2 {
+  margin-top: 0;
+  color: var(--text);
+}
+
+.grafana-frame-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 640px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #111318;
+}
+
+.grafana-frame-wrapper iframe {
+  display: block;
+  width: 100%;
+  height: 760px;
+  border: 0;
+}
+
+.grafana-frame-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: #111318;
+  z-index: 1;
+}
+
+.grafana-panel-hint {
+  margin: 0.75rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
 }
 
 .admin-layout {
@@ -285,6 +346,56 @@ button {
   background: var(--bg);
   color: var(--text);
   font-size: 0.95rem;
+}
+
+.admin-checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.admin-checkbox-field input {
+  accent-color: var(--accent-color);
+}
+
+.grafana-settings {
+  align-items: flex-start;
+}
+
+.grafana-settings .admin-field {
+  width: min(100%, 480px);
+  max-width: none;
+}
+
+@media (max-width: 720px) {
+  .portal-layout {
+    display: block;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .portal-main {
+    padding: 1rem;
+  }
+
+  .grafana-panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .grafana-frame-wrapper {
+    min-height: 480px;
+  }
+
+  .grafana-frame-wrapper iframe {
+    height: 600px;
+  }
 }
 
 .admin-category-manager-layout {

@@ -12,6 +12,16 @@
     "language": "Language",
     "theme": "Theme",
     "accentColor": "Accent color",
+    "grafanaTitle": "Grafana dashboard",
+    "grafanaDescription": "Embed a Grafana dashboard directly in the portal. Sign-in is handled by Grafana.",
+    "grafanaEnabled": "Show Grafana dashboard",
+    "grafanaUrl": "Grafana URL",
+    "grafanaDashboardUid": "Dashboard UID",
+    "grafanaDashboardSlug": "Dashboard slug",
+    "grafanaTimeRange": "Time range",
+    "grafanaRefresh": "Automatic refresh",
+    "grafanaRefreshOff": "Disabled",
+    "saveGrafana": "Save Grafana settings",
     "themeLight": "Light",
     "themeDark": "Dark",
     "addCategory": "Add category",
@@ -39,6 +49,9 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "grafanaPlaceholder": "Grafana integration is coming in a later stage."
+    "grafanaDisabled": "Grafana has not been configured yet.",
+    "openInGrafana": "Open in Grafana",
+    "loading": "Loading Grafana …",
+    "loginHint": "If the dashboard does not load here, open it in a new tab and sign in there."
   }
 }
