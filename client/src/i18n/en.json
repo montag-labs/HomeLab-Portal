@@ -1,0 +1,44 @@
+{
+  "app": {
+    "title": "HomeLab Portal"
+  },
+  "nav": {
+    "portal": "Portal",
+    "admin": "Administration"
+  },
+  "admin": {
+    "general": "General",
+    "categories": "Categories & Apps",
+    "language": "Language",
+    "theme": "Theme",
+    "accentColor": "Accent color",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "addCategory": "Add category",
+    "addApp": "Add app",
+    "selectCategory": "Select or create a category on the left.",
+    "moveTo": "Move to…",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "defaultCollapsed": "Collapsed by default",
+    "categoryName": "Category name",
+    "appName": "App name",
+    "domain": "Domain",
+    "localIp": "Local IP",
+    "iconUrl": "Icon URL",
+    "save": "Save",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "confirmDeleteCategory": "Category \"{{name}}\" still contains apps. Really delete it?",
+    "configTransferTitle": "Backup / Restore configuration",
+    "configTransferDescription": "Export or import the complete portal configuration (settings, categories, and apps).",
+    "exportConfig": "Export configuration",
+    "importConfig": "Import configuration",
+    "importSuccess": "Configuration imported successfully.",
+    "importError": "Import failed. Please verify the JSON file."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "grafanaPlaceholder": "Grafana integration is coming in a later stage."
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "app": {
+    "title": "HomeLab-Portal"
+  },
+  "nav": {
+    "portal": "Portal",
+    "admin": "Administration"
+  },
+  "admin": {
+    "general": "Allgemein",
+    "categories": "Kategorien & Apps",
+    "language": "Sprache",
+    "theme": "Theme",
+    "accentColor": "Akzentfarbe",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
+    "addCategory": "Kategorie hinzufügen",
+    "addApp": "App hinzufügen",
+    "selectCategory": "Bitte links eine Kategorie auswählen oder anlegen.",
+    "moveTo": "Verschieben nach…",
+    "moveUp": "Nach oben verschieben",
+    "moveDown": "Nach unten verschieben",
+    "defaultCollapsed": "Standardmäßig eingeklappt anzeigen",
+    "categoryName": "Kategoriename",
+    "appName": "App-Name",
+    "domain": "Domain",
+    "localIp": "Lokale IP",
+    "iconUrl": "Icon-URL",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "confirmDeleteCategory": "Die Kategorie \"{{name}}\" enthält Apps. Wirklich löschen?",
+    "configTransferTitle": "Konfiguration sichern / wiederherstellen",
+    "configTransferDescription": "Exportiert oder importiert die komplette Portal-Konfiguration (Einstellungen, Kategorien und Apps).",
+    "exportConfig": "Konfiguration exportieren",
+    "importConfig": "Konfiguration importieren",
+    "importSuccess": "Konfiguration wurde erfolgreich importiert.",
+    "importError": "Import fehlgeschlagen. Bitte JSON-Datei prüfen."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "grafanaPlaceholder": "Grafana-Integration folgt in einer späteren Ausbaustufe."
+  }
+}
