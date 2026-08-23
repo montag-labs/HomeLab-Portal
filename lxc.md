@@ -38,7 +38,7 @@ npm --version
 ```bash
 mkdir -p /opt
 cd /opt
-git clone https://github.com/Back-code/HomeLab-Portal.git homelab-portal
+git clone https://github.com/montag-labs/HomeLab-Portal.git homelab-portal
 cd /opt/homelab-portal
 npm run install:all
 npm run build
