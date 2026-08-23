@@ -23,7 +23,7 @@ Ein leichtgewichtiges Webportal fuer Homelab-Dienste mit Kategorien, Erreichbark
 ## Schnellstart mit Node.js
 
 ```bash
-git clone https://github.com/Back-code/HomeLab-Portal.git
+git clone https://github.com/montag-labs/HomeLab-Portal.git
 cd HomeLab-Portal
 npm run install:all
 npm run dev
