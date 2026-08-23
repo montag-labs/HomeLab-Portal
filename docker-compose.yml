@@ -1,0 +1,9 @@
+services:
+  homelab-portal:
+    build: .
+    container_name: homelab-portal
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./server/data:/app/server/data
+    restart: unless-stopped
