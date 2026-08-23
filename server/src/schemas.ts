@@ -21,6 +21,18 @@ export const settingsSchema = z.object({
   language: z.enum(["de", "en"]),
   theme: z.enum(["light", "dark"]),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+  grafana: z
+    .object({
+      enabled: z.boolean(),
+      url: z.string().refine((value) => !value || /^https?:\/\//i.test(value), {
+        message: "Grafana URL must use http or https",
+      }),
+      dashboardUid: z.string(),
+      dashboardSlug: z.string(),
+      timeRange: z.enum(["now-1h", "now-6h", "now-24h", "now-7d", "now-30d"]),
+      refreshInterval: z.enum(["", "5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"]),
+    })
+    .optional(),
 });
 
 export const portalConfigSchema = z.object({

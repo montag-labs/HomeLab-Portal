@@ -12,6 +12,16 @@
     "language": "Sprache",
     "theme": "Theme",
     "accentColor": "Akzentfarbe",
+    "grafanaTitle": "Grafana-Dashboard",
+    "grafanaDescription": "Bindet ein Grafana-Dashboard direkt im Portal ein. Die Anmeldung erfolgt in Grafana.",
+    "grafanaEnabled": "Grafana-Dashboard anzeigen",
+    "grafanaUrl": "Grafana-URL",
+    "grafanaDashboardUid": "Dashboard-UID",
+    "grafanaDashboardSlug": "Dashboard-Slug",
+    "grafanaTimeRange": "Zeitraum",
+    "grafanaRefresh": "Automatische Aktualisierung",
+    "grafanaRefreshOff": "Deaktiviert",
+    "saveGrafana": "Grafana-Einstellungen speichern",
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "addCategory": "Kategorie hinzufügen",
@@ -39,6 +49,9 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "grafanaPlaceholder": "Grafana-Integration folgt in einer späteren Ausbaustufe."
+    "grafanaDisabled": "Grafana ist noch nicht konfiguriert.",
+    "openInGrafana": "In Grafana öffnen",
+    "loading": "Grafana wird geladen …",
+    "loginHint": "Falls das Dashboard hier nicht lädt, öffne es in einem neuen Tab und melde dich dort an."
   }
 }

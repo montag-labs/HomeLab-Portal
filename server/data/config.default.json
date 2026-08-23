@@ -2,7 +2,15 @@
   "settings": {
     "language": "de",
     "theme": "dark",
-    "accentColor": "#3b82f6"
+    "accentColor": "#3b82f6",
+    "grafana": {
+      "enabled": false,
+      "url": "",
+      "dashboardUid": "",
+      "dashboardSlug": "",
+      "timeRange": "now-6h",
+      "refreshInterval": ""
+    }
   },
   "categories": [
     {
