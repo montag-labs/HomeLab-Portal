@@ -6,7 +6,15 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
-Noch keine Änderungen.
+### Geändert
+
+- README-Spendenbuttons auf 20 Prozent skaliert und beide Links öffnen in einem neuen Tab.
+
+## [0.1.30] - 2026-08-24
+
+### Geändert
+
+- README-Spendenbuttons auf 20 Prozent skaliert und beide Links öffnen in einem neuen Tab.
 
 ## [0.1.29] - 2026-08-24
 
@@ -282,7 +290,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.29...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.30...HEAD
+[0.1.30]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.30
 [0.1.29]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.29
 [0.1.28]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.28
 [0.1.27]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.27
