@@ -892,3 +892,51 @@ button {
   color: var(--text);
   font: inherit;
 }
+
+.update-token-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgb(0 0 0 / 55%);
+}
+
+.update-token-modal {
+  width: min(100%, 34rem);
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 20px 60px rgb(0 0 0 / 25%);
+}
+
+.update-token-modal h2 {
+  margin-top: 0;
+}
+
+.update-token-value {
+  display: block;
+  margin: 1rem 0;
+  padding: 0.85rem;
+  overflow-wrap: anywhere;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  font-family: monospace;
+  user-select: all;
+}
+
+.update-token-confirm {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.update-card .btn:disabled {
+  cursor: not-allowed;
+}

@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { UpdateStatus } from "../types.js";
+import { readUpdateToken } from "./updateTokenService.js";
 
 const GITHUB_RELEASES_URL =
   "https://api.github.com/repos/montag-labs/HomeLab-Portal/releases/latest";
@@ -48,10 +49,10 @@ function isNewer(candidate: string, installed: string): boolean {
   return false;
 }
 
-function getCapabilities(): UpdateStatus["capabilities"] {
+async function getCapabilities(): Promise<UpdateStatus["capabilities"]> {
   const mode = process.env.UPDATE_MODE;
   if (mode === "lxc") {
-    return process.env.UPDATE_TOKEN
+    return (await readUpdateToken())
       ? { mode: "lxc", canUpdate: true, reason: "Update wird über das geschützte LXC-Script ausgeführt." }
       : { mode: "lxc", canUpdate: false, reason: "UPDATE_TOKEN ist nicht konfiguriert." };
   }
@@ -66,7 +67,7 @@ export async function getUpdateStatus(force = false): Promise<UpdateStatus> {
     return cachedStatus;
   }
 
-  const capabilities = getCapabilities();
+  const capabilities = await getCapabilities();
   let installedVersion: string;
   try {
     installedVersion = await getInstalledVersion();

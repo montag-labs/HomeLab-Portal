@@ -22,17 +22,22 @@ export function Updates() {
   };
 
   const installUpdate = async () => {
+    if (status?.capabilities.mode !== "lxc" || !status.updateAvailable || !token) {
+      return;
+    }
     setUpdating(true);
     try {
       const result = await api.installUpdate(token);
-      setStatus((current) =>
-        current ? { ...current, state: "updating", error: result.message } : current,
-      );
+      setStatus((current) => (current ? { ...current, state: "updating", error: result.message } : current));
       window.setTimeout(() => window.location.reload(), 10000);
     } catch (error) {
       setStatus((current) =>
         current
-          ? { ...current, error: error instanceof Error ? error.message : t("admin.updateStartError") }
+          ? {
+              ...current,
+              state: "failed",
+              error: error instanceof Error ? error.message : t("admin.updateStartError"),
+            }
           : current,
       );
     } finally {
@@ -92,7 +97,7 @@ export function Updates() {
               {t("admin.viewRelease")}
             </a>
           )}
-          {status?.capabilities.canUpdate && (
+          {status?.capabilities.mode === "lxc" && (
             <input
               className="update-token-input"
               type="password"
@@ -105,10 +110,19 @@ export function Updates() {
           <button
             type="button"
             className="btn"
-            disabled={!status?.capabilities.canUpdate || !status.updateAvailable || !token || updating}
+            disabled={status?.capabilities.mode !== "lxc" || !status.updateAvailable || !token || updating}
             onClick={installUpdate}
+            title={
+              status?.capabilities.mode !== "lxc"
+                ? status?.capabilities.reason
+                : !status.updateAvailable
+                  ? t("admin.noUpdateAvailable")
+                  : !token
+                    ? t("admin.updateTokenRequired")
+                    : undefined
+            }
           >
-            {t("admin.installUpdate")}
+            {updating ? t("admin.installingUpdate") : t("admin.installUpdate")}
           </button>
         </div>
       </div>

@@ -4,6 +4,7 @@
     "versionStates": {
       "current": "aktuell",
       "available": "Update verfügbar",
+      "updating": "Update läuft",
       "failed": "nicht geprüft",
       "loading": "wird geprüft"
     }
@@ -28,6 +29,9 @@
     "checkUpdates": "Jetzt prüfen",
     "viewRelease": "Release ansehen",
     "installUpdate": "Update installieren",
+    "installingUpdate": "Update wird gestartet …",
+    "noUpdateAvailable": "Es ist kein neues Update verfügbar.",
+    "updateTokenRequired": "Bitte zuerst das Update-Token eingeben.",
     "updateToken": "Update-Token",
     "updateStartError": "Update konnte nicht gestartet werden.",
     "updateCheckError": "Die GitHub-Version konnte nicht geprüft werden.",
@@ -86,5 +90,11 @@
     "openInGrafana": "In Grafana öffnen",
     "loading": "Grafana wird geladen …",
     "loginHint": "Falls das Dashboard hier nicht lädt, öffne es in einem neuen Tab und melde dich dort an."
+  },
+  "updateToken": {
+    "title": "Update-Token sichern",
+    "description": "Dieser Token wird nur einmal angezeigt. Speichere ihn jetzt an einem sicheren Ort.",
+    "confirm": "Ich habe den Token sicher gespeichert.",
+    "continue": "Weiter"
   }
 }

@@ -27,7 +27,7 @@ Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung 
 
 Bei einer Neuinstallation fragt das Script nach dem Portal-Port. Der Standardwert `80` ist bereits eingetragen; mit Enter wird er übernommen. Bei einer bestehenden Installation wird der bisher verwendete Port automatisch beibehalten. Ein Port kann jederzeit über `HOMELAB_PORT` vorgegeben werden.
 
-Für den Updatebutton in der WebUI fragt das Script zusätzlich verdeckt nach einem Update-Token. Ein leeres Token deaktiviert den automatischen Updatebutton. Das Token wird nicht in der Anwendung gespeichert, sondern nur als geschützter Wert in der systemd-Service-Datei verwendet.
+Für den Updatebutton in der WebUI erzeugt das Script automatisch ein Update-Token. Beim ersten Öffnen des Portals wird es einmalig in einem Popup angezeigt. Das Token wird nicht in der Anwendung gespeichert, sondern als geschützte Datei unter `/var/lib/homelab-portal/update-token` verwaltet.
 
 Den Port einer bestehenden Installation kann man ohne Update mit `--switch` ändern:
 
@@ -38,6 +38,14 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 Das Script aktualisiert dabei nur die systemd-Service-Datei, startet den Service neu und prüft den neuen Port.
 
 Nach der Installation kann das Token im Adminbereich unter „Updates“ eingegeben werden. Bei einem verfügbaren Update startet der Button das fest installierte `/usr/local/sbin/homelab-portal-update`-Script. Der Serverprozess wird dabei neu gestartet; die Oberfläche lädt sich anschließend automatisch neu.
+
+Token neu setzen:
+
+```bash
+sudo /usr/local/sbin/homelab-portal-reset-token
+```
+
+Das alte Token wird ungültig. Beim nächsten Öffnen des Portals erscheint das neue Token einmalig im Popup.
 
 ## 2. Basissystem vorbereiten
 
