@@ -1,6 +1,6 @@
 # HomeLab-Portal im LXC-Container
 
-Diese Anleitung beschreibt den Betrieb des HomeLab-Portals in einem Debian- oder Ubuntu-LXC auf Proxmox. Das Portal wird direkt mit Node.js betrieben. Docker im LXC ist fuer diesen Anwendungsfall nicht erforderlich.
+Diese Anleitung beschreibt den Betrieb des HomeLab-Portals in einem Debian- oder Ubuntu-LXC auf Proxmox. Das Portal wird direkt mit Node.js betrieben. Docker im LXC ist für diesen Anwendungsfall nicht erforderlich.
 
 ## 1. LXC in Proxmox erstellen
 
@@ -14,7 +14,7 @@ Empfohlene Grundeinstellungen:
 - Unprivileged Container: aktiviert
 - Start at boot: aktiviert
 
-Nach dem Erstellen die Container-Konsole oeffnen und als `root` anmelden.
+Nach dem Erstellen die Container-Konsole öffnen und als `root` anmelden.
 
 ## 2. Basissystem vorbereiten
 
@@ -62,7 +62,7 @@ cp -a /opt/homelab-portal/server/data/config.json \
   /var/backups/homelab-portal/config-$(date +%Y%m%d-%H%M%S).json
 ```
 
-Die Datei `config.json` darf nicht durch einen Git-Reset ueberschrieben werden.
+Die Datei `config.json` darf nicht durch einen Git-Reset überschrieben werden.
 
 ## 5. Systemd-Service einrichten
 
@@ -106,17 +106,17 @@ Logs anzeigen:
 journalctl -u homelab-portal -f
 ```
 
-Das Portal ist danach standardmaessig unter `http://CONTAINER-IP:4000` erreichbar.
+Das Portal ist danach standardmäßig unter `http://CONTAINER-IP:4000` erreichbar.
 
 ## 6. Reverse Proxy und HTTPS
 
-Fuer den Zugriff im Heimnetz reicht der direkte Port 4000. Fuer einen komfortablen Hostnamen und HTTPS sollte ein Reverse Proxy wie Caddy oder Nginx vorgeschaltet werden.
+Für den Zugriff im Heimnetz reicht der direkte Port 4000. Für einen komfortablen Hostnamen und HTTPS sollte ein Reverse Proxy wie Caddy oder Nginx vorgeschaltet werden.
 
-Der Reverse Proxy muss an die Container-IP und den Port 4000 weiterleiten. Die Anwendung selbst besitzt aktuell keine Authentifizierung. Deshalb darf Port 4000 nicht ungeschuetzt aus dem Internet erreichbar sein.
+Der Reverse Proxy muss an die Container-IP und den Port 4000 weiterleiten. Die Anwendung selbst besitzt aktuell keine Authentifizierung. Deshalb darf Port 4000 nicht ungeschützt aus dem Internet erreichbar sein.
 
 ## 7. Manuelles Update
 
-Bis die WebUI-Updatefunktion implementiert ist, wird das Update ueber die Container-Konsole ausgefuehrt:
+Bis die WebUI-Updatefunktion implementiert ist, wird das Update über die Container-Konsole ausgeführt:
 
 ```bash
 cd /opt/homelab-portal
@@ -133,19 +133,19 @@ systemctl start homelab-portal
 systemctl status homelab-portal
 ```
 
-Nach dem Start pruefen:
+Nach dem Start prüfen:
 
 ```bash
 curl --fail http://127.0.0.1:4000/api/config > /dev/null
 ```
 
-Wenn der Build fehlschlaegt, darf der Service nicht gestartet werden. Die vorherige Version bleibt dann installiert. Bei einem Fehler nach dem Start den Service wieder stoppen, die Ursache mit `journalctl -u homelab-portal` pruefen und bei Bedarf den letzten funktionierenden Git-Stand auschecken.
+Wenn der Build fehlschlägt, darf der Service nicht gestartet werden. Die vorherige Version bleibt dann installiert. Bei einem Fehler nach dem Start den Service wieder stoppen, die Ursache mit `journalctl -u homelab-portal` prüfen und bei Bedarf den letzten funktionierenden Git-Stand auschecken.
 
-## 8. Vorbereitung fuer WebUI-Updates
+## 8. Vorbereitung für WebUI-Updates
 
-Die Anwendung kann sich nicht verlaesslich selbst aktualisieren, waehrend ihr eigener Node-Prozess ersetzt und neu gestartet wird. Daher sollte die WebUI spaeter ein separates Update-Script starten.
+Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Daher sollte die WebUI später ein separates Update-Script starten.
 
-Beispiel fuer `/usr/local/sbin/homelab-portal-update`:
+Beispiel für `/usr/local/sbin/homelab-portal-update`:
 
 ```bash
 #!/usr/bin/env bash
@@ -183,19 +183,19 @@ chmod 750 /usr/local/sbin/homelab-portal-update
 chown root:root /usr/local/sbin/homelab-portal-update
 ```
 
-Das Script verwendet `git reset --hard origin/main`. Es darf nur eingesetzt werden, wenn der Installationsordner keine lokalen Quellcodeaenderungen enthaelt. Die Konfiguration liegt ausserhalb der Git-Aenderungen und wird separat gesichert.
+Das Script verwendet `git reset --hard origin/main`. Es darf nur eingesetzt werden, wenn der Installationsordner keine lokalen Quellcodeänderungen enthält. Die Konfiguration liegt außerhalb der Git-Änderungen und wird separat gesichert.
 
 ## 9. WebUI-Update sicher freigeben
 
-Vor einem Update-Button in der WebUI muessen mindestens folgende Punkte umgesetzt werden:
+Vor einem Update-Button in der WebUI müssen mindestens folgende Punkte umgesetzt werden:
 
 1. Admin-Authentifizierung oder vorgeschaltete Reverse-Proxy-Authentifizierung.
 2. Serverroute, die nur das feste Update-Script starten darf.
-3. Keine frei uebergebbaren Shell-Befehle, URLs oder Branches.
+3. Keine frei übergebbaren Shell-Befehle, URLs oder Branches.
 4. Ein Lock gegen parallele Updates.
-5. Statusanzeige fuer `running`, `success` und `failed`.
+5. Statusanzeige für `running`, `success` und `failed`.
 6. Backup und Healthcheck vor einer Erfolgsmeldung.
-7. Begrenzte Berechtigung, idealerweise ueber einen eigenen Systembenutzer und eine enge `sudoers`-Regel.
+7. Begrenzte Berechtigung, idealerweise über einen eigenen Systembenutzer und eine enge `sudoers`-Regel.
 
 Das Update-Script darf niemals direkt mit Daten aus einem Formular zusammengesetzt werden.
 
@@ -208,4 +208,4 @@ ss -ltnp | grep 4000
 curl -i http://127.0.0.1:4000/api/config
 ```
 
-Wenn der Zugriff von ausserhalb des Containers nicht funktioniert, zuerst die Container-IP, den Listener-Port, die Proxmox-Firewall und danach den Reverse Proxy pruefen.
+Wenn der Zugriff von außerhalb des Containers nicht funktioniert, zuerst die Container-IP, den Listener-Port, die Proxmox-Firewall und danach den Reverse Proxy prüfen.

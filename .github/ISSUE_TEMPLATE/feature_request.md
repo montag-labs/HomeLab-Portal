@@ -12,10 +12,10 @@ Welches Problem soll geloest werden?
 
 ## Vorschlag
 
-Beschreibe die gewuenschte Funktion oder Aenderung.
+Beschreibe die gewünschte Funktion oder Änderung.
 
-## Moegliche Loesung
+## Mögliche Lösung
 
-Optional: Wie koennte die Umsetzung aussehen?
+Optional: Wie könnte die Umsetzung aussehen?
 
 ## Zusaetzliche Informationen
