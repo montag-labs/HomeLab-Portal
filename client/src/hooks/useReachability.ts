@@ -5,17 +5,23 @@ export type ReachabilityStatus = "checking" | "online" | "offline";
 
 const POLL_INTERVAL_MS = 30_000;
 
-export function useReachability(url: string | undefined): ReachabilityStatus {
+export function useReachability(
+  primaryUrl: string | undefined,
+  fallbackUrl?: string,
+): ReachabilityStatus {
   const [status, setStatus] = useState<ReachabilityStatus>("checking");
 
   useEffect(() => {
-    if (!url) return;
+    const urls = [primaryUrl, fallbackUrl].filter(
+      (url): url is string => Boolean(url),
+    );
+    if (urls.length === 0) return;
     let cancelled = false;
 
     const check = async () => {
       try {
-        const result = await api.getStatus(url);
-        if (!cancelled) setStatus(result.online ? "online" : "offline");
+        const results = await Promise.all(urls.map((url) => api.getStatus(url)));
+        if (!cancelled) setStatus(results.some((result) => result.online) ? "online" : "offline");
       } catch {
         if (!cancelled) setStatus("offline");
       }
@@ -27,7 +33,7 @@ export function useReachability(url: string | undefined): ReachabilityStatus {
       cancelled = true;
       clearInterval(interval);
     };
-  }, [url]);
+  }, [primaryUrl, fallbackUrl]);
 
   return status;
 }

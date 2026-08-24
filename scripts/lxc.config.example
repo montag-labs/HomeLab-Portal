@@ -1,14 +1,55 @@
-# HomeLab-Portal LXC-Parameter
-# Auskommentierte oder leere Werte verwenden den Default.
-# Nur aktive KEY=value-Zeilen überschreiben den jeweiligen Default.
+# HomeLab-Portal LXC-Konfiguration
+#
+# Regeln:
+# - Eine Zeile mit # ist deaktiviert und verwendet den Default.
+# - Nur aktive KEY=value-Zeilen werden angewendet.
+# - Werte ohne Leerzeichen können direkt eingetragen werden.
+# - Pfade dürfen keine Anführungszeichen enthalten.
+# - Nach Änderungen: systemctl restart homelab-portal
+#
+# NICHT konfigurierbar:
+# Repository-URL, Token-Verzeichnis, Token-Datei und Update-Token
+# sind aus Sicherheitsgründen fest im Script bzw. in der Anwendung definiert.
 
+# Git-Branch der eigenen Repository-Quelle.
+# Erlaubt: ein vorhandener Branchname, zum Beispiel main.
 # REPOSITORY_BRANCH=main
+
+# Betriebsmodus der Anwendung.
+# Erlaubt: production oder development.
+# production = DEV-API aus, Standardbetrieb.
+# development = DEV-API an und Admin-Tab „DEV-Diagnose“ sichtbar.
 # APP_ENV=production
+
+# Betriebsart für den Update-Status.
+# Erlaubt: lxc.
 # UPDATE_MODE=lxc
+
+# Verzeichnis der Installation.
+# Erlaubt: absoluter Linux-Pfad.
 # APP_DIR=/opt/homelab-portal
+
+# Name des systemd-Service.
+# Erlaubt: gültiger systemd-Unitname ohne Leerzeichen.
 # SERVICE_NAME=homelab-portal
+
+# Vollständiger Pfad zur systemd-Service-Datei.
+# Erlaubt: absoluter Pfad zu einer .service-Datei.
 # SERVICE_FILE=/etc/systemd/system/homelab-portal.service
+
+# Lock-Datei gegen parallele Installationen und Updates.
+# Erlaubt: absoluter Pfad unter /run.
 # LOCK_FILE=/run/homelab-portal-install.lock
+
+# Verzeichnis für Backups der Portal-Konfiguration.
+# Erlaubt: absoluter Linux-Pfad.
 # BACKUP_DIR=/var/backups/homelab-portal
+
+# Verzeichnis für das Update-Log.
+# Erlaubt: absoluter Linux-Pfad.
 # LOG_DIR=/var/log/homelab-portal
+
+# HTTP-Port des Portals.
+# Erlaubt: ganze Zahl von 1 bis 65535.
+# Standard: 80.
 # HOMELAB_PORT=80
