@@ -27,8 +27,8 @@ export function BrandLogo({ version, status, statusState }: BrandLogoProps) {
       <text className="brand-logo-name" x="90" y="33">
         HomeLab<tspan className="brand-logo-accent">-Portal</tspan>
       </text>
-      <circle className={`brand-logo-version-indicator brand-logo-version-${statusState}`} cx="94" cy="73" r="4" />
-      <text className="brand-logo-version" x="104" y="77">
+      <circle className={`brand-logo-version-indicator brand-logo-version-${statusState}`} cx="94" cy="52" r="4" />
+      <text className="brand-logo-version" x="104" y="56">
         v{version} · {status}
       </text>
     </svg>
