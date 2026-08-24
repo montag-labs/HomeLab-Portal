@@ -85,6 +85,14 @@ server/data/config.json
 
 Die Datei wird nicht versioniert. Eine Startvorlage befindet sich in [server/data/config.default.json](server/data/config.default.json). Vor manuellen Updates oder Importen sollte `config.json` gesichert werden.
 
+## Updates
+
+Im Administrationsbereich prüft das Modul „Updates“ die installierte Version gegen das neueste stabile GitHub-Release. Die Prüfung verwendet einen kurzen Cache und blockiert den Portalbetrieb nicht, wenn GitHub nicht erreichbar ist.
+
+Für den LXC-Betrieb kann der Modus mit `UPDATE_MODE=lxc` gesetzt werden. Die Versionsprüfung ist dann verfügbar; der eigentliche Update-Script-Aufruf wird erst nach Einrichtung der beschriebenen Authentifizierung und `sudoers`-Freigabe aktiviert.
+
+Bei Docker wird `UPDATE_MODE=docker` verwendet. Das Portal zeigt die verfügbare Version und den GitHub-Release-Link an. Das eigentliche Update wird sicher hostseitig mit `docker compose pull` und `docker compose up -d` ausgeführt. Der Docker-Socket wird nicht in den Container eingebunden.
+
 ## Entwicklung
 
 ```bash

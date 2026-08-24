@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import { GeneralSettings } from "./admin/GeneralSettings";
 import { CategoryManager } from "./admin/CategoryManager";
 import { Dashboard } from "./admin/Dashboard";
+import { Updates } from "./admin/Updates";
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "categories" | "dashboard">("general");
+  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates">("general");
 
   return (
     <div className="admin-layout">
@@ -35,12 +36,20 @@ export function AdminPage() {
           >
             {t("admin.dashboard")}
           </button>
+          <button
+            type="button"
+            className={tab === "updates" ? "active" : ""}
+            onClick={() => setTab("updates")}
+          >
+            {t("admin.updates")}
+          </button>
         </div>
       </header>
       <main className="admin-content">
         {tab === "general" && <GeneralSettings />}
         {tab === "categories" && <CategoryManager />}
         {tab === "dashboard" && <Dashboard />}
+        {tab === "updates" && <Updates />}
       </main>
     </div>
   );
