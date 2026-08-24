@@ -8,6 +8,26 @@ readonly SERVICE_NAME="homelab-portal"
 readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 readonly LOCK_FILE="/run/homelab-portal-install.lock"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
+SWITCH_PORT=false
+
+if [[ "${1:-}" == "--switch" ]]; then
+  if [[ -z "${2:-}" || -n "${3:-}" ]]; then
+    echo "Verwendung: $0 --switch PORT" >&2
+    exit 1
+  fi
+  HOMELAB_PORT="$2"
+  SWITCH_PORT=true
+elif [[ -n "${1:-}" ]]; then
+  echo "Unbekannte Option: $1" >&2
+  echo "Verwendung: $0 [--switch PORT]" >&2
+  exit 1
+fi
+
+install_dependencies() {
+  local package_dir="$1"
+  npm install --ignore-scripts --prefix "${package_dir}"
+  npm rebuild esbuild --foreground-scripts --prefix "${package_dir}"
+}
 
 validate_port() {
   if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( 10#${HOMELAB_PORT} < 1 || 10#${HOMELAB_PORT} > 65535 )); then
@@ -50,12 +70,57 @@ if [[ -e "${APP_DIR}" ]]; then
     echo "${APP_DIR} existiert, ist aber kein Git-Repository." >&2
     exit 1
   fi
-  if [[ -z "${HOMELAB_PORT}" && -f "${SERVICE_FILE}" ]]; then
+  if [[ "${SWITCH_PORT}" == false && -z "${HOMELAB_PORT}" && -f "${SERVICE_FILE}" ]]; then
     HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1 | tr -d '[:space:]')"
   fi
   HOMELAB_PORT="${HOMELAB_PORT:-80}"
-  echo "Bestehende Installation erkannt. Verwende Portal-Port: ${HOMELAB_PORT}"
+  if [[ "${SWITCH_PORT}" == true ]]; then
+    echo "Portwechsel angefordert. Neuer Portal-Port: ${HOMELAB_PORT}"
+  else
+    echo "Bestehende Installation erkannt. Verwende Portal-Port: ${HOMELAB_PORT}"
+  fi
   validate_port
+
+  if [[ "${SWITCH_PORT}" == true ]]; then
+    systemctl stop "${SERVICE_NAME}" 2>/dev/null || true
+    cat > "${SERVICE_FILE}" <<EOF
+[Unit]
+Description=HomeLab Portal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=${APP_DIR}
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=production
+Environment=UPDATE_MODE=lxc
+Environment=PORT=${HOMELAB_PORT}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    chmod 644 "${SERVICE_FILE}"
+    systemctl daemon-reload
+    systemctl enable --now "${SERVICE_NAME}"
+    HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
+    for attempt in {1..30}; do
+      if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
+        LXC_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+        LXC_IP="${LXC_IP:-$(hostname -i 2>/dev/null | awk '{print $1}')}"
+        LXC_IP="${LXC_IP:-LXC-IP-nicht-ermittelbar}"
+        echo "Port wurde erfolgreich geändert."
+        echo "Portal: http://${LXC_IP}:${HOMELAB_PORT}"
+        exit 0
+      fi
+      sleep 1
+    done
+    echo "Portwechsel fehlgeschlagen. Der Service konnte auf Port ${HOMELAB_PORT} nicht erreicht werden." >&2
+    systemctl --no-pager --full status "${SERVICE_NAME}" || true
+    exit 1
+  fi
 
   cd "${APP_DIR}"
   CURRENT_COMMIT="$(git rev-parse HEAD)"
@@ -93,9 +158,15 @@ if [[ -e "${APP_DIR}" ]]; then
   trap rollback ERR
   systemctl stop "${SERVICE_NAME}"
   git reset --hard "${TARGET_COMMIT}"
-  npm run install:all
+  install_dependencies "${APP_DIR}/client"
+  install_dependencies "${APP_DIR}/server"
   npm run build
 else
+  if [[ "${SWITCH_PORT}" == true ]]; then
+    echo "Keine bestehende Installation unter ${APP_DIR} gefunden. Portwechsel nicht möglich." >&2
+    echo "Bitte zuerst die Installation ohne --switch ausführen." >&2
+    exit 1
+  fi
   if [[ -z "${HOMELAB_PORT}" ]]; then
     HOMELAB_PORT="80"
     read -r -p "Welchen Port soll das Portal verwenden [${HOMELAB_PORT}]: " entered_port
@@ -108,7 +179,8 @@ else
   git clone --depth 1 --branch "${REPOSITORY_BRANCH}" "${REPOSITORY_URL}" "${APP_DIR}"
   cd "${APP_DIR}"
   echo "Installiere Projektabhängigkeiten ..."
-  npm run install:all
+  install_dependencies "${APP_DIR}/client"
+  install_dependencies "${APP_DIR}/server"
   echo "Erzeuge den Produktiv-Build ..."
   npm run build
 fi
@@ -138,11 +210,14 @@ systemctl daemon-reload
 systemctl enable --now "${SERVICE_NAME}"
 
 HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
-for attempt in {1..10}; do
-  if curl --fail --silent --show-error "${HEALTH_URL}" >/dev/null; then
+for attempt in {1..30}; do
+  if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
     trap - ERR
+    LXC_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
+    LXC_IP="${LXC_IP:-$(hostname -i 2>/dev/null | awk '{print $1}')}"
+    LXC_IP="${LXC_IP:-LXC-IP-nicht-ermittelbar}"
     echo "HomeLab-Portal wurde erfolgreich installiert oder aktualisiert."
-    echo "Portal: http://<CONTAINER-IP>:${HOMELAB_PORT}"
+    echo "Portal: http://${LXC_IP}:${HOMELAB_PORT}"
     exit 0
   fi
   sleep 1

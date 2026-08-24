@@ -77,6 +77,14 @@ Der gleiche Aufruf prüft bei einer bestehenden Installation auf eine neue Versi
 
 Bei der Neuinstallation ist Port `80` im Dialog vorausgefüllt. Mit Enter wird der Standard übernommen. Bei einer bestehenden Installation übernimmt das Script automatisch den bisher verwendeten Port.
 
+Nach erfolgreichem Start gibt das Script die erkannte LXC-IP und die vollständige Portal-Adresse aus.
+
+Port einer bestehenden LXC-Installation ändern:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)" -- --switch 8080
+```
+
 ## Grafana konfigurieren
 
 1. In der Administration den Bereich für Grafana öffnen.
