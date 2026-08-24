@@ -1,6 +1,12 @@
 {
   "app": {
-    "title": "HomeLab-Portal"
+    "title": "HomeLab-Portal",
+    "versionStates": {
+      "current": "aktuell",
+      "available": "Update verfügbar",
+      "failed": "nicht geprüft",
+      "loading": "wird geprüft"
+    }
   },
   "nav": {
     "portal": "Portal",
