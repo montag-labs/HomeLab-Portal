@@ -8,6 +8,16 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.23] - 2026-08-24
+
+### Geändert
+
+- Parameterdatei um Beschreibungen, erlaubte Eingaben und Defaults ergänzt.
+
+### Behoben
+
+- Online-Status berücksichtigt Domain und lokale IP parallel, wenn beide hinterlegt sind.
+
 ## [0.1.22] - 2026-08-24
 
 ### Geändert
@@ -232,7 +242,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.22...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.23...HEAD
+[0.1.23]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.23
 [0.1.22]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.22
 [0.1.21]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.21
 [0.1.20]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.20

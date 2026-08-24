@@ -16,7 +16,7 @@ function initials(name: string): string {
 
 export function AppCard({ app }: { app: AppEntry }) {
   const primaryUrl = resolvePrimaryUrl(app);
-  const status = useReachability(primaryUrl);
+  const status = useReachability(app.domain, app.localIp);
 
   const openPrimary = () => {
     if (primaryUrl) window.open(primaryUrl, "_blank", "noreferrer");
