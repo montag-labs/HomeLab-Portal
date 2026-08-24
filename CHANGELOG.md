@@ -8,6 +8,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.10] - 2026-08-24
+
+### Geändert
+
+- Portauslesen aus bestehender systemd-Installation gegen Leerzeichen und Zeilenenden abgesichert.
+- Fehlermeldung bei ungültigem Port für Installationen und Updates präzisiert.
+
 ## [0.1.9] - 2026-08-24
 
 ### Hinzugefügt
@@ -115,7 +122,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.9...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.10...HEAD
+[0.1.10]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.10
 [0.1.9]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.9
 [0.1.8]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.8
 [0.1.7]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.7

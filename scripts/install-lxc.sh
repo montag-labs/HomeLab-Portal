@@ -9,6 +9,13 @@ readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 readonly LOCK_FILE="/run/homelab-portal-install.lock"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
 
+validate_port() {
+  if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( 10#${HOMELAB_PORT} < 1 || 10#${HOMELAB_PORT} > 65535 )); then
+    echo "Ungültiger Portal-Port: '${HOMELAB_PORT}'. Erlaubt sind Werte von 1 bis 65535." >&2
+    exit 1
+  fi
+}
+
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Dieses Script muss als root ausgeführt werden." >&2
   exit 1
@@ -44,14 +51,11 @@ if [[ -e "${APP_DIR}" ]]; then
     exit 1
   fi
   if [[ -z "${HOMELAB_PORT}" && -f "${SERVICE_FILE}" ]]; then
-    HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1)"
+    HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1 | tr -d '[:space:]')"
   fi
   HOMELAB_PORT="${HOMELAB_PORT:-80}"
-  echo "Bestehende Installation erkannt. Der bisherige Port ${HOMELAB_PORT} wird beibehalten."
-  if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
-    echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
-    exit 1
-  fi
+  echo "Bestehende Installation erkannt. Verwende Portal-Port: ${HOMELAB_PORT}"
+  validate_port
 
   cd "${APP_DIR}"
   CURRENT_COMMIT="$(git rev-parse HEAD)"
@@ -97,10 +101,7 @@ else
     read -r -p "Welchen Port soll das Portal verwenden [${HOMELAB_PORT}]: " entered_port
     HOMELAB_PORT="${entered_port:-${HOMELAB_PORT}}"
   fi
-  if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
-    echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
-    exit 1
-  fi
+  validate_port
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
