@@ -21,6 +21,7 @@ COPY --from=server-build /app/server/package*.json ./server/
 RUN npm ci --omit=dev --prefix server
 COPY --from=server-build /app/server/dist ./server/dist
 COPY --from=server-build /app/server/data ./server/data
+COPY --from=server-build /app/server/data/config.default.json ./server/config.default.json
 COPY --from=client-build /app/client/dist ./client/dist
 
 EXPOSE 4000

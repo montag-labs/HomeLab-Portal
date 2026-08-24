@@ -61,6 +61,8 @@ docker compose up -d
 
 Das öffentliche Image liegt unter `montaglabs/homelab-portal`. Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten. Für einen lokalen Build kann weiterhin `docker compose up -d --build` verwendet werden.
 
+Die Konfigurationsvorlage ist zusätzlich im Image außerhalb des gemounteten Datenverzeichnisses hinterlegt. Ein neuer Docker-Start funktioniert deshalb auch dann, wenn auf dem Host noch keine `config.default.json` vorhanden ist.
+
 Der Container läuft im Betriebsmodus `docker` und in `production`. Updates werden sicher auf dem Docker-Host ausgeführt:
 
 ```bash
