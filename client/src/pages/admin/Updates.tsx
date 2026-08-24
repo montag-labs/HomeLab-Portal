@@ -29,7 +29,7 @@ export function Updates() {
     try {
       const result = await api.installUpdate(token);
       setStatus((current) => (current ? { ...current, state: "updating", error: result.message } : current));
-      window.setTimeout(() => window.location.reload(), 10000);
+      waitForServerRestart(status.latestVersion);
     } catch (error) {
       setStatus((current) =>
         current
@@ -43,6 +43,29 @@ export function Updates() {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const waitForServerRestart = (expectedVersion?: string) => {
+    let attempts = 0;
+    const check = async () => {
+      attempts += 1;
+      try {
+        const response = await fetch("/api/update", { cache: "no-store" });
+        const updateStatus = (await response.json()) as UpdateStatus;
+        if (
+          response.ok &&
+          updateStatus.state === "current" &&
+          (!expectedVersion || updateStatus.installedVersion === expectedVersion)
+        ) {
+          window.location.reload();
+          return;
+        }
+      } catch {
+        // The server is expected to be unavailable while it restarts.
+      }
+      if (attempts < 90) window.setTimeout(check, 2000);
+    };
+    window.setTimeout(check, 2000);
   };
 
   useEffect(() => {

@@ -5,7 +5,13 @@ readonly APP_DIR="/opt/homelab-portal"
 readonly SERVICE_NAME="homelab-portal"
 readonly BACKUP_DIR="/var/backups/homelab-portal"
 readonly LOCK_FILE="/run/homelab-portal-update.lock"
+readonly LOG_DIR="/var/log/homelab-portal"
+readonly LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
 readonly HEALTH_URL="http://127.0.0.1:${PORT:-80}/api/config"
+
+install -d -m 750 "${LOG_DIR}"
+exec >>"${LOG_FILE}" 2>&1
+echo "--- Update gestartet: $(date --iso-8601=seconds) ---"
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Dieses Script muss als root ausgeführt werden." >&2
@@ -52,6 +58,15 @@ rollback() {
   systemctl start "${SERVICE_NAME}"
   echo "Rollback abgeschlossen." >&2
 }
+
+ensure_service_running() {
+  if ! systemctl is-active --quiet "${SERVICE_NAME}"; then
+    systemctl daemon-reload
+    systemctl start "${SERVICE_NAME}"
+  fi
+}
+
+trap ensure_service_running EXIT
 
 trap rollback ERR
 echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
