@@ -18,6 +18,8 @@
     "categories": "Categories & Apps",
     "dashboard": "Dashboard",
     "updates": "Updates",
+    "devDebug": "DEV diagnostics",
+    "devDebugDescription": "Technical runtime, configuration, and reachability data for development.",
     "updateTitle": "Version check",
     "updateDescription": "Checks the installed version against the latest stable GitHub release.",
     "updateLoading": "Loading …",

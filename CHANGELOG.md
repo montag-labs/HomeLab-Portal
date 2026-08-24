@@ -8,6 +8,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.21] - 2026-08-24
+
+### Hinzugefügt
+
+- Kommentierbare Parameterdatei für Installation und Update ergänzt.
+- Produktiv-/DEV-Schalter über `APP_ENV` ergänzt.
+- Eigenes DEV-Diagnosemodul im Adminbereich ergänzt.
+
+### Geändert
+
+- Repository-URL und Tokenpfade sind feste interne Werte und nicht mehr konfigurierbar.
+- DEV-Debug-API liefert detaillierte Erreichbarkeitsdiagnosen.
+
 ## [0.1.20] - 2026-08-24
 
 ### Hinzugefügt
@@ -212,7 +225,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.20...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.21...HEAD
+[0.1.21]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.21
 [0.1.20]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.20
 [0.1.19]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.19
 [0.1.18]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.18

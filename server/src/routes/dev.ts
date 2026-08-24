@@ -6,6 +6,10 @@ import { checkReachability } from "./status.js";
 
 export const devRouter = Router();
 
+devRouter.get("/dev/enabled", (_req, res) => {
+  res.json({ enabled: true });
+});
+
 function safeEnvironment(): Record<string, string> {
   return Object.fromEntries(
     Object.entries(process.env)
