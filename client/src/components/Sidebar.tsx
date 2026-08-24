@@ -17,17 +17,18 @@ export function Sidebar() {
   }, []);
 
   const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
+  const versionStatus = updateStatus
+    ? t(`app.versionStates.${versionState}`)
+    : t("app.versionStates.loading");
 
   return (
     <aside className="sidebar">
       <div className="sidebar-title">
-        <BrandLogo />
-      </div>
-      <div className={`sidebar-version sidebar-version-${versionState}`}>
-        <span className="sidebar-version-indicator" aria-hidden="true" />
-        <span>
-          {updateStatus?.installedVersion ?? "-"} · {t(`app.versionStates.${versionState}`)}
-        </span>
+        <BrandLogo
+          version={updateStatus?.installedVersion ?? "-"}
+          status={versionStatus}
+          statusState={versionState}
+        />
       </div>
       <nav className="sidebar-categories">
         {config &&

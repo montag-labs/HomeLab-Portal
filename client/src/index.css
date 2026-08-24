@@ -69,36 +69,6 @@ button {
   height: auto;
 }
 
-.sidebar-version {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  margin: -0.65rem 0 1rem;
-  padding-left: 0.15rem;
-  color: var(--text-muted);
-  font-size: 0.7rem;
-}
-
-.sidebar-version-indicator {
-  width: 0.45rem;
-  height: 0.45rem;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--text-muted);
-}
-
-.sidebar-version-current .sidebar-version-indicator {
-  background: #22c55e;
-}
-
-.sidebar-version-available .sidebar-version-indicator {
-  background: #f59e0b;
-}
-
-.sidebar-version-failed .sidebar-version-indicator {
-  background: #ef4444;
-}
-
 .brand-logo {
   display: block;
   width: 100%;
@@ -148,6 +118,29 @@ button {
 
 .brand-logo-accent {
   fill: var(--accent-color);
+}
+
+.brand-logo-version {
+  fill: var(--text-muted);
+  font-family: system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.brand-logo-version-indicator {
+  fill: var(--text-muted);
+}
+
+.brand-logo-version-indicator.brand-logo-version-current {
+  fill: #22c55e;
+}
+
+.brand-logo-version-indicator.brand-logo-version-available {
+  fill: #f59e0b;
+}
+
+.brand-logo-version-indicator.brand-logo-version-failed {
+  fill: #ef4444;
 }
 
 .sidebar-categories {
