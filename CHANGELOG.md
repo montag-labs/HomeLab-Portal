@@ -8,6 +8,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.2] - 2026-08-24
+
+### Geändert
+
+- Deutsche Projektbeschreibung mit Umlauten und englische Kurzbeschreibung ergänzt.
+- Private Beispiel-IP-Adressen in der Konfigurationsvorlage durch Dokumentationsadressen ersetzt.
+- LXC-Dokumentation auf Debian 13 aktualisiert.
+
 ## [0.1.1] - 2026-08-24
 
 ### Hinzugefügt
@@ -33,6 +41,7 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.2
 [0.1.1]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.1
 [0.1.0]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.0
