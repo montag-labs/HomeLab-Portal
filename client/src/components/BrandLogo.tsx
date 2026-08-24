@@ -29,7 +29,7 @@ export function BrandLogo({ version, status, statusState }: BrandLogoProps) {
       </text>
       <circle className={`brand-logo-version-indicator brand-logo-version-${statusState}`} cx="94" cy="73" r="4" />
       <text className="brand-logo-version" x="104" y="77">
-        {version} · {status}
+        v{version} · {status}
       </text>
     </svg>
   );
