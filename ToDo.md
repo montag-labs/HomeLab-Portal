@@ -2,7 +2,7 @@
 
 ## LXC und Updates
 
-- [ ] LXC-Container auf Proxmox mit Debian 12 oder Ubuntu 24.04 erstellen.
+- [ ] LXC-Container auf Proxmox mit Debian 13 erstellen.
 - [ ] Node.js LTS, Git und benoetigte Systempakete installieren.
 - [ ] HomeLab-Portal unter `/opt/homelab-portal` installieren und produktiv bauen.
 - [ ] `systemd`-Service `homelab-portal.service` einrichten und Start beim Boot aktivieren.

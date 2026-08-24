@@ -1,6 +1,8 @@
 # HomeLab-Portal
 
-Ein leichtgewichtiges Webportal fuer Homelab-Dienste mit Kategorien, Erreichbarkeitsstatus und eingebettetem Grafana-Dashboard.
+Ein leichtgewichtiges Webportal für Homelab-Dienste mit Kategorien, Erreichbarkeitsstatus und eingebettetem Grafana-Dashboard.
+
+HomeLab-Portal is a lightweight web portal for homelab services with categories, reachability status indicators, and an embedded Grafana dashboard.
 
 ## Funktionen
 
