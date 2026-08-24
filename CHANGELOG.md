@@ -8,6 +8,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.35] - 2026-08-24
+
+### Behoben
+
+- Pfad zur eingebetteten Docker-Konfigurationsvorlage korrigiert.
+- Docker verwendet den Fallback korrekt, wenn der Daten-Volume-Mount keine Vorlage enthält.
+
 ## [0.1.34] - 2026-08-24
 
 ### Behoben
@@ -15,6 +22,8 @@ Noch keine Änderungen.
 - Docker-Update erzwingt den Pull und die Neuerstellung des Portal-Containers.
 - Fehlgeschlagene Config-Ladevorgänge zeigen im Docker-Admin eine verständliche Fehlermeldung.
 - Docker verwendet eine eingebettete Konfigurationsvorlage, wenn das gemountete Datenverzeichnis leer ist.
+- Docker-Compose verwendet im Produktivbetrieb eindeutig das aktuelle Docker-Hub-Image statt eines lokalen Builds.
+- Docker-Healthcheck prüft die Config-API des laufenden Containers.
 
 ## [0.1.33] - 2026-08-24
 
@@ -321,7 +330,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.34...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.35...HEAD
+[0.1.35]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.35
 [0.1.34]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.34
 [0.1.33]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.33
 [0.1.32]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.32

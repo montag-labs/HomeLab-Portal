@@ -6,7 +6,7 @@ import type { PortalConfig } from "../types.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = path.resolve(__dirname, "../../data/config.json");
 const DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../../data/config.default.json");
-const EMBEDDED_DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../config.default.json");
+const EMBEDDED_DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../../config.default.json");
 
 // Serializes writes so concurrent requests never interleave file access.
 let writeQueue: Promise<unknown> = Promise.resolve();

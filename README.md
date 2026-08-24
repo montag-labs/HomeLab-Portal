@@ -59,8 +59,15 @@ docker compose pull
 docker compose up -d
 ```
 
-Das öffentliche Image liegt unter `montaglabs/homelab-portal`. Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten. Für einen lokalen Build kann weiterhin `docker compose up -d --build` verwendet werden.
+Das öffentliche Image liegt unter `montaglabs/homelab-portal`. Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten.
 
+Compose zieht das Image wegen `pull_policy: always` bei jedem Start neu; der produktive Compose-Stack baut nicht lokal.
+
+Für einen lokalen Build kann das Image separat gebaut werden:
+
+```bash
+docker build -t montaglabs/homelab-portal:local .
+```
 Die Konfigurationsvorlage ist zusätzlich im Image außerhalb des gemounteten Datenverzeichnisses hinterlegt. Ein neuer Docker-Start funktioniert deshalb auch dann, wenn auf dem Host noch keine `config.default.json` vorhanden ist.
 
 Der Container läuft im Betriebsmodus `docker` und in `production`. Updates werden sicher auf dem Docker-Host ausgeführt:
