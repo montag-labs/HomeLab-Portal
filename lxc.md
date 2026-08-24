@@ -116,13 +116,13 @@ Logs anzeigen:
 journalctl -u homelab-portal -f
 ```
 
-Das Portal ist danach standardmäßig unter `http://CONTAINER-IP:4000` erreichbar.
+Das Portal ist danach unter `http://<LXC-IP>:80` erreichbar. Die IP-Adresse des LXC kann mit `hostname -I` ermittelt werden. Der Port kann über `HOMELAB_PORT` beim Installationsaufruf angepasst werden.
 
 ## 6. Reverse Proxy und HTTPS
 
-Für den Zugriff im Heimnetz reicht der direkte Port 4000. Für einen komfortablen Hostnamen und HTTPS sollte ein Reverse Proxy wie Caddy oder Nginx vorgeschaltet werden.
+Für den Zugriff im Heimnetz reicht der direkte Port 80. Für einen komfortablen Hostnamen und HTTPS sollte ein Reverse Proxy wie Caddy oder Nginx vorgeschaltet werden.
 
-Der Reverse Proxy muss an die Container-IP und den Port 4000 weiterleiten. Die Anwendung selbst besitzt aktuell keine Authentifizierung. Deshalb darf Port 4000 nicht ungeschützt aus dem Internet erreichbar sein.
+Der Reverse Proxy muss an die Container-IP und den konfigurierten Port weiterleiten. Die Anwendung selbst besitzt aktuell keine Authentifizierung. Deshalb darf der Portalport nicht ungeschützt aus dem Internet erreichbar sein.
 
 ## 7. Manuelles Update
 
@@ -146,7 +146,7 @@ systemctl status homelab-portal
 Nach dem Start prüfen:
 
 ```bash
-curl --fail http://127.0.0.1:4000/api/config > /dev/null
+curl --fail http://127.0.0.1:80/api/config > /dev/null
 ```
 
 Wenn der Build fehlschlägt, darf der Service nicht gestartet werden. Die vorherige Version bleibt dann installiert. Bei einem Fehler nach dem Start den Service wieder stoppen, die Ursache mit `journalctl -u homelab-portal` prüfen und bei Bedarf den letzten funktionierenden Git-Stand auschecken.
@@ -181,7 +181,7 @@ git reset --hard origin/main
 npm run install:all
 npm run build
 systemctl start homelab-portal
-curl --fail --retry 10 --retry-delay 1 http://127.0.0.1:4000/api/config > /dev/null
+curl --fail --retry 10 --retry-delay 1 http://127.0.0.1:80/api/config > /dev/null
 
 echo "Update erfolgreich: $(git rev-parse --short HEAD)"
 ```
@@ -214,8 +214,8 @@ Das Update-Script darf niemals direkt mit Daten aus einem Formular zusammengeset
 ```bash
 systemctl status homelab-portal
 journalctl -u homelab-portal -n 100 --no-pager
-ss -ltnp | grep 4000
-curl -i http://127.0.0.1:4000/api/config
+ss -ltnp | grep ':80 '
+curl -i http://127.0.0.1:80/api/config
 ```
 
 Wenn der Zugriff von außerhalb des Containers nicht funktioniert, zuerst die Container-IP, den Listener-Port, die Proxmox-Firewall und danach den Reverse Proxy prüfen.
