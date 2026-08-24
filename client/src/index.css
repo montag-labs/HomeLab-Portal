@@ -120,19 +120,6 @@ button {
   fill: var(--accent-color);
 }
 
-.brand-logo-author {
-  fill: var(--text-muted);
-  font-family: system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.brand-logo-author:hover {
-  fill: var(--accent-color);
-  text-decoration: underline;
-}
-
 .brand-logo-version {
   fill: var(--text-muted);
   font-family: system-ui, sans-serif;
