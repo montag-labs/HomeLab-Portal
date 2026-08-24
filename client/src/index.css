@@ -192,6 +192,15 @@ button {
   font-size: 0.85rem;
 }
 
+.sidebar-paypal {
+  min-height: 34px;
+}
+
+.sidebar-paypal img {
+  max-width: 100%;
+  height: auto;
+}
+
 .sidebar-author-link,
 .sidebar-license-link {
   text-decoration: none;

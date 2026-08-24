@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
@@ -11,9 +11,46 @@ export function Sidebar() {
   const { config } = useConfig();
   const { t } = useTranslation();
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null);
+  const paypalRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
+  }, []);
+
+  useEffect(() => {
+    const container = paypalRef.current;
+    if (!container) return;
+    const script = document.createElement("script");
+    script.src = "https://www.paypalobjects.com/donate/sdk/donate-sdk.js";
+    script.charset = "UTF-8";
+    script.async = true;
+    script.onload = () => {
+      const paypal = window as typeof window & {
+        PayPal?: {
+          Donation?: {
+            Button: (options: {
+              env: "production";
+              hosted_button_id: string;
+              image: { src: string; alt: string; title: string };
+            }) => { render: (selector: string) => void };
+          };
+        };
+      };
+      paypal.PayPal?.Donation?.Button({
+        env: "production",
+        hosted_button_id: "AAWND2KK9V22G",
+        image: {
+          src: "https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif",
+          alt: "Donate with PayPal button",
+          title: "PayPal - The safer, easier way to pay online!",
+        },
+      }).render("#paypal-donate-button");
+    };
+    container.appendChild(script);
+    return () => {
+      script.remove();
+      container.replaceChildren();
+    };
   }, []);
 
   const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
@@ -51,6 +88,9 @@ export function Sidebar() {
           <span className="sidebar-kofi-icon" aria-hidden="true">♥</span>
           Support me on Ko-fi
         </a>
+        <div className="sidebar-paypal" ref={paypalRef}>
+          <div id="paypal-donate-button" />
+        </div>
         <a
           className="sidebar-author-link"
           href="https://github.com/montag-labs/HomeLab-Portal"
