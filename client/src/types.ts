@@ -39,7 +39,7 @@ export interface PortalConfig {
   categories: Category[];
 }
 
-export type UpdateState = "current" | "available" | "failed";
+export type UpdateState = "current" | "available" | "updating" | "failed";
 export type UpdateMode = "lxc" | "docker" | "unsupported";
 
 export interface UpdateStatus {
@@ -56,4 +56,9 @@ export interface UpdateStatus {
     reason: string;
   };
   error?: string;
+}
+
+export interface UpdateStartResult {
+  state: "updating" | "rejected";
+  message: string;
 }

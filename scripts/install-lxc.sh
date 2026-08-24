@@ -8,6 +8,7 @@ readonly SERVICE_NAME="homelab-portal"
 readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 readonly LOCK_FILE="/run/homelab-portal-install.lock"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
+UPDATE_TOKEN="${UPDATE_TOKEN:-}"
 SWITCH_PORT=false
 
 if [[ "${1:-}" == "--switch" ]]; then
@@ -75,6 +76,9 @@ if [[ -e "${APP_DIR}" ]]; then
   if [[ "${SWITCH_PORT}" == false && -z "${HOMELAB_PORT}" && -f "${SERVICE_FILE}" ]]; then
     HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1 | tr -d '[:space:]')"
   fi
+  if [[ -z "${UPDATE_TOKEN}" && -f "${SERVICE_FILE}" ]]; then
+    UPDATE_TOKEN="$(sed -n 's/^Environment=UPDATE_TOKEN=//p' "${SERVICE_FILE}" | tail -n 1 | tr -d '\r')"
+  fi
   HOMELAB_PORT="${HOMELAB_PORT:-80}"
   if [[ "${SWITCH_PORT}" == true ]]; then
     echo "Portwechsel angefordert. Neuer Portal-Port: ${HOMELAB_PORT}"
@@ -100,6 +104,8 @@ RestartSec=5
 Environment=NODE_ENV=production
 Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
+Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
+Environment=UPDATE_TOKEN=${UPDATE_TOKEN}
 
 [Install]
 WantedBy=multi-user.target
@@ -176,6 +182,10 @@ else
   fi
   validate_port
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
+  if [[ -z "${UPDATE_TOKEN}" ]]; then
+    read -r -s -p "Update-Token für den UI-Updatebutton (leer = deaktiviert): " UPDATE_TOKEN
+    echo
+  fi
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
   git clone --depth 1 --branch "${REPOSITORY_BRANCH}" "${REPOSITORY_URL}" "${APP_DIR}"
@@ -186,6 +196,8 @@ else
   echo "Erzeuge den Produktiv-Build ..."
   npm run build
 fi
+
+install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
 
 cat > "${SERVICE_FILE}" <<EOF
 [Unit]
@@ -202,6 +214,8 @@ RestartSec=5
 Environment=NODE_ENV=production
 Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
+Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
+Environment=UPDATE_TOKEN=${UPDATE_TOKEN}
 
 [Install]
 WantedBy=multi-user.target

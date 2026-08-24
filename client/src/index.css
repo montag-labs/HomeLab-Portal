@@ -852,3 +852,13 @@ button {
   align-items: center;
   text-decoration: none;
 }
+
+.update-token-input {
+  min-width: 12rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
