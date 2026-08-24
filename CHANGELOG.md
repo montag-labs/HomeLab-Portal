@@ -6,7 +6,15 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
-Noch keine Änderungen.
+### Geändert
+
+- Docker-Update erzwingt den Pull und die Neuerstellung des Portal-Containers.
+
+## [0.1.32] - 2026-08-24
+
+### Geändert
+
+- Docker-Update erzwingt den Pull und die Neuerstellung des Portal-Containers.
 
 ## [0.1.31] - 2026-08-24
 
@@ -301,7 +309,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.31...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.32...HEAD
+[0.1.32]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.32
 [0.1.31]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.31
 [0.1.30]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.30
 [0.1.29]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.29

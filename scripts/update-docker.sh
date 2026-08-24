@@ -33,6 +33,6 @@ fi
 echo "Aktualisiere Docker-Deployment ..."
 git reset --hard "${target_commit}"
 docker compose pull
-docker compose up -d --remove-orphans
+docker compose up -d --pull always --force-recreate --remove-orphans
 docker compose ps
 echo "Docker-Update erfolgreich abgeschlossen."
