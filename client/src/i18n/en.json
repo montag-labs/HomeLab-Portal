@@ -22,10 +22,13 @@
     "checkUpdates": "Check now",
     "viewRelease": "View release",
     "installUpdate": "Install update",
+    "updateToken": "Update token",
+    "updateStartError": "The update could not be started.",
     "updateCheckError": "The GitHub version could not be checked.",
     "updateStates": {
       "current": "Up to date",
       "available": "Update available",
+      "updating": "Update running",
       "failed": "Check failed"
     },
     "updateModes": {

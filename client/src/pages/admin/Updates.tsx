@@ -7,6 +7,8 @@ export function Updates() {
   const { t } = useTranslation();
   const [status, setStatus] = useState<UpdateStatus | null>(null);
   const [checking, setChecking] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [token, setToken] = useState("");
 
   const checkForUpdates = async () => {
     setChecking(true);
@@ -16,6 +18,25 @@ export function Updates() {
       setStatus(null);
     } finally {
       setChecking(false);
+    }
+  };
+
+  const installUpdate = async () => {
+    setUpdating(true);
+    try {
+      const result = await api.installUpdate(token);
+      setStatus((current) =>
+        current ? { ...current, state: "updating", error: result.message } : current,
+      );
+      window.setTimeout(() => window.location.reload(), 10000);
+    } catch (error) {
+      setStatus((current) =>
+        current
+          ? { ...current, error: error instanceof Error ? error.message : t("admin.updateStartError") }
+          : current,
+      );
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -71,7 +92,22 @@ export function Updates() {
               {t("admin.viewRelease")}
             </a>
           )}
-          <button type="button" className="btn" disabled={!status?.capabilities.canUpdate}>
+          {status?.capabilities.canUpdate && (
+            <input
+              className="update-token-input"
+              type="password"
+              value={token}
+              placeholder={t("admin.updateToken")}
+              aria-label={t("admin.updateToken")}
+              onChange={(event) => setToken(event.target.value)}
+            />
+          )}
+          <button
+            type="button"
+            className="btn"
+            disabled={!status?.capabilities.canUpdate || !status.updateAvailable || !token || updating}
+            onClick={installUpdate}
+          >
             {t("admin.installUpdate")}
           </button>
         </div>

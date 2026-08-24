@@ -111,6 +111,8 @@ Im Administrationsbereich prüft das Modul „Updates“ die installierte Versio
 
 Für den LXC-Betrieb kann der Modus mit `UPDATE_MODE=lxc` gesetzt werden. Die Versionsprüfung ist dann verfügbar; der eigentliche Update-Script-Aufruf wird erst nach Einrichtung der beschriebenen Authentifizierung und `sudoers`-Freigabe aktiviert.
 
+Für den UI-Updatebutton muss bei der LXC-Installation ein Update-Token gesetzt werden. Das Script fragt dieses bei einer Neuinstallation verdeckt ab. Das Token wird anschließend im Adminbereich eingegeben und nicht gespeichert.
+
 Bei Docker wird `UPDATE_MODE=docker` verwendet. Das Portal zeigt die verfügbare Version und den GitHub-Release-Link an. Das eigentliche Update wird sicher hostseitig mit `docker compose pull` und `docker compose up -d` ausgeführt. Der Docker-Socket wird nicht in den Container eingebunden.
 
 ## Entwicklung

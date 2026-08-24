@@ -51,7 +51,9 @@ function isNewer(candidate: string, installed: string): boolean {
 function getCapabilities(): UpdateStatus["capabilities"] {
   const mode = process.env.UPDATE_MODE;
   if (mode === "lxc") {
-    return { mode: "lxc", canUpdate: false, reason: "Update-Script noch nicht eingerichtet." };
+    return process.env.UPDATE_TOKEN
+      ? { mode: "lxc", canUpdate: true, reason: "Update wird über das geschützte LXC-Script ausgeführt." }
+      : { mode: "lxc", canUpdate: false, reason: "UPDATE_TOKEN ist nicht konfiguriert." };
   }
   if (mode === "docker") {
     return { mode: "docker", canUpdate: false, reason: "Docker-Updates werden hostseitig ausgeführt." };

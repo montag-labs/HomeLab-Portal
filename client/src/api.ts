@@ -1,4 +1,4 @@
-import type { AppEntry, Category, PortalConfig, Settings, UpdateStatus } from "./types";
+import type { AppEntry, Category, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -31,6 +31,11 @@ export const api = {
   getUpdateStatus: () => request<UpdateStatus>("/api/update"),
   checkForUpdates: () =>
     request<UpdateStatus>("/api/update/check", { method: "POST" }),
+  installUpdate: (token: string) =>
+    request<UpdateStartResult>("/api/update/install", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-HomeLab-Update-Token": token },
+    }),
   createCategory: (data: Partial<Category>) =>
     request<Category>("/api/categories", {
       method: "POST",

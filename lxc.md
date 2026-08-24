@@ -12,7 +12,6 @@ Empfohlene Grundeinstellungen:
 - Festplatte: mindestens 4 GB, empfohlen 8 GB
 - Netzwerk: statische IP oder DHCP-Reservierung
 - Unprivileged Container: aktiviert
-- Start at boot: aktiviert
 
 Nach dem Erstellen die Container-Konsole öffnen und als `root` anmelden.
 
@@ -28,6 +27,8 @@ Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung 
 
 Bei einer Neuinstallation fragt das Script nach dem Portal-Port. Der Standardwert `80` ist bereits eingetragen; mit Enter wird er übernommen. Bei einer bestehenden Installation wird der bisher verwendete Port automatisch beibehalten. Ein Port kann jederzeit über `HOMELAB_PORT` vorgegeben werden.
 
+Für den Updatebutton in der WebUI fragt das Script zusätzlich verdeckt nach einem Update-Token. Ein leeres Token deaktiviert den automatischen Updatebutton. Das Token wird nicht in der Anwendung gespeichert, sondern nur als geschützter Wert in der systemd-Service-Datei verwendet.
+
 Den Port einer bestehenden Installation kann man ohne Update mit `--switch` ändern:
 
 ```bash
@@ -35,6 +36,8 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 ```
 
 Das Script aktualisiert dabei nur die systemd-Service-Datei, startet den Service neu und prüft den neuen Port.
+
+Nach der Installation kann das Token im Adminbereich unter „Updates“ eingegeben werden. Bei einem verfügbaren Update startet der Button das fest installierte `/usr/local/sbin/homelab-portal-update`-Script. Der Serverprozess wird dabei neu gestartet; die Oberfläche lädt sich anschließend automatisch neu.
 
 ## 2. Basissystem vorbereiten
 

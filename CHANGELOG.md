@@ -8,6 +8,18 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.13] - 2026-08-24
+
+### Hinzugefügt
+
+- Geschützter UI-Start des LXC-Update-Scripts mit Update-Token.
+- Status „Update läuft“ und automatisches Neuladen der Oberfläche nach dem Neustart.
+
+### Geändert
+
+- Das Installationsscript richtet das LXC-Update-Script automatisch ein.
+- Fehlendes Update-Script wird vor dem Start sauber erkannt.
+
 ## [0.1.12] - 2026-08-24
 
 ### Geändert
@@ -36,6 +48,7 @@ Noch keine Änderungen.
 ### Hinzugefügt
 
 - Klare Portabfrage mit vorausgefülltem Standardwert `80` ergänzt.
+- Geschützter UI-Start des LXC-Update-Scripts mit Update-Token ergänzt.
 
 ### Geändert
 
@@ -138,7 +151,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.12...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.13...HEAD
+[0.1.13]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.13
 [0.1.12]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.12
 [0.1.11]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.11
 [0.1.10]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.10
