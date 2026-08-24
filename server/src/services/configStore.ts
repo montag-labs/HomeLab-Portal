@@ -6,6 +6,7 @@ import type { PortalConfig } from "../types.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = path.resolve(__dirname, "../../data/config.json");
 const DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../../data/config.default.json");
+const EMBEDDED_DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../config.default.json");
 
 // Serializes writes so concurrent requests never interleave file access.
 let writeQueue: Promise<unknown> = Promise.resolve();
@@ -14,7 +15,12 @@ async function ensureConfigExists(): Promise<void> {
   try {
     await fs.access(CONFIG_PATH);
   } catch {
-    const fallback = await fs.readFile(DEFAULT_CONFIG_PATH, "utf-8");
+    let fallback: string;
+    try {
+      fallback = await fs.readFile(DEFAULT_CONFIG_PATH, "utf-8");
+    } catch {
+      fallback = await fs.readFile(EMBEDDED_DEFAULT_CONFIG_PATH, "utf-8");
+    }
     await fs.writeFile(CONFIG_PATH, fallback, "utf-8");
   }
 }
