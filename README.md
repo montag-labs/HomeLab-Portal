@@ -73,6 +73,8 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 
 Der Standardport im LXC ist `80`. Ein anderer Port kann über `HOMELAB_PORT` gesetzt werden, zum Beispiel `HOMELAB_PORT=8080 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"`.
 
+Der gleiche Aufruf prüft bei einer bestehenden Installation auf eine neue Version und führt das Update mit Backup, Build, Healthcheck und Rollback aus.
+
 ## Grafana konfigurieren
 
 1. In der Administration den Bereich für Grafana öffnen.

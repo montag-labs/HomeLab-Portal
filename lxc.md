@@ -24,7 +24,7 @@ Die Installation kann direkt aus diesem Repository gestartet werden:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wird ein Healthcheck ausgeführt. Eine bestehende Installation wird nicht überschrieben.
+Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wird ein Healthcheck ausgeführt. Wird derselbe Aufruf später erneut gestartet, prüft das Script die installierte Version und aktualisiert nur bei einem neuen Stand. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
 
 ## 2. Basissystem vorbereiten
 
@@ -126,7 +126,13 @@ Der Reverse Proxy muss an die Container-IP und den konfigurierten Port weiterlei
 
 ## 7. Manuelles Update
 
-Das Administrationsmodul kann die installierte Version gegen das neueste stabile GitHub-Release prüfen. Bis der authentifizierte Script-Aufruf eingerichtet ist, wird das Update weiterhin über die Container-Konsole ausgeführt:
+Das Administrationsmodul kann die installierte Version gegen das neueste stabile GitHub-Release prüfen. Bis der authentifizierte Aufruf aus der WebUI eingerichtet ist, kann das Installationsscript erneut über die Container-Konsole gestartet werden. Es erkennt die bestehende Installation automatisch:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
+```
+
+Alternativ kann das Update weiterhin manuell ausgeführt werden:
 
 ```bash
 cd /opt/homelab-portal
@@ -153,7 +159,7 @@ Wenn der Build fehlschlägt, darf der Service nicht gestartet werden. Die vorher
 
 ## 8. Update-Script für LXC
 
-Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Das Update-Modul zeigt deshalb zunächst nur den Status; die Installation muss über ein separates, privilegiertes Update-Script erfolgen.
+Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Das Installationsscript ist deshalb als separates, privilegiertes Host-Script ausgelegt und kann aus der LXC-Konsole gestartet werden.
 
 Beispiel für `/usr/local/sbin/homelab-portal-update`:
 
