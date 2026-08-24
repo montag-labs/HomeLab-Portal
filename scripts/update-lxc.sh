@@ -1,13 +1,37 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly APP_DIR="/opt/homelab-portal"
-readonly SERVICE_NAME="homelab-portal"
-readonly BACKUP_DIR="/var/backups/homelab-portal"
-readonly LOCK_FILE="/run/homelab-portal-update.lock"
-readonly LOG_DIR="/var/log/homelab-portal"
-readonly LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
-readonly HEALTH_URL="http://127.0.0.1:${PORT:-80}/api/config"
+APP_DIR="/opt/homelab-portal"
+REPOSITORY_BRANCH="main"
+SERVICE_NAME="homelab-portal"
+BACKUP_DIR="/var/backups/homelab-portal"
+LOCK_FILE="/run/homelab-portal-update.lock"
+LOG_DIR="/var/log/homelab-portal"
+LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
+HOMELAB_PORT="${PORT:-80}"
+CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/install.conf}"
+
+load_parameters() {
+  [[ -f "${CONFIG_FILE}" ]] || return 0
+  while IFS= read -r line || [[ -n "${line}" ]]; do
+    line="${line#"${line%%[![:space:]]*}"}"
+    [[ -z "${line}" || "${line:0:1}" == "#" ]] && continue
+    [[ "${line}" =~ ^([A-Z_][A-Z0-9_]*)=(.*)$ ]] || { echo "Ungültige Zeile in ${CONFIG_FILE}: ${line}" >&2; exit 1; }
+    local key="${BASH_REMATCH[1]}" value="${BASH_REMATCH[2]}"
+    value="${value#\"}"; value="${value%\"}"
+    case "${key}" in
+      APP_DIR|SERVICE_NAME|BACKUP_DIR|LOCK_FILE|LOG_DIR|HOMELAB_PORT)
+        printf -v "${key}" '%s' "${value}" ;;
+      REPOSITORY_BRANCH|APP_ENV|SERVICE_FILE)
+        printf -v "${key}" '%s' "${value}" ;;
+      *) echo "Unbekannter Parameter in ${CONFIG_FILE}: ${key}" >&2; exit 1 ;;
+    esac
+  done < "${CONFIG_FILE}"
+  LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
+}
+
+load_parameters
+HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 
 install -d -m 750 "${LOG_DIR}"
 touch "${LOG_FILE}"
@@ -27,8 +51,8 @@ cd "${APP_DIR}"
 readonly CURRENT_COMMIT="$(git rev-parse HEAD)"
 readonly CURRENT_VERSION="$(node -p "require('./package.json').version")"
 
-git fetch --depth 1 origin main
-readonly TARGET_COMMIT="$(git rev-parse origin/main)"
+git fetch --depth 1 origin "${REPOSITORY_BRANCH}"
+readonly TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
 readonly TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
 
 if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then

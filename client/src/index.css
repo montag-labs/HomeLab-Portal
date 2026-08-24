@@ -933,3 +933,21 @@ button {
 .update-card .btn:disabled {
   cursor: not-allowed;
 }
+
+.dev-debug-card {
+  max-width: 100%;
+}
+
+.dev-debug-output {
+  max-height: 65vh;
+  margin: 1rem 0 0;
+  padding: 1rem;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

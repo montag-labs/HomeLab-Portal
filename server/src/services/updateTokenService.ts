@@ -1,8 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
 import { access, mkdir, readFile, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
 
-const TOKEN_DIR = process.env.UPDATE_TOKEN_DIR ?? "/var/lib/homelab-portal";
-const TOKEN_FILE = `${TOKEN_DIR}/update-token`;
+const TOKEN_FILE = process.env.UPDATE_TOKEN_FILE ?? "/var/lib/homelab-portal/update-token";
+const TOKEN_DIR = path.dirname(TOKEN_FILE);
 const ACK_FILE = `${TOKEN_DIR}/update-token-acknowledged`;
 
 export async function readUpdateToken(): Promise<string | undefined> {

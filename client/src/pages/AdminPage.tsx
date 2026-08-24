@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { api } from "../api";
 import { GeneralSettings } from "./admin/GeneralSettings";
 import { CategoryManager } from "./admin/CategoryManager";
 import { Dashboard } from "./admin/Dashboard";
 import { Updates } from "./admin/Updates";
+import { DevDebug } from "./admin/DevDebug";
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates">("general");
+  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates" | "dev">("general");
+  const [devEnabled, setDevEnabled] = useState(false);
+
+  useEffect(() => {
+    api.getDevAvailability().then((result) => setDevEnabled(result.enabled)).catch(() => setDevEnabled(false));
+  }, []);
 
   return (
     <div className="admin-layout">
@@ -43,6 +50,15 @@ export function AdminPage() {
           >
             {t("admin.updates")}
           </button>
+          {devEnabled && (
+            <button
+              type="button"
+              className={tab === "dev" ? "active" : ""}
+              onClick={() => setTab("dev")}
+            >
+              {t("admin.devDebug")}
+            </button>
+          )}
         </div>
       </header>
       <main className="admin-content">
@@ -50,6 +66,7 @@ export function AdminPage() {
         {tab === "categories" && <CategoryManager />}
         {tab === "dashboard" && <Dashboard />}
         {tab === "updates" && <Updates />}
+        {tab === "dev" && devEnabled && <DevDebug />}
       </main>
     </div>
   );

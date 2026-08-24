@@ -1,0 +1,13 @@
+# HomeLab-Portal LXC-Parameter
+# Auskommentierte oder leere Werte verwenden den Default.
+# Nur aktive KEY=value-Zeilen überschreiben den jeweiligen Default.
+
+# REPOSITORY_BRANCH=main
+# APP_ENV=production
+# APP_DIR=/opt/homelab-portal
+# SERVICE_NAME=homelab-portal
+# SERVICE_FILE=/etc/systemd/system/homelab-portal.service
+# LOCK_FILE=/run/homelab-portal-install.lock
+# BACKUP_DIR=/var/backups/homelab-portal
+# LOG_DIR=/var/log/homelab-portal
+# HOMELAB_PORT=80

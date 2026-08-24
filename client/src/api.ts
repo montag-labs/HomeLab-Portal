@@ -32,6 +32,8 @@ export const api = {
     request<{ online: boolean; method?: "HEAD" | "GET"; statusCode?: number; error?: string }>(
       `/api/status?url=${encodeURIComponent(url)}`,
     ),
+  getDevAvailability: () => request<{ enabled: boolean }>("/api/dev/enabled"),
+  getDevDebug: () => request<Record<string, unknown>>("/api/dev/debug"),
   updateSettings: (settings: Settings) =>
     request<Settings>("/api/settings", {
       method: "PUT",
