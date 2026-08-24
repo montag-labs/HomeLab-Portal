@@ -8,16 +8,29 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.8] - 2026-08-24
+
+### Hinzugefügt
+
+- Installationsscript erkennt bestehende Installationen und unterstützt Updates.
+
+### Geändert
+
+- Updatepfad prüft Versionen, sichert die Konfiguration und versucht bei Fehlern ein Rollback.
+- Der Healthcheck verwendet den konfigurierten LXC-Port.
+
 ## [0.1.7] - 2026-08-24
 
 ### Hinzugefügt
 
 - Konfigurierbarer LXC-Port mit Standardwert `80` ergänzt.
+- Installationsscript erkennt bestehende Installationen und unterstützt Updates.
 
 ### Geändert
 
 - Lokale Entwicklung verwendet weiterhin Port `4000`, während der Produktionsstandard auf Port `80` liegt.
 - LXC-Dokumentation verwendet die dynamische Adresse des LXC statt eines Container-Platzhalters.
+- Updatepfad sichert die Konfiguration und versucht bei Fehlern ein Rollback.
 
 ## [0.1.6] - 2026-08-24
 
@@ -91,7 +104,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.7...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.8
 [0.1.7]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.7
 [0.1.6]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.6
 [0.1.5]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.5
