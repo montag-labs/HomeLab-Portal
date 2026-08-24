@@ -19,22 +19,42 @@ function isReachable(urlString: string): Promise<boolean> {
       return;
     }
     const client = target.protocol === "https:" ? https : http;
-    const req = client.request(
-      target,
-      {
-        method: "HEAD",
-        timeout: 3000,
-        // Homelab services often use self-signed certificates.
-        rejectUnauthorized: false,
-      },
-      (res) => {
-        res.resume();
-        resolve(true);
-      }
-    );
-    req.on("timeout", () => req.destroy());
-    req.on("error", () => resolve(false));
-    req.end();
+    let settled = false;
+
+    const finish = (online: boolean) => {
+      if (settled) return;
+      settled = true;
+      resolve(online);
+    };
+
+    const request = (method: "HEAD" | "GET") => {
+      const req = client.request(
+        target,
+        {
+          method,
+          timeout: 8000,
+          // Homelab services often use self-signed certificates.
+          rejectUnauthorized: false,
+        },
+        (res) => {
+          const shouldFallback = method === "HEAD" && (res.statusCode === 405 || res.statusCode === 501);
+          res.resume();
+          if (shouldFallback) {
+            request("GET");
+          } else {
+            finish(true);
+          }
+        }
+      );
+      req.on("timeout", () => {
+        req.destroy();
+        finish(false);
+      });
+      req.on("error", () => finish(false));
+      req.end();
+    };
+
+    request("HEAD");
   });
 }
 

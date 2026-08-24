@@ -8,6 +8,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.18] - 2026-08-24
+
+### Behoben
+
+- Erreichbarkeitsprüfung verwendet bei nicht unterstütztem HEAD-Aufruf automatisch GET.
+- Timeout für die Erreichbarkeitsprüfung auf acht Sekunden erhöht.
+
 ## [0.1.17] - 2026-08-24
 
 ### Behoben
@@ -15,6 +22,7 @@ Noch keine Änderungen.
 - Die UI wartet nach dem Update auf die Rückkehr des Servers, bevor sie neu geladen wird.
 - Update-Script protokolliert Fehler persistent und stellt den Service bei Abbrüchen wieder her.
 - Update-Log liegt jetzt unter `/var/log/homelab-portal/homelab-portal-update.log`.
+- Erreichbarkeitsprüfung verwendet bei nicht unterstütztem HEAD-Aufruf automatisch GET.
 
 ## [0.1.16] - 2026-08-24
 
@@ -187,7 +195,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.17...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.18...HEAD
+[0.1.18]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.18
 [0.1.17]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.17
 [0.1.16]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.16
 [0.1.15]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.15
