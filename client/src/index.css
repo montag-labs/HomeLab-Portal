@@ -5,6 +5,9 @@
   --text: #1a1a1a;
   --text-muted: #6b7280;
   --border: #e5e7eb;
+  --logo-surface: #202b3c;
+  --logo-contrast: #fff8e7;
+  --logo-highlight: #f7c95c;
 }
 
 :root[data-theme="dark"] {
@@ -13,6 +16,9 @@
   --text: #f2f2f2;
   --text-muted: #9aa0a6;
   --border: #2b2d31;
+  --logo-surface: #f4f5f7;
+  --logo-contrast: #121316;
+  --logo-highlight: #2563eb;
 }
 
 * {
@@ -51,10 +57,67 @@ button {
 }
 
 .sidebar-title {
-  font-size: 1.25rem;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  min-height: 56px;
   margin-bottom: 1rem;
-  color: var(--accent-color);
+}
+
+.sidebar-title img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.brand-logo-mark {
+  fill: var(--accent-color);
+}
+
+.brand-logo-server {
+  fill: var(--logo-surface);
+}
+
+.brand-logo-prompt,
+.brand-logo-status-line {
+  fill: none;
+  stroke: var(--logo-contrast);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.brand-logo-status-line {
+  stroke: var(--logo-highlight);
+  stroke-width: 3;
+}
+
+.brand-logo-status-red {
+  fill: #f58d75;
+}
+
+.brand-logo-status-yellow {
+  fill: #f7c95c;
+}
+
+.brand-logo-status-green {
+  fill: #55d68a;
+}
+
+.brand-logo-name {
+  fill: var(--text);
+  font-family: system-ui, sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.brand-logo-accent {
+  fill: var(--accent-color);
 }
 
 .sidebar-categories {
