@@ -178,6 +178,8 @@ curl --fail http://127.0.0.1:80/api/config > /dev/null
 
 Wenn der Build fehlschlägt, darf der Service nicht gestartet werden. Die vorherige Version bleibt dann installiert. Bei einem Fehler nach dem Start den Service wieder stoppen, die Ursache mit `journalctl -u homelab-portal` prüfen und bei Bedarf den letzten funktionierenden Git-Stand auschecken.
 
+Der automatische Ablauf protokolliert seine Ausgaben in `/var/log/homelab-portal/homelab-portal-update.log`. Nach einem Fehler kann der Service mit `systemctl start homelab-portal` gestartet und das Update-Log mit `tail -n 200 /var/log/homelab-portal/homelab-portal-update.log` geprüft werden.
+
 ## 8. Update-Script für LXC
 
 Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Das Installationsscript ist deshalb als separates, privilegiertes Host-Script ausgelegt und kann aus der LXC-Konsole gestartet werden.
