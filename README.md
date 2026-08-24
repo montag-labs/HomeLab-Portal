@@ -8,7 +8,7 @@ HomeLab-Portal is a lightweight web portal for homelab services with categories,
 
 - Verwaltung von Kategorien und Apps
 - Externe und lokale URLs pro App
-- Erreichbarkeitsanzeige fuer konfigurierte Dienste
+- Erreichbarkeitsanzeige für konfigurierte Dienste
 - Helles und dunkles Theme
 - Deutsch und Englisch
 - Import und Export der Portal-Konfiguration
@@ -19,8 +19,8 @@ HomeLab-Portal is a lightweight web portal for homelab services with categories,
 
 - Node.js LTS
 - npm
-- Fuer den Containerbetrieb: Docker und Docker Compose
-- Fuer den LXC-Betrieb: Debian 12 oder Ubuntu 24.04
+- Für den Containerbetrieb: Docker und Docker Compose
+- Für den LXC-Betrieb: Debian 12 oder Ubuntu 24.04
 
 ## Schnellstart mit Node.js
 
@@ -46,7 +46,7 @@ npm run build
 npm start
 ```
 
-Das Portal ist anschliessend standardmaessig unter http://localhost:4000 erreichbar.
+Das Portal ist anschließend standardmäßig unter http://localhost:4000 erreichbar.
 
 ## Docker Compose
 
@@ -63,17 +63,17 @@ docker compose down
 
 ## LXC-Betrieb
 
-Die vollstaendige Anleitung fuer einen Proxmox-LXC, inklusive `systemd`-Service, Backup und Updatevorbereitung, steht in [lxc.md](lxc.md).
+Die vollständige Anleitung für einen Proxmox-LXC, inklusive `systemd`-Service, Backup und Updatevorbereitung, steht in [lxc.md](lxc.md).
 
 ## Grafana konfigurieren
 
-1. In der Administration den Bereich fuer Grafana oeffnen.
+1. In der Administration den Bereich für Grafana öffnen.
 2. Grafana aktivieren.
 3. Die Basis-URL oder Dashboard-URL eintragen.
 4. Optional Dashboard-UID und Slug, Zeitraum sowie Refresh-Intervall eintragen.
 5. Einstellungen speichern.
 
-Das Portal speichert keine Grafana-Zugangsdaten. Die Anmeldung erfolgt in Grafana. Grafana muss das Einbetten erlauben, zum Beispiel ueber `allow_embedding = true`. Abhaengig von Browser und Reverse Proxy koennen Drittanbieter-Cookies den Login im Iframe verhindern. In diesem Fall das Dashboard ueber den Link in einem neuen Tab oeffnen.
+Das Portal speichert keine Grafana-Zugangsdaten. Die Anmeldung erfolgt in Grafana. Grafana muss das Einbetten erlauben, zum Beispiel über `allow_embedding = true`. Abhängig von Browser und Reverse Proxy können Drittanbieter-Cookies den Login im Iframe verhindern. In diesem Fall das Dashboard über den Link in einem neuen Tab öffnen.
 
 ## Konfiguration
 
@@ -103,14 +103,14 @@ Der Server liefert im Produktivbetrieb das gebaute Frontend aus `client/dist` au
 
 ## Sicherheit
 
-Die aktuelle Anwendung besitzt keine eigene Authentifizierung. Sie ist fuer den Betrieb im vertrauenswuerdigen Heimnetz vorgesehen. Port 4000 nicht ungeschuetzt aus dem Internet veroeffentlichen. Vor einer WebUI-Updatefunktion muessen insbesondere Admin-Authentifizierung, feste Updatequellen, Locking, Backups und ein Healthcheck umgesetzt werden.
+Die aktuelle Anwendung besitzt keine eigene Authentifizierung. Sie ist für den Betrieb im vertrauenswürdigen Heimnetz vorgesehen. Port 4000 nicht ungeschützt aus dem Internet veröffentlichen. Vor einer WebUI-Updatefunktion müssen insbesondere Admin-Authentifizierung, feste Updatequellen, Locking, Backups und ein Healthcheck umgesetzt werden.
 
-Sicherheitsprobleme bitte nicht oeffentlich als Issue melden. Hinweise stehen in [SECURITY.md](SECURITY.md).
+Sicherheitsprobleme bitte nicht öffentlich als Issue melden. Hinweise stehen in [SECURITY.md](SECURITY.md).
 
 ## Beitragen
 
-Fehlerberichte und Verbesserungsvorschlaege sind willkommen. Bitte zuerst die [Beitragsrichtlinien](CONTRIBUTING.md) lesen und fuer neue Meldungen die Issue-Vorlagen verwenden.
+Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte zuerst die [Beitragsrichtlinien](CONTRIBUTING.md) lesen und für neue Meldungen die Issue-Vorlagen verwenden.
 
 ## Lizenz
 
-Fuer dieses Repository ist derzeit keine Open-Source-Lizenz angegeben. Ohne Lizenz gelten die gesetzlichen Urheberrechte; eine Nutzung, Weitergabe oder Aenderung ist daher nicht automatisch erlaubt.
+Für dieses Repository ist derzeit keine Open-Source-Lizenz angegeben. Ohne Lizenz gelten die gesetzlichen Urheberrechte; eine Nutzung, Weitergabe oder Änderung ist daher nicht automatisch erlaubt.

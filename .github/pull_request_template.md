@@ -1,8 +1,8 @@
 ## Beschreibung
 
-Was aendert dieser Pull Request und warum?
+Was ändert dieser Pull Request und warum?
 
-## Aenderungen
+## Änderungen
 
 - [ ] Funktionalitaet
 - [ ] Fehlerbehebung
@@ -14,7 +14,7 @@ Was aendert dieser Pull Request und warum?
 
 - [ ] `npm run lint --prefix client`
 - [ ] `npm run build`
-- [ ] Manuell geprueft, falls UI oder Deployment betroffen ist
+- [ ] Manuell geprüft, falls UI oder Deployment betroffen ist
 
 ## Hinweise
 
