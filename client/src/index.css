@@ -184,11 +184,25 @@ button {
 }
 
 .sidebar-kofi {
-  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 6px;
+  background: #72a4f2;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
 }
 
-.sidebar-kofi script {
-  display: none;
+.sidebar-kofi:hover {
+  background: #5d8edb;
+}
+
+.sidebar-kofi-icon {
+  color: #ff5f45;
+  font-size: 0.85rem;
 }
 
 .sidebar-author-link,
