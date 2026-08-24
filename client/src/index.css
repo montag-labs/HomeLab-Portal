@@ -211,24 +211,6 @@ button {
   min-width: 0;
 }
 
-.grafana-panel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.grafana-panel-header h2 {
-  margin: 0;
-}
-
-.grafana-panel-header a {
-  color: var(--accent-color);
-  font-size: 0.9rem;
-  white-space: nowrap;
-}
-
 .grafana-panel-empty {
   border: 1px dashed var(--border);
   border-radius: 12px;
@@ -250,6 +232,26 @@ button {
   border: 1px solid var(--border);
   border-radius: 8px;
   background: #111318;
+}
+
+.grafana-open-button {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  place-items: center;
+  text-decoration: none;
+  border-color: var(--accent-color);
+  background: var(--accent-color);
+  color: #fff;
+}
+
+.grafana-open-icon {
+  flex-shrink: 0;
 }
 
 .grafana-frame-wrapper iframe {
@@ -382,11 +384,6 @@ button {
 
   .portal-main {
     padding: 1rem;
-  }
-
-  .grafana-panel-header {
-    align-items: flex-start;
-    flex-direction: column;
   }
 
   .grafana-frame-wrapper {

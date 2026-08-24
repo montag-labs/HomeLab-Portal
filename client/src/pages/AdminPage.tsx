@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GeneralSettings } from "./admin/GeneralSettings";
 import { CategoryManager } from "./admin/CategoryManager";
+import { Dashboard } from "./admin/Dashboard";
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "categories">("general");
+  const [tab, setTab] = useState<"general" | "categories" | "dashboard">("general");
 
   return (
     <div className="admin-layout">
@@ -27,10 +28,19 @@ export function AdminPage() {
           >
             {t("admin.categories")}
           </button>
+          <button
+            type="button"
+            className={tab === "dashboard" ? "active" : ""}
+            onClick={() => setTab("dashboard")}
+          >
+            {t("admin.dashboard")}
+          </button>
         </div>
       </header>
       <main className="admin-content">
-        {tab === "general" ? <GeneralSettings /> : <CategoryManager />}
+        {tab === "general" && <GeneralSettings />}
+        {tab === "categories" && <CategoryManager />}
+        {tab === "dashboard" && <Dashboard />}
       </main>
     </div>
   );

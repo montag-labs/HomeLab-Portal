@@ -9,6 +9,7 @@
   "admin": {
     "general": "Allgemein",
     "categories": "Kategorien & Apps",
+    "dashboard": "Dashboard",
     "language": "Sprache",
     "theme": "Theme",
     "accentColor": "Akzentfarbe",
