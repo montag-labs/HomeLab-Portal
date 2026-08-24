@@ -53,7 +53,7 @@ export function Sidebar() {
         </a>
         <a
           className="sidebar-author-link"
-          href="https://homelab.montag.nrw"
+          href="https://github.com/montag-labs/HomeLab-Portal"
           target="_blank"
           rel="noreferrer"
         >

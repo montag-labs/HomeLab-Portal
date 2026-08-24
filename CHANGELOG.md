@@ -8,6 +8,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.26] - 2026-08-24
+
+### Geändert
+
+- Autorentext aus dem Logo entfernt und den Footer-Link auf das GitHub-Repository gesetzt.
+
 ## [0.1.25] - 2026-08-24
 
 ### Behoben
@@ -256,7 +262,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.25...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.26...HEAD
+[0.1.26]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.26
 [0.1.25]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.25
 [0.1.24]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.24
 [0.1.23]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.23
