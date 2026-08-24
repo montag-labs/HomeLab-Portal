@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useConfig } from "../context/ConfigContext";
 import { CategoryGroup } from "./CategoryGroup";
+import { BrandLogo } from "./BrandLogo";
 
 export function Sidebar() {
   const { config } = useConfig();
@@ -9,7 +10,9 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <div className="sidebar-title">{t("app.title")}</div>
+      <div className="sidebar-title">
+        <BrandLogo />
+      </div>
       <nav className="sidebar-categories">
         {config &&
           [...config.categories]
