@@ -75,6 +75,8 @@ Der Standardport im LXC ist `80`. Ein anderer Port kann über `HOMELAB_PORT` ges
 
 Der gleiche Aufruf prüft bei einer bestehenden Installation auf eine neue Version und führt das Update mit Backup, Build, Healthcheck und Rollback aus.
 
+Bei der Neuinstallation ist Port `80` im Dialog vorausgefüllt. Mit Enter wird der Standard übernommen. Bei einer bestehenden Installation übernimmt das Script automatisch den bisher verwendeten Port.
+
 ## Grafana konfigurieren
 
 1. In der Administration den Bereich für Grafana öffnen.

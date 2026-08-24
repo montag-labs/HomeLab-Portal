@@ -8,6 +8,17 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.9] - 2026-08-24
+
+### Hinzugefügt
+
+- Klare Portabfrage mit vorausgefülltem Standardwert `80` ergänzt.
+
+### Geändert
+
+- Bestehende Installationen behalten automatisch ihren bisherigen Port.
+- npm-Hinweise auf neue npm-Hauptversionen während der Installation unterdrückt.
+
 ## [0.1.8] - 2026-08-24
 
 ### Hinzugefügt
@@ -104,7 +115,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.8...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.9...HEAD
+[0.1.9]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.9
 [0.1.8]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.8
 [0.1.7]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.7
 [0.1.6]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.6

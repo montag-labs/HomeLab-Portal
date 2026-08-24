@@ -26,6 +26,8 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 
 Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wird ein Healthcheck ausgeführt. Wird derselbe Aufruf später erneut gestartet, prüft das Script die installierte Version und aktualisiert nur bei einem neuen Stand. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
 
+Bei einer Neuinstallation fragt das Script nach dem Portal-Port. Der Standardwert `80` ist bereits eingetragen; mit Enter wird er übernommen. Bei einer bestehenden Installation wird der bisher verwendete Port automatisch beibehalten. Ein Port kann jederzeit über `HOMELAB_PORT` vorgegeben werden.
+
 ## 2. Basissystem vorbereiten
 
 ```bash
