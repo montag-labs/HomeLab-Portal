@@ -14,11 +14,6 @@ if [[ "${EUID}" -ne 0 ]]; then
   exit 1
 fi
 
-if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
-  echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
-  exit 1
-fi
-
 if ! command -v apt-get >/dev/null 2>&1; then
   echo "Dieses Script unterstützt nur Debian- und Ubuntu-Systeme mit apt-get." >&2
   exit 1
@@ -52,6 +47,7 @@ if [[ -e "${APP_DIR}" ]]; then
     HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1)"
   fi
   HOMELAB_PORT="${HOMELAB_PORT:-80}"
+  echo "Bestehende Installation erkannt. Der bisherige Port ${HOMELAB_PORT} wird beibehalten."
   if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
     echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
     exit 1
@@ -96,11 +92,16 @@ if [[ -e "${APP_DIR}" ]]; then
   npm run install:all
   npm run build
 else
-  HOMELAB_PORT="${HOMELAB_PORT:-80}"
+  if [[ -z "${HOMELAB_PORT}" ]]; then
+    HOMELAB_PORT="80"
+    read -r -p "Welchen Port soll das Portal verwenden [${HOMELAB_PORT}]: " entered_port
+    HOMELAB_PORT="${entered_port:-${HOMELAB_PORT}}"
+  fi
   if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
     echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
     exit 1
   fi
+  echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
   git clone --depth 1 --branch "${REPOSITORY_BRANCH}" "${REPOSITORY_URL}" "${APP_DIR}"
