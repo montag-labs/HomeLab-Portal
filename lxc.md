@@ -182,7 +182,7 @@ Der automatische Ablauf protokolliert seine Ausgaben in `/var/log/homelab-portal
 
 ## 8. Update-Script für LXC
 
-Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Das Installationsscript ist deshalb als separates, privilegiertes Host-Script ausgelegt und kann aus der LXC-Konsole gestartet werden.
+Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Der UI-Aufruf startet deshalb über `systemd-run` eine eigene transient Unit. So kann das Update den Portal-Service stoppen, ohne dass das Update-Script selbst beendet wird.
 
 Beispiel für `/usr/local/sbin/homelab-portal-update`:
 

@@ -44,11 +44,16 @@ updateRouter.post("/update/install", async (req, res) => {
   const script = process.env.UPDATE_SCRIPT ?? "/usr/local/sbin/homelab-portal-update";
   try {
     await access(script);
+    await access("/usr/bin/systemd-run");
   } catch {
-    res.status(503).json({ state: "rejected", message: "Update-Script ist nicht eingerichtet." });
+    res.status(503).json({ state: "rejected", message: "Update-Script oder systemd-run ist nicht eingerichtet." });
     return;
   }
-  const child = spawn(script, [], { detached: true, stdio: "ignore" });
+  const child = spawn(
+    "systemd-run",
+    ["--quiet", "--no-block", "--collect", "--unit=homelab-portal-update", script],
+    { detached: true, stdio: "ignore" },
+  );
   child.unref();
   res.status(202).json({ state: "updating", message: "Update wurde gestartet." });
 });

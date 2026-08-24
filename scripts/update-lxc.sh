@@ -10,6 +10,8 @@ readonly LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
 readonly HEALTH_URL="http://127.0.0.1:${PORT:-80}/api/config"
 
 install -d -m 750 "${LOG_DIR}"
+touch "${LOG_FILE}"
+chmod 640 "${LOG_FILE}"
 exec >>"${LOG_FILE}" 2>&1
 echo "--- Update gestartet: $(date --iso-8601=seconds) ---"
 
@@ -70,6 +72,7 @@ trap ensure_service_running EXIT
 
 trap rollback ERR
 echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
+echo "Stoppe Portal-Service für den Build ..."
 systemctl stop "${SERVICE_NAME}"
 git reset --hard "${TARGET_COMMIT}"
 npm install --ignore-scripts --prefix client
