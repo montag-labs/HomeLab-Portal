@@ -8,6 +8,17 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.20] - 2026-08-24
+
+### Hinzugefügt
+
+- DEV-Debug-API unter `GET /api/dev/debug` mit Laufzeit-, Konfigurations- und Erreichbarkeitsdiagnosen.
+
+### Geändert
+
+- Debug-API wird bei `NODE_ENV=production` nicht registriert.
+- Erreichbarkeitsprüfung liefert Methode, HTTP-Status und Fehlerursache für die Diagnose.
+
 ## [0.1.19] - 2026-08-24
 
 ### Behoben
@@ -201,7 +212,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.19...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.20...HEAD
+[0.1.20]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.20
 [0.1.19]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.19
 [0.1.18]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.18
 [0.1.17]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.17

@@ -29,7 +29,9 @@ export const api = {
       body: JSON.stringify(config),
     }),
   getStatus: (url: string) =>
-    request<{ online: boolean }>(`/api/status?url=${encodeURIComponent(url)}`),
+    request<{ online: boolean; method?: "HEAD" | "GET"; statusCode?: number; error?: string }>(
+      `/api/status?url=${encodeURIComponent(url)}`,
+    ),
   updateSettings: (settings: Settings) =>
     request<Settings>("/api/settings", {
       method: "PUT",

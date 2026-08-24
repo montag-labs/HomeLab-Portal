@@ -15,11 +15,6 @@
 - [ ] Updatefunktion im LXC testen: alte Version, neue Version, Buildfehler, Neustart und Wiederherstellung der Konfiguration.
 - [ ] Updatebetrieb dokumentieren und nur feste Quellen wie `origin/main` zulassen.
 
-Implementier eine DEV API wo mal alles fürs debugging abrufen kann.
-Diese API muss aber ein und ausschaltbar sein
-Produkitv = aus
-Dev = an
-
 ## Bereits umgesetzt
 
 - [x] GitHub-README, Beitragsrichtlinien, Security-Hinweise, Issue-Templates und CI ergänzt.

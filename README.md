@@ -125,6 +125,8 @@ npm run build
 npm run lint --prefix client
 ```
 
+In der Entwicklungsumgebung ist die Debug-API unter `GET /api/dev/debug` verfügbar. Sie liefert Laufzeitinformationen, die geladene Konfiguration, den Update-Status und detaillierte Erreichbarkeitstests für konfigurierte URLs. Tokens, Passwörter und andere Schlüssel werden herausgefiltert. Bei `NODE_ENV=production` wird die Debug-API nicht registriert.
+
 Das Projekt besteht aus:
 
 - `client/`: React, TypeScript und Vite
