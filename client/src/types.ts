@@ -62,3 +62,8 @@ export interface UpdateStartResult {
   state: "updating" | "rejected";
   message: string;
 }
+
+export interface PendingUpdateToken {
+  available: boolean;
+  token?: string;
+}

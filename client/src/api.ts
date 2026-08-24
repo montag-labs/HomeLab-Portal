@@ -1,4 +1,4 @@
-import type { AppEntry, Category, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, Category, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -6,7 +6,14 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     ...options,
   });
   if (!res.ok) {
-    throw new Error(`Request failed: ${res.status} ${res.statusText}`);
+    let message = `Request failed: ${res.status} ${res.statusText}`;
+    try {
+      const body = (await res.json()) as { message?: unknown };
+      if (typeof body.message === "string") message = body.message;
+    } catch {
+      // Keep the HTTP error when the response has no JSON body.
+    }
+    throw new Error(message);
   }
   if (res.status === 204) {
     return undefined as T;
@@ -35,6 +42,12 @@ export const api = {
     request<UpdateStartResult>("/api/update/install", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-HomeLab-Update-Token": token },
+    }),
+  getPendingUpdateToken: () => request<PendingUpdateToken>("/api/update/token"),
+  confirmUpdateToken: (token: string) =>
+    request<void>("/api/update/token/confirm", {
+      method: "POST",
+      body: JSON.stringify({ token }),
     }),
   createCategory: (data: Partial<Category>) =>
     request<Category>("/api/categories", {

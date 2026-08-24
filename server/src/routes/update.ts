@@ -2,6 +2,11 @@ import { Router } from "express";
 import { spawn } from "node:child_process";
 import { access } from "node:fs/promises";
 import { getUpdateStatus } from "../services/updateService.js";
+import {
+  acknowledgeUpdateToken,
+  getPendingUpdateToken,
+  readUpdateToken,
+} from "../services/updateTokenService.js";
 
 export const updateRouter = Router();
 
@@ -13,8 +18,19 @@ updateRouter.post("/update/check", async (_req, res) => {
   res.json(await getUpdateStatus(true));
 });
 
+updateRouter.get("/update/token", async (_req, res) => {
+  const token = await getPendingUpdateToken();
+  res.json({ available: Boolean(token), token });
+});
+
+updateRouter.post("/update/token/confirm", async (req, res) => {
+  const token = typeof req.body?.token === "string" ? req.body.token : "";
+  const acknowledged = await acknowledgeUpdateToken(token);
+  res.status(acknowledged ? 204 : 400).send();
+});
+
 updateRouter.post("/update/install", async (req, res) => {
-  const configuredToken = process.env.UPDATE_TOKEN;
+  const configuredToken = await readUpdateToken();
   const suppliedToken = req.get("x-homelab-update-token");
   if (!configuredToken || suppliedToken !== configuredToken) {
     res.status(403).json({ state: "rejected", message: "Update ist nicht autorisiert." });

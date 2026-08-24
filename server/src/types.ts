@@ -58,6 +58,11 @@ export interface UpdateStartResult {
   message: string;
 }
 
+export interface PendingUpdateToken {
+  available: boolean;
+  token?: string;
+}
+
 export interface PortalConfig {
   settings: Settings;
   categories: Category[];

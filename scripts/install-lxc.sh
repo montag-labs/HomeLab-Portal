@@ -7,6 +7,8 @@ readonly APP_DIR="/opt/homelab-portal"
 readonly SERVICE_NAME="homelab-portal"
 readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 readonly LOCK_FILE="/run/homelab-portal-install.lock"
+readonly TOKEN_DIR="/var/lib/homelab-portal"
+readonly TOKEN_FILE="${TOKEN_DIR}/update-token"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
 UPDATE_TOKEN="${UPDATE_TOKEN:-}"
 SWITCH_PORT=false
@@ -57,7 +59,7 @@ export NPM_CONFIG_UPDATE_NOTIFIER=false
 
 echo "Installiere Systempakete ..."
 apt-get update
-apt-get install -y ca-certificates curl git sudo
+apt-get install -y ca-certificates curl git openssl sudo
 
 if ! command -v node >/dev/null 2>&1; then
   echo "Installiere Node.js LTS ..."
@@ -87,6 +89,16 @@ if [[ -e "${APP_DIR}" ]]; then
   fi
   validate_port
 
+  install -d -m 700 "${TOKEN_DIR}"
+  if [[ -n "${UPDATE_TOKEN}" && ! -f "${TOKEN_FILE}" ]]; then
+    printf '%s\n' "${UPDATE_TOKEN}" > "${TOKEN_FILE}"
+    chmod 600 "${TOKEN_FILE}"
+  fi
+  if [[ ! -f "${TOKEN_FILE}" ]]; then
+    openssl rand -hex 32 > "${TOKEN_FILE}"
+    chmod 600 "${TOKEN_FILE}"
+  fi
+
   if [[ "${SWITCH_PORT}" == true ]]; then
     systemctl stop "${SERVICE_NAME}" 2>/dev/null || true
     cat > "${SERVICE_FILE}" <<EOF
@@ -105,12 +117,12 @@ Environment=NODE_ENV=production
 Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
 Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
-Environment=UPDATE_TOKEN=${UPDATE_TOKEN}
+Environment=UPDATE_TOKEN_FILE=/var/lib/homelab-portal/update-token
 
 [Install]
 WantedBy=multi-user.target
 EOF
-    chmod 644 "${SERVICE_FILE}"
+    chmod 600 "${SERVICE_FILE}"
     systemctl daemon-reload
     systemctl enable --now "${SERVICE_NAME}"
     HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
@@ -182,9 +194,10 @@ else
   fi
   validate_port
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
-  if [[ -z "${UPDATE_TOKEN}" ]]; then
-    read -r -s -p "Update-Token für den UI-Updatebutton (leer = deaktiviert): " UPDATE_TOKEN
-    echo
+  install -d -m 700 "${TOKEN_DIR}"
+  if [[ ! -f "${TOKEN_FILE}" ]]; then
+    openssl rand -hex 32 > "${TOKEN_FILE}"
+    chmod 600 "${TOKEN_FILE}"
   fi
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
@@ -198,6 +211,7 @@ else
 fi
 
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
+install -m 750 scripts/reset-update-token.sh /usr/local/sbin/homelab-portal-reset-token
 
 cat > "${SERVICE_FILE}" <<EOF
 [Unit]
@@ -215,13 +229,13 @@ Environment=NODE_ENV=production
 Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
 Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
-Environment=UPDATE_TOKEN=${UPDATE_TOKEN}
+Environment=UPDATE_TOKEN_FILE=${TOKEN_FILE}
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-chmod 644 "${SERVICE_FILE}"
+chmod 600 "${SERVICE_FILE}"
 systemctl daemon-reload
 systemctl enable --now "${SERVICE_NAME}"
 

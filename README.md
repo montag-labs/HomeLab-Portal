@@ -111,7 +111,9 @@ Im Administrationsbereich prüft das Modul „Updates“ die installierte Versio
 
 Für den LXC-Betrieb kann der Modus mit `UPDATE_MODE=lxc` gesetzt werden. Die Versionsprüfung ist dann verfügbar; der eigentliche Update-Script-Aufruf wird erst nach Einrichtung der beschriebenen Authentifizierung und `sudoers`-Freigabe aktiviert.
 
-Für den UI-Updatebutton muss bei der LXC-Installation ein Update-Token gesetzt werden. Das Script fragt dieses bei einer Neuinstallation verdeckt ab. Das Token wird anschließend im Adminbereich eingegeben und nicht gespeichert.
+Für den UI-Updatebutton erzeugt das Script bei der LXC-Installation automatisch ein Update-Token. Das Token wird beim ersten Öffnen einmalig im Popup angezeigt, muss sicher gespeichert und anschließend im Adminbereich eingegeben werden.
+
+Ein neues Token kann im LXC-Terminal mit `sudo /usr/local/sbin/homelab-portal-reset-token` erzeugt werden. Beim nächsten Öffnen des Portals wird es einmalig angezeigt.
 
 Bei Docker wird `UPDATE_MODE=docker` verwendet. Das Portal zeigt die verfügbare Version und den GitHub-Release-Link an. Das eigentliche Update wird sicher hostseitig mit `docker compose pull` und `docker compose up -d` ausgeführt. Der Docker-Socket wird nicht in den Container eingebunden.
 

@@ -8,10 +8,25 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.15] - 2026-08-24
+
+### Hinzugefügt
+
+- Einmaliges Token-Popup beim ersten Öffnen der Anwendung.
+- Terminal-Script zum Erzeugen eines neuen Update-Tokens.
+
+### Geändert
+
+- Update-Token wird sicher in einer geschützten Datei verwaltet.
+- Updatebutton und Server-API verwenden den persistenten Token-Speicher.
+- Update-Fehler aus der Server-API werden im Adminbereich verständlicher angezeigt.
+
 ## [0.1.14] - 2026-08-24
 
 ### Hinzugefügt
 
+- Automatische Token-Erzeugung bei Installation und einmalige Anzeige beim ersten Öffnen.
+- Terminal-Script zum Zurücksetzen des Update-Tokens ergänzt.
 - Kleine Versionsanzeige mit Statusindikator unter dem HomeLab-Portal-Logo ergänzt.
 - Anzeige markiert aktuelle Versionen, verfügbare Updates und fehlgeschlagene Prüfungen.
 
@@ -158,7 +173,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.14...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.15...HEAD
+[0.1.15]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.15
 [0.1.14]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.14
 [0.1.13]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.13
 [0.1.12]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.12
