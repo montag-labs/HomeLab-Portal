@@ -26,7 +26,9 @@ fi
 install_dependencies() {
   local package_dir="$1"
   npm install --ignore-scripts --prefix "${package_dir}"
-  npm rebuild esbuild --foreground-scripts --prefix "${package_dir}"
+  if [[ -f "${package_dir}/node_modules/esbuild/install.js" ]]; then
+    node "${package_dir}/node_modules/esbuild/install.js"
+  fi
 }
 
 validate_port() {

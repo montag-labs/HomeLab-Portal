@@ -8,11 +8,18 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.12] - 2026-08-24
+
+### Geändert
+
+- esbuild wird direkt über Node.js eingerichtet, damit auch die npm-Rebuild-Warnung entfällt.
+
 ## [0.1.11] - 2026-08-24
 
 ### Geändert
 
 - npm-Installationsskripte werden kontrolliert ausgeführt, damit die `allow-scripts`-Warnung nicht mehr erscheint.
+- esbuild wird direkt über Node.js eingerichtet, damit auch die npm-Rebuild-Warnung entfällt.
 - Healthcheck wartet länger und gibt bei Erfolg die ermittelte LXC-IP aus.
 - Installations- und Updateausgaben wurden verständlicher gestaltet.
 - Mit `--switch PORT` kann der Port einer bestehenden LXC-Installation geändert werden.
@@ -131,7 +138,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.11...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.12...HEAD
+[0.1.12]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.12
 [0.1.11]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.11
 [0.1.10]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.10
 [0.1.9]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.9
