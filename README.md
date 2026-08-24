@@ -75,7 +75,7 @@ Der Standardport im LXC ist `80`. Ein anderer Port kann über `HOMELAB_PORT` ges
 
 Der gleiche Aufruf prüft bei einer bestehenden Installation auf eine neue Version und führt das Update mit Backup, Build, Healthcheck und Rollback aus.
 
-Die Installationsparameter liegen nach der ersten Installation in `/etc/homelab-portal/install.conf`. Auskommentierte Zeilen (`#`) verwenden die Defaults; nur aktive `KEY=value`-Zeilen werden angewendet. Die Vorlage liegt in [scripts/install-lxc.conf.example](scripts/install-lxc.conf.example). Ein eigener Pfad kann mit `HOMELAB_CONFIG=/pfad/datei.conf` verwendet werden.
+Die Laufzeitparameter liegen nach der ersten Installation in `/etc/homelab-portal/lxc.config`. Auskommentierte Zeilen (`#`) verwenden die Defaults; nur aktive `KEY=value`-Zeilen werden beim nächsten Service-Start angewendet. Nach Änderungen genügt `systemctl restart homelab-portal`. Die Vorlage liegt in [scripts/lxc.config.example](scripts/lxc.config.example). Ein eigener Pfad kann mit `HOMELAB_CONFIG=/pfad/datei.conf` verwendet werden.
 
 Der Parameter `APP_ENV` ist standardmäßig `production`. Für eine Entwicklungsinstallation die Zeile `APP_ENV=development` in der Parameterdatei aktivieren; dann wird im Adminbereich zusätzlich das Modul „DEV-Diagnose“ angezeigt.
 

@@ -9,7 +9,10 @@ LOCK_FILE="/run/homelab-portal-update.lock"
 LOG_DIR="/var/log/homelab-portal"
 LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
 HOMELAB_PORT="${PORT:-80}"
-CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/install.conf}"
+CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
+if [[ -z "${HOMELAB_CONFIG:-}" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
+  cp -p /etc/homelab-portal/install.conf "${CONFIG_FILE}"
+fi
 
 load_parameters() {
   [[ -f "${CONFIG_FILE}" ]] || return 0

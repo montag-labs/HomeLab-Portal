@@ -11,7 +11,10 @@ readonly TOKEN_DIR="/var/lib/homelab-portal"
 readonly TOKEN_FILE="${TOKEN_DIR}/update-token"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOG_DIR="/var/log/homelab-portal"
-CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/install.conf}"
+CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
+if [[ -z "${HOMELAB_CONFIG:-}" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
+  cp -p /etc/homelab-portal/install.conf "${CONFIG_FILE}"
+fi
 APP_ENV="production"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
 SWITCH_PORT=false
@@ -159,6 +162,7 @@ Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
 Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
 Environment=UPDATE_TOKEN_FILE=/var/lib/homelab-portal/update-token
+EnvironmentFile=-${CONFIG_FILE}
 
 [Install]
 WantedBy=multi-user.target
@@ -253,8 +257,8 @@ else
 fi
 
 install -d -m 700 "$(dirname "${CONFIG_FILE}")"
-if [[ ! -f "${CONFIG_FILE}" && -f "scripts/install-lxc.conf.example" ]]; then
-  install -m 600 scripts/install-lxc.conf.example "${CONFIG_FILE}"
+if [[ ! -f "${CONFIG_FILE}" && -f "scripts/lxc.config.example" ]]; then
+  install -m 600 scripts/lxc.config.example "${CONFIG_FILE}"
   echo "Parameterdatei erstellt: ${CONFIG_FILE}"
 fi
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
@@ -277,6 +281,7 @@ Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
 Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
 Environment=UPDATE_TOKEN_FILE=${TOKEN_FILE}
+EnvironmentFile=-${CONFIG_FILE}
 
 [Install]
 WantedBy=multi-user.target

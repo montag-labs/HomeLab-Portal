@@ -4,6 +4,7 @@
 
 # REPOSITORY_BRANCH=main
 # APP_ENV=production
+# UPDATE_MODE=lxc
 # APP_DIR=/opt/homelab-portal
 # SERVICE_NAME=homelab-portal
 # SERVICE_FILE=/etc/systemd/system/homelab-portal.service
