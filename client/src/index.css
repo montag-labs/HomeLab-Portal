@@ -120,6 +120,19 @@ button {
   fill: var(--accent-color);
 }
 
+.brand-logo-author {
+  fill: var(--text-muted);
+  font-family: system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.brand-logo-author:hover {
+  fill: var(--accent-color);
+  text-decoration: underline;
+}
+
 .brand-logo-version {
   fill: var(--text-muted);
   font-family: system-ui, sans-serif;
@@ -156,6 +169,41 @@ button {
   margin-top: 1rem;
   text-decoration: none;
   color: var(--text-muted);
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.sidebar-kofi {
+  min-height: 34px;
+}
+
+.sidebar-kofi script {
+  display: none;
+}
+
+.sidebar-author-link,
+.sidebar-license-link {
+  text-decoration: none;
+}
+
+.sidebar-author-link:hover,
+.sidebar-license-link:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.sidebar-author-link span {
+  color: #ef476f;
 }
 
 .category-group {
