@@ -37,3 +37,7 @@ Bevorzugt werden kurze Conventional-Commit-Titel:
 - `docs:` für Dokumentation
 - `refactor:` für strukturelle Änderungen
 - `chore:` für Wartung
+
+## Releases
+
+Releases werden über einen SemVer-Git-Tag im Format `vX.Y.Z` ausgelöst. Der GitHub-Release-Name entspricht ausschließlich dem Tag, zum Beispiel `v0.1.23`.

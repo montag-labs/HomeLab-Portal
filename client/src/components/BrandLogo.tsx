@@ -24,9 +24,17 @@ export function BrandLogo({ version, status, statusState }: BrandLogoProps) {
       <circle className="brand-logo-status brand-logo-status-red" cx="35" cy="25" r="3" />
       <circle className="brand-logo-status brand-logo-status-yellow" cx="44" cy="25" r="3" />
       <circle className="brand-logo-status brand-logo-status-green" cx="53" cy="25" r="3" />
-      <text className="brand-logo-name" x="90" y="50">
+      <text className="brand-logo-name" x="90" y="33">
         HomeLab<tspan className="brand-logo-accent">-Portal</tspan>
       </text>
+      <a
+        className="brand-logo-author"
+        href="https://github.com/montag-labs/HomeLab-Portal"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <text x="90" y="53">by Marc Montag</text>
+      </a>
       <circle className={`brand-logo-version-indicator brand-logo-version-${statusState}`} cx="94" cy="73" r="4" />
       <text className="brand-logo-version" x="104" y="77">
         {version} · {status}
