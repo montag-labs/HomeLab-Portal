@@ -50,15 +50,26 @@ npm run build
 npm start
 ```
 
-Das Portal ist anschließend standardmäßig unter http://localhost:80 erreichbar. Für die lokale Entwicklung wird weiterhin Port 4000 verwendet.
+Das Portal ist anschließend standardmäßig unter http://localhost:80 erreichbar.
 
 ## Docker Compose
 
 ```bash
-docker compose up -d --build
+docker compose pull
+docker compose up -d
 ```
 
-Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten.
+Das öffentliche Image liegt unter `montaglabs/homelab-portal`. Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten. Für einen lokalen Build kann weiterhin `docker compose up -d --build` verwendet werden.
+
+Der Container läuft im Betriebsmodus `docker` und in `production`. Updates werden sicher auf dem Docker-Host ausgeführt:
+
+```bash
+bash scripts/update-docker.sh
+```
+
+Das Script aktualisiert das Repository auf dem festen Branch `main`, zieht das Image `montaglabs/homelab-portal:latest` und erstellt den Container neu. Ein Docker-Socket wird nicht in den Container eingebunden.
+
+Das Image wird durch GitHub Actions bei jedem Release-Tag automatisch gebaut und zu Docker Hub veröffentlicht. Dafür müssen im GitHub-Repository die Secrets `DOCKERHUB_USERNAME` und `DOCKERHUB_TOKEN` hinterlegt sein.
 
 ```bash
 docker compose logs -f homelab-portal

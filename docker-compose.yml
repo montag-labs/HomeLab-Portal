@@ -1,8 +1,11 @@
 services:
   homelab-portal:
+    image: montaglabs/homelab-portal:latest
     build: .
     container_name: homelab-portal
     environment:
+      APP_ENV: production
+      UPDATE_MODE: docker
       PORT: 4000
     ports:
       - "4000:4000"
