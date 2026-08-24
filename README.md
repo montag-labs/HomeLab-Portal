@@ -46,7 +46,7 @@ npm run build
 npm start
 ```
 
-Das Portal ist anschließend standardmäßig unter http://localhost:4000 erreichbar.
+Das Portal ist anschließend standardmäßig unter http://localhost:80 erreichbar. Für die lokale Entwicklung wird weiterhin Port 4000 verwendet.
 
 ## Docker Compose
 
@@ -70,6 +70,8 @@ Für eine neue Installation im LXC kann das Installationsscript direkt aus dem R
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
+
+Der Standardport im LXC ist `80`. Ein anderer Port kann über `HOMELAB_PORT` gesetzt werden, zum Beispiel `HOMELAB_PORT=8080 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"`.
 
 ## Grafana konfigurieren
 

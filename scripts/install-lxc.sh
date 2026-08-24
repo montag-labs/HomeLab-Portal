@@ -6,10 +6,16 @@ readonly REPOSITORY_BRANCH="main"
 readonly APP_DIR="/opt/homelab-portal"
 readonly SERVICE_NAME="homelab-portal"
 readonly SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-readonly HEALTH_URL="http://127.0.0.1:4000/api/config"
+readonly HOMELAB_PORT="${HOMELAB_PORT:-80}"
+readonly HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Dieses Script muss als root ausgeführt werden." >&2
+  exit 1
+fi
+
+if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( HOMELAB_PORT < 1 || HOMELAB_PORT > 65535 )); then
+  echo "HOMELAB_PORT muss eine Zahl zwischen 1 und 65535 sein." >&2
   exit 1
 fi
 
@@ -25,6 +31,7 @@ if ! command -v apt-get >/dev/null 2>&1; then
 fi
 
 export DEBIAN_FRONTEND=noninteractive
+export NPM_CONFIG_UPDATE_NOTIFIER=false
 
 echo "Installiere Systempakete ..."
 apt-get update
@@ -62,6 +69,7 @@ Restart=on-failure
 RestartSec=5
 Environment=NODE_ENV=production
 Environment=UPDATE_MODE=lxc
+Environment=PORT=${HOMELAB_PORT}
 
 [Install]
 WantedBy=multi-user.target
@@ -74,7 +82,7 @@ systemctl enable --now "${SERVICE_NAME}"
 for attempt in {1..10}; do
   if curl --fail --silent --show-error "${HEALTH_URL}" >/dev/null; then
     echo "HomeLab-Portal wurde erfolgreich installiert."
-    echo "Portal: http://<CONTAINER-IP>:4000"
+    echo "Portal: http://<CONTAINER-IP>:${HOMELAB_PORT}"
     exit 0
   fi
   sleep 1
