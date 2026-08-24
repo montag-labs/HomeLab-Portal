@@ -8,6 +8,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.14] - 2026-08-24
+
+### Hinzugefügt
+
+- Kleine Versionsanzeige mit Statusindikator unter dem HomeLab-Portal-Logo ergänzt.
+- Anzeige markiert aktuelle Versionen, verfügbare Updates und fehlgeschlagene Prüfungen.
+
 ## [0.1.13] - 2026-08-24
 
 ### Hinzugefügt
@@ -151,7 +158,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.13...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.14...HEAD
+[0.1.14]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.14
 [0.1.13]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.13
 [0.1.12]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.12
 [0.1.11]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.11

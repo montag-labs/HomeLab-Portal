@@ -69,6 +69,36 @@ button {
   height: auto;
 }
 
+.sidebar-version {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: -0.65rem 0 1rem;
+  padding-left: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.sidebar-version-indicator {
+  width: 0.45rem;
+  height: 0.45rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.sidebar-version-current .sidebar-version-indicator {
+  background: #22c55e;
+}
+
+.sidebar-version-available .sidebar-version-indicator {
+  background: #f59e0b;
+}
+
+.sidebar-version-failed .sidebar-version-indicator {
+  background: #ef4444;
+}
+
 .brand-logo {
   display: block;
   width: 100%;
