@@ -6,9 +6,20 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+Noch keine Änderungen.
+
+## [0.1.1] - 2026-08-24
+
 ### Hinzugefügt
 
-- Changelog und CI-Prüfung für die Pflege der Änderungshistorie.
+- Grafana-Einstellungen in ein eigenes Dashboard-Modul verschoben.
+- Lucide-Icon für das Öffnen des Grafana-Dashboards ergänzt.
+- CI-Prüfung für die Pflege der Änderungshistorie ergänzt.
+
+### Geändert
+
+- Button zum Öffnen von Grafana als schwebendes Icon oben links im Iframe gestaltet.
+- Projektstruktur um ungenutzte Vite-Template-Assets bereinigt.
 
 ## [0.1.0] - 2026-08-24
 
@@ -22,5 +33,6 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.1
 [0.1.0]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.0
