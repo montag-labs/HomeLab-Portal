@@ -65,6 +65,12 @@ docker compose down
 
 Die vollständige Anleitung für einen Proxmox-LXC, inklusive `systemd`-Service, Backup und Updatevorbereitung, steht in [lxc.md](lxc.md).
 
+Für eine neue Installation im LXC kann das Installationsscript direkt aus dem Repository gestartet werden:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
+```
+
 ## Grafana konfigurieren
 
 1. In der Administration den Bereich für Grafana öffnen.
