@@ -116,7 +116,7 @@ Der Reverse Proxy muss an die Container-IP und den Port 4000 weiterleiten. Die A
 
 ## 7. Manuelles Update
 
-Bis die WebUI-Updatefunktion implementiert ist, wird das Update über die Container-Konsole ausgeführt:
+Das Administrationsmodul kann die installierte Version gegen das neueste stabile GitHub-Release prüfen. Bis der authentifizierte Script-Aufruf eingerichtet ist, wird das Update weiterhin über die Container-Konsole ausgeführt:
 
 ```bash
 cd /opt/homelab-portal
@@ -141,9 +141,9 @@ curl --fail http://127.0.0.1:4000/api/config > /dev/null
 
 Wenn der Build fehlschlägt, darf der Service nicht gestartet werden. Die vorherige Version bleibt dann installiert. Bei einem Fehler nach dem Start den Service wieder stoppen, die Ursache mit `journalctl -u homelab-portal` prüfen und bei Bedarf den letzten funktionierenden Git-Stand auschecken.
 
-## 8. Vorbereitung für WebUI-Updates
+## 8. Update-Script für LXC
 
-Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Daher sollte die WebUI später ein separates Update-Script starten.
+Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Das Update-Modul zeigt deshalb zunächst nur den Status; die Installation muss über ein separates, privilegiertes Update-Script erfolgen.
 
 Beispiel für `/usr/local/sbin/homelab-portal-update`:
 

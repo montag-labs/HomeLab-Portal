@@ -1,4 +1,4 @@
-import type { AppEntry, Category, PortalConfig, Settings } from "./types";
+import type { AppEntry, Category, PortalConfig, Settings, UpdateStatus } from "./types";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -28,6 +28,9 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
+  getUpdateStatus: () => request<UpdateStatus>("/api/update"),
+  checkForUpdates: () =>
+    request<UpdateStatus>("/api/update/check", { method: "POST" }),
   createCategory: (data: Partial<Category>) =>
     request<Category>("/api/categories", {
       method: "POST",

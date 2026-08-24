@@ -34,6 +34,25 @@ export interface Settings {
   grafana?: GrafanaSettings;
 }
 
+export type UpdateState = "current" | "available" | "failed";
+export type UpdateMode = "lxc" | "docker" | "unsupported";
+
+export interface UpdateStatus {
+  state: UpdateState;
+  installedVersion: string;
+  latestVersion?: string;
+  updateAvailable: boolean;
+  releaseUrl?: string;
+  releaseName?: string;
+  checkedAt: string;
+  capabilities: {
+    mode: UpdateMode;
+    canUpdate: boolean;
+    reason: string;
+  };
+  error?: string;
+}
+
 export interface PortalConfig {
   settings: Settings;
   categories: Category[];
