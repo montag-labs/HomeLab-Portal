@@ -9,22 +9,29 @@ const querySchema = z.object({
   url: z.string().url(),
 });
 
-function isReachable(urlString: string): Promise<boolean> {
+export interface ReachabilityDetails {
+  online: boolean;
+  method?: "HEAD" | "GET";
+  statusCode?: number;
+  error?: string;
+}
+
+export function checkReachability(urlString: string): Promise<ReachabilityDetails> {
   return new Promise((resolve) => {
     let target: URL;
     try {
       target = new URL(urlString);
     } catch {
-      resolve(false);
+      resolve({ online: false, error: "Ungültige URL" });
       return;
     }
     const client = target.protocol === "https:" ? https : http;
     let settled = false;
 
-    const finish = (online: boolean) => {
+    const finish = (details: ReachabilityDetails) => {
       if (settled) return;
       settled = true;
-      resolve(online);
+      resolve(details);
     };
 
     const request = (method: "HEAD" | "GET") => {
@@ -42,15 +49,15 @@ function isReachable(urlString: string): Promise<boolean> {
           if (shouldFallback) {
             request("GET");
           } else {
-            finish(true);
+            finish({ online: true, method, statusCode: res.statusCode });
           }
         }
       );
       req.on("timeout", () => {
         req.destroy();
-        finish(false);
+        finish({ online: false, method, error: "Timeout" });
       });
-      req.on("error", () => finish(false));
+      req.on("error", (error: Error) => finish({ online: false, method, error: error.message }));
       req.end();
     };
 
@@ -63,6 +70,6 @@ statusRouter.get("/status", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const online = await isReachable(parsed.data.url);
-  res.json({ online });
+  const result = await checkReachability(parsed.data.url);
+  res.json(result);
 });
