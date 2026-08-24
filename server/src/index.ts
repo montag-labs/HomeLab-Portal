@@ -8,13 +8,13 @@ import { devRouter } from "./routes/dev.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = process.env.PORT ?? 80;
+const PORT = process.env.HOMELAB_PORT ?? process.env.PORT ?? 80;
 
 app.use(express.json());
 app.use("/api", configRouter);
 app.use("/api", statusRouter);
 app.use("/api", updateRouter);
-if (process.env.NODE_ENV !== "production") {
+if ((process.env.APP_ENV ?? process.env.NODE_ENV ?? "production") !== "production") {
   app.use("/api", devRouter);
 }
 app.use("/api", (_req, res) => {

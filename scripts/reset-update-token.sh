@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-readonly CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/install.conf}"
+readonly CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
 TOKEN_DIR="/var/lib/homelab-portal"
 TOKEN_FILE="${TOKEN_DIR}/update-token"
 readonly SERVICE_NAME="homelab-portal"
