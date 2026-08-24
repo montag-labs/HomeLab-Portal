@@ -6,9 +6,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+Noch keine Änderungen.
+
+## [0.1.31] - 2026-08-24
+
+### Hinzugefügt
+
+- Docker-Hub-Workflow für automatische Multi-Architektur-Releases ergänzt.
+- Öffentlicher Docker-Workflow für `montaglabs/homelab-portal` ergänzt.
+
 ### Geändert
 
-- README-Spendenbuttons auf 20 Prozent skaliert und beide Links öffnen in einem neuen Tab.
+- Docker-Publishing wird ausschließlich durch Versions-Tags ausgelöst und erzeugt signierte Build-Metadaten.
+- Docker-Compose und Docker-Update auf das veröffentlichte Image umgestellt.
 
 ## [0.1.30] - 2026-08-24
 
@@ -23,6 +33,7 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - PayPal-Spendenbutton unterhalb von Ko-fi ergänzt.
 - Ko-fi-Support-Link „Support my Project“ oben in der README ergänzt.
 - PayPal-Spendenbutton oben in der README ergänzt.
+- Docker-Betriebsmodus mit hostseitigem Update-Script ergänzt.
 
 ## [0.1.28] - 2026-08-24
 
@@ -290,7 +301,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.30...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.31...HEAD
+[0.1.31]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.31
 [0.1.30]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.30
 [0.1.29]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.29
 [0.1.28]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.28

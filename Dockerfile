@@ -15,6 +15,8 @@ RUN npm run build
 FROM node:20-alpine
 WORKDIR /app
 ENV NODE_ENV=production
+ENV APP_ENV=production
+ENV UPDATE_MODE=docker
 COPY --from=server-build /app/server/package*.json ./server/
 RUN npm ci --omit=dev --prefix server
 COPY --from=server-build /app/server/dist ./server/dist
