@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useConfig } from "../context/ConfigContext";
 import type { GrafanaSettings } from "../types";
@@ -12,7 +13,6 @@ export function GrafanaPanelStub() {
   if (!settings?.enabled || !settings.url) {
     return (
       <section className="grafana-panel grafana-panel-empty">
-        <h2>{t("dashboard.title")}</h2>
         <p>{t("dashboard.grafanaDisabled")}</p>
       </section>
     );
@@ -22,13 +22,17 @@ export function GrafanaPanelStub() {
 
   return (
     <section className="grafana-panel">
-      <div className="grafana-panel-header">
-        <h2>{t("dashboard.title")}</h2>
-        <a href={dashboardUrl} target="_blank" rel="noreferrer">
-          {t("dashboard.openInGrafana")}
-        </a>
-      </div>
       <div className="grafana-frame-wrapper">
+        <a
+          className="grafana-open-button btn"
+          href={dashboardUrl}
+          target="_blank"
+          rel="noreferrer"
+          title={t("dashboard.openInGrafana")}
+          aria-label={t("dashboard.openInGrafana")}
+        >
+          <ExternalLink className="grafana-open-icon" aria-hidden="true" size={20} strokeWidth={2.5} />
+        </a>
         {!loaded && <div className="grafana-frame-loading">{t("dashboard.loading")}</div>}
         <iframe
           title={t("dashboard.title")}
