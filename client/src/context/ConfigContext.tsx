@@ -7,6 +7,7 @@ import type { PortalConfig } from "../types";
 interface ConfigContextValue {
   config: PortalConfig | null;
   loading: boolean;
+  error: string | null;
   refresh: () => Promise<void>;
 }
 
@@ -15,10 +16,17 @@ const ConfigContext = createContext<ConfigContextValue | undefined>(undefined);
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<PortalConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const data = await api.getConfig();
-    setConfig(data);
+    try {
+      const data = await api.getConfig();
+      setConfig(data);
+      setError(null);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Konfiguration konnte nicht geladen werden.");
+      throw reason;
+    }
   }, []);
 
   useEffect(() => {
@@ -36,7 +44,7 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   }, [config]);
 
   return (
-    <ConfigContext.Provider value={{ config, loading, refresh }}>
+    <ConfigContext.Provider value={{ config, loading, error, refresh }}>
       {children}
     </ConfigContext.Provider>
   );
