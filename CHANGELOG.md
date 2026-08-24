@@ -8,6 +8,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 Noch keine Änderungen.
 
+## [0.1.25] - 2026-08-24
+
+### Behoben
+
+- Ko-fi-Widget durch einen sicheren Link ersetzt, damit die Anwendung beim Laden nicht überschrieben wird.
+
 ## [0.1.24] - 2026-08-24
 
 ### Hinzugefügt
@@ -250,7 +256,8 @@ Noch keine Änderungen.
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.24...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.25...HEAD
+[0.1.25]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.25
 [0.1.24]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.24
 [0.1.23]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.23
 [0.1.22]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.22

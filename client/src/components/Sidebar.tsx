@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
@@ -11,25 +11,9 @@ export function Sidebar() {
   const { config } = useConfig();
   const { t } = useTranslation();
   const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null);
-  const kofiRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
-  }, []);
-
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://storage.ko-fi.com/cdn/widget/Widget_2.js";
-    script.async = true;
-    script.onload = () => {
-      const widget = window as typeof window & {
-        kofiwidget2?: { init: (label: string, color: string, account: string) => void; draw: () => void };
-      };
-      widget.kofiwidget2?.init("Support me on Ko-fi", "#72a4f2", "E6F725OFMG");
-      widget.kofiwidget2?.draw();
-    };
-    kofiRef.current?.appendChild(script);
-    return () => script.remove();
   }, []);
 
   const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
@@ -58,7 +42,15 @@ export function Sidebar() {
         {t("nav.admin")}
       </Link>
       <footer className="sidebar-footer">
-        <div ref={kofiRef} id="kofi-widget" className="sidebar-kofi" />
+        <a
+          className="sidebar-kofi"
+          href="https://ko-fi.com/E6F725OFMG"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span className="sidebar-kofi-icon" aria-hidden="true">♥</span>
+          Support me on Ko-fi
+        </a>
         <a
           className="sidebar-author-link"
           href="https://homelab.montag.nrw"
