@@ -6,7 +6,7 @@ Diese Anleitung beschreibt den Betrieb des HomeLab-Portals in einem Debian- oder
 
 Empfohlene Grundeinstellungen:
 
-- Template: Debian 12 oder Ubuntu 24.04
+- Template: Debian 13 oder Ubuntu 24.04
 - CPU: mindestens 1 vCPU
 - Arbeitsspeicher: mindestens 512 MB, empfohlen 1 GB
 - Festplatte: mindestens 4 GB, empfohlen 8 GB
@@ -15,6 +15,16 @@ Empfohlene Grundeinstellungen:
 - Start at boot: aktiviert
 
 Nach dem Erstellen die Container-Konsole öffnen und als `root` anmelden.
+
+## Schnellinstallation
+
+Die Installation kann direkt aus diesem Repository gestartet werden:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
+```
+
+Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wird ein Healthcheck ausgeführt. Eine bestehende Installation wird nicht überschrieben.
 
 ## 2. Basissystem vorbereiten
 
