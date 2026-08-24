@@ -1,5 +1,9 @@
 # HomeLab-Portal
 
+[![Support my Project on Ko-fi](https://storage.ko-fi.com/cdn/kofi3.png?v=3)](https://ko-fi.com/E6F725OFMG)
+
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate/?hosted_button_id=AAWND2KK9V22G)
+
 Ein leichtgewichtiges Webportal für Homelab-Dienste mit Kategorien, Erreichbarkeitsstatus und eingebettetem Grafana-Dashboard.
 
 HomeLab-Portal is a lightweight web portal for homelab services with categories, reachability status indicators, and an embedded Grafana dashboard.
