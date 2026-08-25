@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Nginx icon">
+  <rect width="128" height="128" rx="28" fill="#1f2937"/>
+  <path d="M32 88V40l31-18 31 18v48L63 106 32 88zm18-11 13 8v-36l-13-8-13 8v36l13-8zm31 0 13 8V49l-13-8-13 8v36l13-8z" fill="#009639"/>
+  <path d="M63 28l18 11v10L63 39 45 49v-10L63 28z" fill="#d1fae5" opacity="0.8"/>
+</svg>

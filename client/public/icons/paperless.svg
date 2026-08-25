@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Paperless icon">
+  <rect width="128" height="128" rx="28" fill="#111827"/>
+  <path d="M36 24h42l14 14v66H36V24zm42 4v16h16" fill="#f59e0b"/>
+  <path d="M48 54h32M48 68h32M48 82h22" stroke="#fff7ed" stroke-width="8" stroke-linecap="round"/>
+</svg>

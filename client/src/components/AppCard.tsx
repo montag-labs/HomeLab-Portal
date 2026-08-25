@@ -1,4 +1,5 @@
 import type { AppEntry } from "../types";
+import { getAppIconUrl } from "../iconCatalog";
 import { useReachability } from "../hooks/useReachability";
 
 function resolvePrimaryUrl(app: AppEntry): string | undefined {
@@ -17,6 +18,7 @@ function initials(name: string): string {
 export function AppCard({ app }: { app: AppEntry }) {
   const primaryUrl = resolvePrimaryUrl(app);
   const status = useReachability(app.domain, app.localIp);
+  const iconUrl = getAppIconUrl(app);
 
   const openPrimary = () => {
     if (primaryUrl) window.open(primaryUrl, "_blank", "noreferrer");
@@ -37,11 +39,7 @@ export function AppCard({ app }: { app: AppEntry }) {
         <span className={`status-dot status-dot-${status}`} title={status} />
       )}
       <div className="app-card-icon">
-        {app.iconUrl ? (
-          <img src={app.iconUrl} alt="" />
-        ) : (
-          <span>{initials(app.name)}</span>
-        )}
+        {iconUrl ? <img src={iconUrl} alt="" /> : <span>{initials(app.name)}</span>}
       </div>
       <div className="app-card-body">
         <div className="app-card-name">{app.name}</div>

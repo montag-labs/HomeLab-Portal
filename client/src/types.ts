@@ -4,6 +4,7 @@ export interface AppEntry {
   domain?: string;
   localIp?: string;
   iconUrl?: string;
+  iconKey?: string;
   order: number;
 }
 

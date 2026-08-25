@@ -4,6 +4,15 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.0] - Unreleased
+
+### Hinzugefügt
+
+- Lokaler Icon-Katalog für häufige Homelab-Anwendungen ergänzt.
+- Automatische Icon-Erkennung anhand von App-Name und Adresse ergänzt.
+- Manuelle Icon-Auswahl und bestehende eigene Icon-URL im Administrationsbereich beibehalten.
+- Icon-Schlüssel in Konfiguration und API ergänzt; bestehende Konfigurationen bleiben kompatibel.
+
 ## [1.0.0] - 2026-08-25
 
 ### Hinzugefügt

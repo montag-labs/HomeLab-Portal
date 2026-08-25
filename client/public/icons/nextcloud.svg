@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Nextcloud icon">
+  <rect width="128" height="128" rx="28" fill="#0d1117"/>
+  <circle cx="47" cy="64" r="18" fill="#0082c9"/>
+  <circle cx="81" cy="64" r="18" fill="#0082c9"/>
+  <circle cx="64" cy="49" r="12" fill="#1a93d1"/>
+  <circle cx="64" cy="79" r="12" fill="#1a93d1"/>
+  <path d="M26 88c13 0 23-11 23-24 0-12-10-23-23-23" fill="none" stroke="#dbeafe" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+  <path d="M102 88c-13 0-23-11-23-24 0-12 10-23 23-23" fill="none" stroke="#dbeafe" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+</svg>

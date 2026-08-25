@@ -4,6 +4,13 @@
 
 - [ ] Authentifizierung für den Administrationsbereich einführen.
 
+## App-Icon-System 1.1.0
+
+- [x] App-Modell um einen lokalen Icon-Schlüssel erweitern. (v1.1.0)
+- [x] Automatische Erkennung und manuelle Icon-Auswahl im Admin ergänzen. (v1.1.0)
+- [x] Lokalen Icon-Katalog für häufige Homelab-Apps ergänzen. (v1.1.0)
+- [x] Eigene Icon-URL als Fallback beibehalten und Icons in App-Karten zentral auflösen. (v1.1.0)
+
 ## Bereits umgesetzt
 
 - [x] GitHub-README, Beitragsrichtlinien, Security-Hinweise, Issue-Templates und CI ergänzt.

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Grafana icon">
+  <rect width="128" height="128" rx="28" fill="#0f172a"/>
+  <path d="M64 22c-13 0-23 10-23 23 0 12 9 22 21 22 14 0 25-9 27-22 1-13-9-23-25-23zm0 62c-15 0-28 10-33 24h66c-5-14-18-24-33-24zm-40 8c-5 13-6 21-6 21h12l4-18-10-3zm80 0l10 3 4 18h-12l-2-21z" fill="#f97316"/>
+  <path d="M64 34h10v58H64zm-17 12h34v10H47zm-12 17h58v10H35z" fill="#fef3c7" opacity="0.8"/>
+</svg>
