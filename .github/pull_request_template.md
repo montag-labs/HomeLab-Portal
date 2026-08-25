@@ -4,13 +4,13 @@ Was ändert dieser Pull Request und warum?
 
 ## Änderungen
 
-- [ ] Funktionalitaet
+- [ ] Funktionalität
 - [ ] Fehlerbehebung
 - [ ] UI
 - [ ] Dokumentation
 - [ ] Konfiguration oder Deployment
 
-## Pruefung
+## Prüfung
 
 - [ ] `npm run lint --prefix client`
 - [ ] `npm run build`

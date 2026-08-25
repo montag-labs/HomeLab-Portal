@@ -4,6 +4,17 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [Unreleased]
+
+## [1.1.8] - 2026-08-25
+
+### Geändert
+
+- Docker-Images und CI-Workflow von Node 20 auf Node 26 aktualisiert.
+- Abhängigkeiten aktualisiert: express 5, zod 4, typescript 7, @types/express 5, @types/node 26, lucide-react, oxlint, @types/react-dom, concurrently 10.
+- CI-Workflow prüft jetzt korrekt den `## [Unreleased]`-Abschnitt im Changelog.
+- Release-Workflow überspringt die Release-Erstellung, wenn der Tag bereits existiert.
+
 ## [1.1.7] - 2026-08-25
 
 ### Behoben

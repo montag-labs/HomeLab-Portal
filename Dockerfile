@@ -1,18 +1,18 @@
-FROM node:20-alpine AS client-build
+FROM node:26-alpine AS client-build
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm ci
 COPY client/ ./
 RUN npm run build
 
-FROM node:20-alpine AS server-build
+FROM node:26-alpine AS server-build
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN npm ci
 COPY server/ ./
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:26-alpine
 WORKDIR /app
 ENV NODE_ENV=production
 ENV APP_ENV=production

@@ -34,3 +34,12 @@
 - [x] Fehlerstatus und Rollback auf die letzte funktionierende Version anzeigen.
 - [x] Updatefunktion im LXC testen: alte Version, neue Version, Buildfehler, Neustart und Wiederherstellung der Konfiguration.
 - [x] Updatebetrieb dokumentieren und nur feste Quellen wie `origin/main` zulassen.
+
+## GitHub Workflows Fehler beheben
+- [x] ci.yml -> grep -q '^## \[Unreleased\]' CHANGELOG.md schlug fehl, da der Abschnitt fehlte. `## [Unreleased]` in CHANGELOG.md ergänzt. (v1.1.8)
+- [x] release.yml -> gh release create schlug fehl, wenn Tag bereits existiert. Prüfung mit `gh release view` ergänzt, Erstellung wird bei bestehendem Release übersprungen. (v1.1.8)
+
+## Dringende Änderungen
+- [x] Docker wird momentan mit Node 20 erstellt! Update auf Node 26 LTS durchführen, da Node 20 nicht mehr unterstützt wird. (v1.1.8)
+- [x] Prüfe alle verwendeten Programmiersprachen/Techniken/Bibliotheken auf Sicherheitslücken und aktualisiere sie auf die neuesten Versionen. `npm audit` meldet 0 Lücken; express, zod, typescript, @types/express, @types/node, lucide-react, oxlint, @types/react-dom und concurrently auf neueste Version aktualisiert. (v1.1.8)
+- [x] Prüfe die Kompatibilität der App mit Node 26 LTS und behebe eventuelle Probleme. Build und Lint laufen fehlerfrei, Server startet erfolgreich unter Node 26. (v1.1.8)
