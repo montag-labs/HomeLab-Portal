@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.7] - 2026-08-25
+
+### Behoben
+
+- Der Updatepfad des LXC-Installationsscripts schreibt jetzt in das separate Update-Log.
+
 ## [1.1.6] - 2026-08-25
 
 ### Hinzugefügt

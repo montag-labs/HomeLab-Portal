@@ -105,10 +105,17 @@ exec 9>"${LOCK_FILE}"
 flock -n 9 || { echo "Installation oder Update läuft bereits." >&2; exit 1; }
 
 install -d -m 750 "${LOG_DIR}"
-touch "${LOG_DIR}/homelab-portal-install.log"
-chmod 640 "${LOG_DIR}/homelab-portal-install.log"
-exec >>"${LOG_DIR}/homelab-portal-install.log" 2>&1
-echo "--- Installation gestartet: $(date --iso-8601=seconds) ---"
+if [[ -d "${APP_DIR}/.git" ]]; then
+  LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
+  LOG_LABEL="Update"
+else
+  LOG_FILE="${LOG_DIR}/homelab-portal-install.log"
+  LOG_LABEL="Installation"
+fi
+touch "${LOG_FILE}"
+chmod 640 "${LOG_FILE}"
+exec >>"${LOG_FILE}" 2>&1
+echo "--- ${LOG_LABEL} gestartet: $(date --iso-8601=seconds) ---"
 
 export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
