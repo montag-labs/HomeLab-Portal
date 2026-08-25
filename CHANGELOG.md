@@ -4,6 +4,12 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.4] - 2026-08-25
+
+### Geändert
+
+- Hintergrundflächen im Admin-Icon-Picker und in den Icon-Auswahlkacheln entfernt.
+
 ## [1.1.3] - 2026-08-25
 
 ### Geändert

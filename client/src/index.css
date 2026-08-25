@@ -754,7 +754,7 @@ button {
   padding: 0.35rem;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: var(--bg);
+  background: transparent;
 }
 
 .admin-icon-option {
@@ -765,7 +765,7 @@ button {
   padding: 0.45rem;
   border: 1px solid transparent;
   border-radius: 5px;
-  background: var(--bg-elevated);
+  background: transparent;
   color: var(--text);
   text-align: left;
   cursor: pointer;
