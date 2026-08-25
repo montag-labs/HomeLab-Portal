@@ -323,8 +323,8 @@ button {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  background: var(--accent-color);
-  color: #fff;
+  background: transparent;
+  color: var(--accent-color);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -783,8 +783,8 @@ button {
   flex-shrink: 0;
   place-items: center;
   border-radius: 5px;
-  background: var(--accent-color);
-  color: #fff;
+  background: transparent;
+  color: var(--accent-color);
   font-size: 0.55rem;
   font-weight: 700;
 }
