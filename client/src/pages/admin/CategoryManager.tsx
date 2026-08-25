@@ -25,8 +25,15 @@ function AppFormFields({
   onChange: (next: AppFormState) => void;
 }) {
   const { t } = useTranslation();
+  const [iconSearch, setIconSearch] = useState("");
   const detectedIconKey = detectAppIconKey(form.name, form.domain, form.localIp);
   const selectedIconKey = form.iconKey || detectedIconKey || "";
+  const normalizedSearch = iconSearch.trim().toLowerCase();
+  const filteredIcons = APP_ICONS.filter((icon) =>
+    [icon.label, icon.id, ...icon.aliases].some((value) =>
+      value.toLowerCase().includes(normalizedSearch),
+    ),
+  );
 
   return (
     <div className="admin-form-fields">
@@ -68,20 +75,47 @@ function AppFormFields({
           }
         />
       </label>
-      <label className="admin-form-field">
-        <span className="admin-form-label">Icon</span>
-        <select
-          value={selectedIconKey}
-          onChange={(e) => onChange({ ...form, iconKey: e.target.value })}
-        >
-          <option value="">{detectedIconKey ? "Automatisch erkannt" : "Kein Icon"}</option>
-          {APP_ICONS.map((icon) => (
-            <option key={icon.id} value={icon.id}>
-              {icon.label}
-            </option>
+      <div className="admin-form-field">
+        <span className="admin-form-label">Icon auswählen</span>
+        <input
+          type="search"
+          placeholder="Icon suchen …"
+          value={iconSearch}
+          onChange={(e) => setIconSearch(e.target.value)}
+        />
+        <div className="admin-icon-picker" role="listbox" aria-label="Icon auswählen">
+          <button
+            type="button"
+            className={`admin-icon-option ${selectedIconKey === "" ? "selected" : ""}`}
+            onClick={() => onChange({ ...form, iconKey: "" })}
+          >
+            <span className="admin-icon-option-preview">{detectedIconKey ? "AUTO" : "--"}</span>
+            <span>
+              <strong>{detectedIconKey ? "Automatisch erkannt" : "Kein Katalog-Icon"}</strong>
+              {detectedIconKey && <small>{detectedIconKey}</small>}
+            </span>
+          </button>
+          {filteredIcons.map((icon) => (
+            <button
+              type="button"
+              role="option"
+              aria-selected={selectedIconKey === icon.id}
+              className={`admin-icon-option ${selectedIconKey === icon.id ? "selected" : ""}`}
+              key={icon.id}
+              onClick={() => onChange({ ...form, iconKey: icon.id })}
+            >
+              <img className="admin-icon-option-preview" src={icon.path} alt="" />
+              <span>
+                <strong>{icon.label}</strong>
+                <small>{icon.id}</small>
+              </span>
+            </button>
           ))}
-        </select>
-      </label>
+          {filteredIcons.length === 0 && (
+            <span className="admin-icon-picker-empty">Keine Icons gefunden.</span>
+          )}
+        </div>
+      </div>
       <label className="admin-form-field">
         <span className="admin-form-label">{t("admin.iconUrl")}</span>
         <input
