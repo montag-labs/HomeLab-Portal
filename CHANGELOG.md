@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.1.10] - 2026-08-25
+
+### Geändert
+
+- LXC-Installation und automatische Updates verwenden jetzt ausdrücklich Node.js 26 statt der generischen aktuellen LTS-Version.
+
 ## [1.1.9] - 2026-08-25
 
 ### Geändert

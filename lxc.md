@@ -23,7 +23,7 @@ Die Installation kann direkt aus diesem Repository gestartet werden:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Das Script installiert die benötigten Systempakete, Node.js LTS, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wartet es bis zu 30 Sekunden auf den Healthcheck und zeigt die erkannte LXC-IP mit Port an. Wird derselbe Aufruf später erneut gestartet, prüft das Script die installierte Version und aktualisiert nur bei einem neuen Stand. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
+Das Script installiert die benötigten Systempakete, Node.js 26, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wartet es bis zu 30 Sekunden auf den Healthcheck und zeigt die erkannte LXC-IP mit Port an. Wird derselbe Aufruf später erneut gestartet, prüft das Script die installierte Version und aktualisiert nur bei einem neuen Stand. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
 
 Bei einer Neuinstallation fragt das Script nach dem Portal-Port. Der Standardwert `80` ist bereits eingetragen; mit Enter wird er übernommen. Bei einer bestehenden Installation wird der bisher verwendete Port automatisch beibehalten. Ein Port kann jederzeit über `HOMELAB_PORT` vorgegeben werden.
 
@@ -59,10 +59,10 @@ apt full-upgrade -y
 apt install -y ca-certificates curl git sudo
 ```
 
-Node.js LTS installieren:
+Node.js 26 installieren:
 
 ```bash
-curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+curl -fsSL https://deb.nodesource.com/setup_26.x | bash -
 apt install -y nodejs
 node --version
 npm --version
