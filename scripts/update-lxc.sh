@@ -54,11 +54,14 @@ cd "${APP_DIR}"
 readonly CURRENT_COMMIT="$(git rev-parse HEAD)"
 readonly CURRENT_VERSION="$(node -p "require('./package.json').version")"
 
-git fetch --depth 1 origin "${REPOSITORY_BRANCH}"
+git fetch --depth 1 --tags --force origin "${REPOSITORY_BRANCH}"
 readonly TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
 readonly TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
 
-if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
+echo "Aktueller Stand: ${CURRENT_VERSION} (${CURRENT_COMMIT:0:12})"
+echo "Remote-Stand:    ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
+
+if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]] || [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]]; then
   echo "HomeLab-Portal ist bereits aktuell (${CURRENT_VERSION})."
   exit 0
 fi
