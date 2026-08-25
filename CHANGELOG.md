@@ -4,9 +4,18 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
-## [Unreleased]
+## [1.0.0] - 2026-08-25
 
-Noch keine Änderungen.
+### Hinzugefügt
+
+- Erstes produktives Release von HomeLab-Portal.
+- Stabile Web-Oberfläche für Homelab-Dienste, Kategorien, Erreichbarkeitsstatus und eingebettetes Grafana-Dashboard.
+- Docker- und LXC-Betriebsmodelle mit Updates und Konfigurationspfaden für Produktivumgebungen.
+
+### Geändert
+
+- Produktive Versionierung auf 1.0.0 gesetzt.
+- Release-Workflow und Docker-Setup auf stabiles erstes Produktiv-Release vorbereitet.
 
 ## [0.1.35] - 2026-08-24
 
