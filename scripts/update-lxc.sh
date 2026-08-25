@@ -47,6 +47,17 @@ if [[ "${EUID}" -ne 0 ]]; then
   exit 1
 fi
 
+export DEBIAN_FRONTEND=noninteractive
+export NPM_CONFIG_UPDATE_NOTIFIER=false
+
+echo "Aktualisiere Node.js auf den aktuellen LTS-Stand ..."
+apt-get update
+apt-get install -y ca-certificates curl
+curl --fail --silent --show-error --location https://deb.nodesource.com/setup_lts.x | bash -
+apt-get install -y nodejs
+node --version
+npm --version
+
 exec 9>"${LOCK_FILE}"
 flock -n 9 || { echo "Ein Update läuft bereits." >&2; exit 1; }
 
@@ -77,8 +88,8 @@ rollback() {
   echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
   systemctl stop "${SERVICE_NAME}"
   git reset --hard "${CURRENT_COMMIT}"
-  npm install --ignore-scripts --prefix client
-  npm install --ignore-scripts --prefix server
+  npm ci --ignore-scripts --prefix client
+  npm ci --ignore-scripts --prefix server
   if [[ -f client/node_modules/esbuild/install.js ]]; then
     node client/node_modules/esbuild/install.js
   fi
@@ -105,8 +116,8 @@ echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
 echo "Stoppe Portal-Service für den Build ..."
 systemctl stop "${SERVICE_NAME}"
 git reset --hard "${TARGET_COMMIT}"
-npm install --ignore-scripts --prefix client
-npm install --ignore-scripts --prefix server
+npm ci --ignore-scripts --prefix client
+npm ci --ignore-scripts --prefix server
 if [[ -f client/node_modules/esbuild/install.js ]]; then
   node client/node_modules/esbuild/install.js
 fi

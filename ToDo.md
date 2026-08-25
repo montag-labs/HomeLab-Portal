@@ -43,3 +43,4 @@
 - [x] Docker wird momentan mit Node 20 erstellt! Update auf Node 26 LTS durchführen, da Node 20 nicht mehr unterstützt wird. (v1.1.8)
 - [x] Prüfe alle verwendeten Programmiersprachen/Techniken/Bibliotheken auf Sicherheitslücken und aktualisiere sie auf die neuesten Versionen. `npm audit` meldet 0 Lücken; express, zod, typescript, @types/express, @types/node, lucide-react, oxlint, @types/react-dom und concurrently auf neueste Version aktualisiert. (v1.1.8)
 - [x] Prüfe die Kompatibilität der App mit Node 26 LTS und behebe eventuelle Probleme. Build und Lint laufen fehlerfrei, Server startet erfolgreich unter Node 26. (v1.1.8)
+- [x] LXC-Installation und automatische Updates auf den aktuellen Node.js-LTS-Stand aktualisieren. (v1.1.9)
