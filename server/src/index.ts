@@ -5,6 +5,7 @@ import { configRouter } from "./routes/config.js";
 import { statusRouter } from "./routes/status.js";
 import { updateRouter } from "./routes/update.js";
 import { devRouter } from "./routes/dev.js";
+import { logsRouter } from "./routes/logs.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/api", configRouter);
 app.use("/api", statusRouter);
 app.use("/api", updateRouter);
+app.use("/api", logsRouter);
 if ((process.env.APP_ENV ?? process.env.NODE_ENV ?? "production") !== "production") {
   app.use("/api", devRouter);
 }

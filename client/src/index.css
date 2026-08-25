@@ -955,6 +955,78 @@ img.admin-icon-option-preview {
   font-size: 0.9rem;
 }
 
+.admin-section-description {
+  color: var(--text-muted);
+}
+
+.admin-log-policy {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.admin-log-policy .admin-field {
+  min-width: 12rem;
+}
+
+.admin-log-layout {
+  display: grid;
+  grid-template-columns: minmax(15rem, 24rem) minmax(0, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.admin-log-meta,
+.admin-log-archives {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.admin-log-archives a {
+  overflow: hidden;
+  color: var(--accent-color);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-log-viewer {
+  min-width: 0;
+}
+
+.admin-log-viewer pre {
+  max-height: 30rem;
+  margin: 0;
+  overflow: auto;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font: 0.75rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-log-notice {
+  color: #15803d;
+}
+
+.admin-log-truncated {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 760px) {
+  .admin-log-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-tools-actions {
   display: flex;
   gap: 0.5rem;

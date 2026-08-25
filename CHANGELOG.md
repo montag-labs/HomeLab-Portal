@@ -4,6 +4,14 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.6] - 2026-08-25
+
+### Hinzugefügt
+
+- Admin-Logmodul mit Anzeige, Download, `.gz`-Archivierung und leeren neuen Logs ergänzt.
+- Log-Rotation nach Tag, Woche, Monat und Jahr sowie konfigurierbare Archivaufbewahrung ergänzt.
+- LXC-Installationslog, Docker-Update-Log und tägliche LXC-Rotationsprüfung ergänzt.
+
 ## [1.1.5] - 2026-08-25
 
 ### Behoben

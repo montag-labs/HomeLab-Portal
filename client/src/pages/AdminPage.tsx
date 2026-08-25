@@ -7,10 +7,11 @@ import { CategoryManager } from "./admin/CategoryManager";
 import { Dashboard } from "./admin/Dashboard";
 import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
+import { Logs } from "./admin/Logs";
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates" | "dev">("general");
+  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates" | "logs" | "dev">("general");
   const [devEnabled, setDevEnabled] = useState(false);
 
   useEffect(() => {
@@ -50,6 +51,13 @@ export function AdminPage() {
           >
             {t("admin.updates")}
           </button>
+          <button
+            type="button"
+            className={tab === "logs" ? "active" : ""}
+            onClick={() => setTab("logs")}
+          >
+            {t("admin.logs")}
+          </button>
           {devEnabled && (
             <button
               type="button"
@@ -66,6 +74,7 @@ export function AdminPage() {
         {tab === "categories" && <CategoryManager />}
         {tab === "dashboard" && <Dashboard />}
         {tab === "updates" && <Updates />}
+        {tab === "logs" && <Logs />}
         {tab === "dev" && devEnabled && <DevDebug />}
       </main>
     </div>
