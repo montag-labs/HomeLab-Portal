@@ -1,6 +1,6 @@
 {
   "name": "homelab-portal",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Leichtgewichtiges Webportal für Homelab-Dienste mit Kategorien, Erreichbarkeitsstatus und Grafana-Dashboard.",
   "private": true,
   "license": "MIT",
@@ -11,6 +11,6 @@
     "install:all": "npm install --prefix server && npm install --prefix client"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^10.0.5"
   }
 }

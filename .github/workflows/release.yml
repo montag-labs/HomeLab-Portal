@@ -13,14 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
-          gh release create "$RELEASE_TAG" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --title "$RELEASE_TAG" \
-            --generate-notes
+          if gh release view "$RELEASE_TAG" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release $RELEASE_TAG existiert bereits, überspringe Erstellung."
+          else
+            gh release create "$RELEASE_TAG" \
+              --repo "${GITHUB_REPOSITORY}" \
+              --title "$RELEASE_TAG" \
+              --generate-notes
+          fi
