@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Uptime Kuma icon">
-  <rect width="128" height="128" rx="28" fill="#0f172a"/>
-  <circle cx="64" cy="64" r="28" fill="#22c55e" opacity="0.18"/>
-  <path d="M64 22c23 0 42 19 42 42 0 23-19 42-42 42S22 87 22 64c0-23 19-42 42-42zm0 18c-13 0-24 11-24 24s11 24 24 24 24-11 24-24S77 40 64 40zm0 10c7 0 13 6 13 13v9h-8v-9a5 5 0 10-10v9h-8v-9c0-7 6-13 13-13z" fill="#22c55e"/>
-</svg>

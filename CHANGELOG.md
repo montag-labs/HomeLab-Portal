@@ -4,6 +4,13 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei dokument
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/),
 und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
+## [1.1.2] - 2026-08-25
+
+### Geändert
+
+- Enthaltene App-Icons aus dem Dashboard-Icons-Katalog neu geladen und aktualisiert.
+- Zusätzliche Katalog-Icons für weitere Homelab-Dienste aufgenommen.
+
 ## [1.1.1] - 2026-08-25
 
 ### Geändert
