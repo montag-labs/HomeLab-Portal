@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import { useConfig } from "../../context/ConfigContext";
+import { APP_ICONS, detectAppIconKey } from "../../iconCatalog";
 import type { AppEntry, Category } from "../../types";
 
 interface AppFormState {
@@ -9,6 +10,11 @@ interface AppFormState {
   domain: string;
   localIp: string;
   iconUrl: string;
+  iconKey: string;
+}
+
+function resolveAutoIconKey(name: string, domain: string, localIp: string): string {
+  return detectAppIconKey(name, domain, localIp) ?? "";
 }
 
 function AppFormFields({
@@ -19,13 +25,21 @@ function AppFormFields({
   onChange: (next: AppFormState) => void;
 }) {
   const { t } = useTranslation();
+  const detectedIconKey = detectAppIconKey(form.name, form.domain, form.localIp);
+  const selectedIconKey = form.iconKey || detectedIconKey || "";
+
   return (
     <div className="admin-form-fields">
       <label className="admin-form-field">
         <span className="admin-form-label">{t("admin.appName")}</span>
         <input
           value={form.name}
-          onChange={(e) => onChange({ ...form, name: e.target.value })}
+          onChange={(e) =>
+            onChange({
+              ...form,
+              name: e.target.value,
+            })
+          }
         />
       </label>
       <label className="admin-form-field">
@@ -33,7 +47,12 @@ function AppFormFields({
         <input
           placeholder="https://..."
           value={form.domain}
-          onChange={(e) => onChange({ ...form, domain: e.target.value })}
+          onChange={(e) =>
+            onChange({
+              ...form,
+              domain: e.target.value,
+            })
+          }
         />
       </label>
       <label className="admin-form-field">
@@ -41,14 +60,51 @@ function AppFormFields({
         <input
           placeholder="http://192.168.x.x"
           value={form.localIp}
-          onChange={(e) => onChange({ ...form, localIp: e.target.value })}
+          onChange={(e) =>
+            onChange({
+              ...form,
+              localIp: e.target.value,
+            })
+          }
         />
+      </label>
+      <label className="admin-form-field">
+        <span className="admin-form-label">Icon</span>
+        <select
+          value={selectedIconKey}
+          onChange={(e) => onChange({ ...form, iconKey: e.target.value })}
+        >
+          <option value="">{detectedIconKey ? "Automatisch erkannt" : "Kein Icon"}</option>
+          {APP_ICONS.map((icon) => (
+            <option key={icon.id} value={icon.id}>
+              {icon.label}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="admin-form-field">
         <span className="admin-form-label">{t("admin.iconUrl")}</span>
         <input
           value={form.iconUrl}
           onChange={(e) => onChange({ ...form, iconUrl: e.target.value })}
+        />
+      </label>
+      <label className="admin-form-field">
+        <span className="admin-form-label">Eigenes Icon hochladen</span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+              if (typeof reader.result === "string") {
+                onChange({ ...form, iconUrl: reader.result, iconKey: "" });
+              }
+            };
+            reader.readAsDataURL(file);
+          }}
         />
       </label>
     </div>
@@ -80,10 +136,15 @@ function AppRow({
     domain: app.domain ?? "",
     localIp: app.localIp ?? "",
     iconUrl: app.iconUrl ?? "",
+    iconKey: app.iconKey ?? detectAppIconKey(app.name, app.domain ?? "", app.localIp ?? "") ?? "",
   });
 
   const save = async () => {
-    await api.updateApp(category.id, app.id, form);
+    const normalized = {
+      ...form,
+      iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
+    };
+    await api.updateApp(category.id, app.id, normalized);
     await refresh();
     setEditing(false);
   };
@@ -168,13 +229,17 @@ function NewAppForm({ category }: { category: Category }) {
     domain: "",
     localIp: "",
     iconUrl: "",
+    iconKey: "",
   });
 
   const add = async () => {
     if (!form.name.trim()) return;
-    await api.createApp(category.id, form);
+    await api.createApp(category.id, {
+      ...form,
+      iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
+    });
     await refresh();
-    setForm({ name: "", domain: "", localIp: "", iconUrl: "" });
+    setForm({ name: "", domain: "", localIp: "", iconUrl: "", iconKey: "" });
   };
 
   return (

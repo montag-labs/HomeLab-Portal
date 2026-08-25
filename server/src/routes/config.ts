@@ -97,6 +97,7 @@ configRouter.post("/categories/:id/apps", async (req, res) => {
     domain: parsed.data.domain,
     localIp: parsed.data.localIp,
     iconUrl: parsed.data.iconUrl,
+    iconKey: parsed.data.iconKey,
     order: parsed.data.order ?? nextOrder,
   };
   category.apps.push(app);

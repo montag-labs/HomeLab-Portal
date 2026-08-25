@@ -5,7 +5,15 @@ export const appEntrySchema = z.object({
   name: z.string().min(1),
   domain: z.string().url().optional().or(z.literal("")).transform((v) => v || undefined),
   localIp: z.string().min(1).optional().or(z.literal("")).transform((v) => v || undefined),
-  iconUrl: z.string().url().optional().or(z.literal("")).transform((v) => v || undefined),
+  iconUrl: z
+    .string()
+    .refine((value) => !value || /^https?:\/\//i.test(value) || /^data:image\//i.test(value), {
+      message: "Icon URL must use http, https, or an image data URL",
+    })
+    .optional()
+    .or(z.literal(""))
+    .transform((v) => v || undefined),
+  iconKey: z.string().min(1).optional().or(z.literal("")).transform((v) => v || undefined),
   order: z.number().int().nonnegative(),
 });
 

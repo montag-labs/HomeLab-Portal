@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Pi-hole icon">
+  <rect width="128" height="128" rx="28" fill="#111827"/>
+  <circle cx="64" cy="64" r="32" fill="#d946ef"/>
+  <circle cx="64" cy="64" r="18" fill="#fff" opacity="0.9"/>
+  <path d="M64 18v18M64 92v18M18 64h18M92 64h18M33 33l13 13M82 82l13 13M95 33L82 46M46 82L33 95" stroke="#fff" stroke-width="8" stroke-linecap="round" opacity="0.85"/>
+</svg>
