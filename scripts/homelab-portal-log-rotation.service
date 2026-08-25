@@ -1,0 +1,10 @@
+[Unit]
+Description=HomeLab Portal log rotation
+After=local-fs.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/homelab-portal
+Environment=APP_DIR=/opt/homelab-portal
+Environment=LOG_DIR=/var/log/homelab-portal
+ExecStart=/usr/local/sbin/homelab-portal-rotate-logs

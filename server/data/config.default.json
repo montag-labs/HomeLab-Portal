@@ -3,6 +3,10 @@
     "language": "de",
     "theme": "dark",
     "accentColor": "#3b82f6",
+    "logPolicy": {
+      "rotation": "day",
+      "archiveCount": 7
+    },
     "grafana": {
       "enabled": false,
       "url": "",

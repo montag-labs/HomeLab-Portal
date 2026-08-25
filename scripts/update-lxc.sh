@@ -115,7 +115,11 @@ if [[ -f server/node_modules/esbuild/install.js ]]; then
 fi
 npm run build
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
+install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
+install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
+install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer
 systemctl daemon-reload
+systemctl enable --now homelab-portal-log-rotation.timer
 systemctl start "${SERVICE_NAME}"
 
 for attempt in {1..30}; do

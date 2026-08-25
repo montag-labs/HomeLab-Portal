@@ -19,6 +19,13 @@ export interface Category {
 export type ThemeMode = "light" | "dark";
 export type Language = "de" | "en";
 
+export type LogRotation = "day" | "week" | "month" | "year";
+
+export interface LogPolicy {
+  rotation: LogRotation;
+  archiveCount: number;
+}
+
 export interface GrafanaSettings {
   enabled: boolean;
   url: string;
@@ -32,6 +39,7 @@ export interface Settings {
   language: Language;
   theme: ThemeMode;
   accentColor: string;
+  logPolicy?: LogPolicy;
   grafana?: GrafanaSettings;
 }
 
@@ -62,6 +70,28 @@ export interface UpdateStartResult {
 export interface PendingUpdateToken {
   available: boolean;
   token?: string;
+}
+
+export interface LogArchive {
+  id: string;
+  fileName: string;
+  size: number;
+  modifiedAt: string;
+}
+
+export interface LogSource {
+  id: string;
+  label: string;
+  available: boolean;
+  size: number;
+  modifiedAt?: string;
+  archives: LogArchive[];
+}
+
+export interface LogContent {
+  id: string;
+  content: string;
+  truncated: boolean;
 }
 
 export interface PortalConfig {

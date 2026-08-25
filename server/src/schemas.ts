@@ -29,6 +29,12 @@ export const settingsSchema = z.object({
   language: z.enum(["de", "en"]),
   theme: z.enum(["light", "dark"]),
   accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/),
+  logPolicy: z
+    .object({
+      rotation: z.enum(["day", "week", "month", "year"]),
+      archiveCount: z.number().int().min(0).max(100),
+    })
+    .optional(),
   grafana: z
     .object({
       enabled: z.boolean(),
@@ -41,6 +47,11 @@ export const settingsSchema = z.object({
       refreshInterval: z.enum(["", "5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"]),
     })
     .optional(),
+});
+
+export const logPolicySchema = z.object({
+  rotation: z.enum(["day", "week", "month", "year"]),
+  archiveCount: z.number().int().min(0).max(100),
 });
 
 export const portalConfigSchema = z.object({

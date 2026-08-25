@@ -104,6 +104,12 @@ fi
 exec 9>"${LOCK_FILE}"
 flock -n 9 || { echo "Installation oder Update läuft bereits." >&2; exit 1; }
 
+install -d -m 750 "${LOG_DIR}"
+touch "${LOG_DIR}/homelab-portal-install.log"
+chmod 640 "${LOG_DIR}/homelab-portal-install.log"
+exec >>"${LOG_DIR}/homelab-portal-install.log" 2>&1
+echo "--- Installation gestartet: $(date --iso-8601=seconds) ---"
+
 export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
 
@@ -263,6 +269,9 @@ if [[ ! -f "${CONFIG_FILE}" && -f "scripts/lxc.config.example" ]]; then
 fi
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
 install -m 750 scripts/reset-update-token.sh /usr/local/sbin/homelab-portal-reset-token
+install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
+install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
+install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer
 
 cat > "${SERVICE_FILE}" <<EOF
 [Unit]
@@ -290,6 +299,7 @@ EOF
 chmod 600 "${SERVICE_FILE}"
 systemctl daemon-reload
 systemctl enable --now "${SERVICE_NAME}"
+systemctl enable --now homelab-portal-log-rotation.timer
 
 HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 for attempt in {1..30}; do

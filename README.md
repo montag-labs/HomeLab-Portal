@@ -78,6 +78,16 @@ bash scripts/update-docker.sh
 
 Das Script aktualisiert das Repository auf dem festen Branch `main`, zieht das Image `montaglabs/homelab-portal:latest` und erstellt den Container neu. Ein Docker-Socket wird nicht in den Container eingebunden.
 
+## Logverwaltung
+
+Der Admin-Bereich enthält ein Logmodul für die festen dateibasierten Quellen Installation, LXC-Update, Docker-Update, Portal-Service, Healthcheck sowie Backup/Rollback. Logs können angezeigt, heruntergeladen, als `.gz` archiviert und als leere Datei neu angelegt werden.
+
+Die Rotation wird nach Tag, Woche, Monat oder Jahr ausgewählt. `archiveCount` begrenzt die Anzahl alter Archive je Logtyp; ältere `.log`- und `.gz`-Dateien werden automatisch entfernt. Aktive Logs werden nicht gelöscht.
+
+Im LXC wird die Rotation täglich über `homelab-portal-log-rotation.timer` geprüft. Docker verwendet den persistenten Host-Ordner `./server/data/logs`, der nach `/var/log/homelab-portal` gemountet wird. Auf Docker-Hosts kann `scripts/rotate-logs.sh` über Cron oder einen Host-Timer ausgeführt werden. Das Portal benötigt dafür keinen Docker-Socket.
+
+Das Logmodul ist bis zur Einführung der Admin-Authentifizierung nicht für ungeschützte öffentliche Umgebungen vorgesehen.
+
 Das Image wird durch GitHub Actions bei jedem Release-Tag automatisch gebaut und zu Docker Hub veröffentlicht. Dafür müssen im GitHub-Repository die Secrets `DOCKERHUB_USERNAME` und `DOCKERHUB_TOKEN` hinterlegt sein.
 
 ```bash

@@ -1,4 +1,4 @@
-import type { AppEntry, Category, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, Category, LogContent, LogPolicy, LogSource, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
@@ -39,6 +39,18 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
+  getLogs: () => request<LogSource[]>("/api/logs"),
+  getLog: (id: string) => request<LogContent>(`/api/logs/${encodeURIComponent(id)}`),
+  getLogPolicy: () => request<LogPolicy>("/api/log-policy"),
+  updateLogPolicy: (policy: LogPolicy) =>
+    request<LogPolicy>("/api/log-policy", {
+      method: "PUT",
+      body: JSON.stringify(policy),
+    }),
+  archiveLog: (id: string) =>
+    request<LogSource[]>(`/api/logs/${encodeURIComponent(id)}/archive`, { method: "POST" }),
+  emptyLog: (id: string) =>
+    request<LogSource[]>(`/api/logs/${encodeURIComponent(id)}/empty`, { method: "POST" }),
   getUpdateStatus: () => request<UpdateStatus>("/api/update"),
   checkForUpdates: () =>
     request<UpdateStatus>("/api/update/check", { method: "POST" }),
