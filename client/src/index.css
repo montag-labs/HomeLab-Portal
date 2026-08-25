@@ -902,7 +902,7 @@ img.admin-icon-option-preview {
   border-radius: 8px;
 }
 
-.admin-new-app-form button {
+.admin-new-app-form > button {
   align-self: flex-start;
   padding: 0.5rem 1rem;
   border-radius: 6px;
