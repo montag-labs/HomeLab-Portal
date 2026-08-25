@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.1.9] - 2026-08-25
+
+### Geändert
+
+- LXC-Installation und automatische Updates aktualisieren Node.js und npm jetzt auf den aktuellen LTS-Stand.
+- LXC-Updates verwenden die aktuelle NodeSource-LTS-Quelle und aktivieren reproduzierbare Dependency-Installationen.
+
 ## [1.1.8] - 2026-08-25
 
 ### Geändert

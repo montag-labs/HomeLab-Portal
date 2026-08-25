@@ -71,7 +71,7 @@ fi
 
 install_dependencies() {
   local package_dir="$1"
-  npm install --ignore-scripts --prefix "${package_dir}"
+  npm ci --ignore-scripts --prefix "${package_dir}"
   if [[ -f "${package_dir}/node_modules/esbuild/install.js" ]]; then
     node "${package_dir}/node_modules/esbuild/install.js"
   fi
@@ -124,11 +124,9 @@ echo "Installiere Systempakete ..."
 apt-get update
 apt-get install -y ca-certificates curl git openssl sudo
 
-if ! command -v node >/dev/null 2>&1; then
-  echo "Installiere Node.js LTS ..."
-  curl --fail --silent --show-error --location https://deb.nodesource.com/setup_lts.x | bash -
-  apt-get install -y nodejs
-fi
+echo "Aktualisiere Node.js auf den aktuellen LTS-Stand ..."
+curl --fail --silent --show-error --location https://deb.nodesource.com/setup_lts.x | bash -
+apt-get install -y nodejs
 
 node --version
 npm --version
@@ -226,7 +224,8 @@ EOF
     echo "Update fehlgeschlagen. Stelle Version ${CURRENT_VERSION} wieder her ..." >&2
     systemctl stop "${SERVICE_NAME}"
     git reset --hard "${CURRENT_COMMIT}"
-    npm run install:all
+    npm ci --ignore-scripts --prefix "${APP_DIR}/client"
+    npm ci --ignore-scripts --prefix "${APP_DIR}/server"
     npm run build
     systemctl daemon-reload
     systemctl start "${SERVICE_NAME}"
