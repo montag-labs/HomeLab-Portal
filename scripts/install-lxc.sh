@@ -124,8 +124,8 @@ echo "Installiere Systempakete ..."
 apt-get update
 apt-get install -y ca-certificates curl git openssl sudo
 
-echo "Aktualisiere Node.js auf den aktuellen LTS-Stand ..."
-curl --fail --silent --show-error --location https://deb.nodesource.com/setup_lts.x | bash -
+echo "Aktualisiere Node.js auf Version 26 ..."
+curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x | bash -
 apt-get install -y nodejs
 
 node --version

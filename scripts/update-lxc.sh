@@ -50,10 +50,10 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
 
-echo "Aktualisiere Node.js auf den aktuellen LTS-Stand ..."
+echo "Aktualisiere Node.js auf Version 26 ..."
 apt-get update
 apt-get install -y ca-certificates curl
-curl --fail --silent --show-error --location https://deb.nodesource.com/setup_lts.x | bash -
+curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x | bash -
 apt-get install -y nodejs
 node --version
 npm --version
