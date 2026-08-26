@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.1.11] - 2026-08-26
+
+### Behoben
+
+- Kategorien reagieren beim Ein-/Ausklappen wieder sofort und behandeln laufende oder fehlgeschlagene Speichervorgänge korrekt.
+
 ## [1.1.10] - 2026-08-25
 
 ### Geändert

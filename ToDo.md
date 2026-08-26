@@ -45,3 +45,4 @@
 - [x] Prüfe die Kompatibilität der App mit Node 26 LTS und behebe eventuelle Probleme. Build und Lint laufen fehlerfrei, Server startet erfolgreich unter Node 26. (v1.1.8)
 - [x] LXC-Installation und automatische Updates auf den aktuellen Node.js-LTS-Stand aktualisieren. (v1.1.9)
 - [x] LXC-Installation und automatische Updates ausdrücklich auf Node.js 26 umstellen. (v1.1.10)
+- [x] Ein-/Ausklappen der Kategorien nach dem Dependency-Update reparieren. (v1.1.11)
