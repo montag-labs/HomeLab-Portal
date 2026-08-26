@@ -1,14 +1,27 @@
 import type { Category } from "../types";
+import { useState } from "react";
 import { api } from "../api";
 import { useConfig } from "../context/ConfigContext";
 import { AppCard } from "./AppCard";
 
 export function CategoryGroup({ category }: { category: Category }) {
   const { refresh } = useConfig();
+  const [collapsed, setCollapsed] = useState(category.collapsed);
+  const [saving, setSaving] = useState(false);
 
   const toggleCollapsed = async () => {
-    await api.updateCategory(category.id, { collapsed: !category.collapsed });
-    await refresh();
+    if (saving) return;
+    const nextCollapsed = !collapsed;
+    setCollapsed(nextCollapsed);
+    setSaving(true);
+    try {
+      await api.updateCategory(category.id, { collapsed: nextCollapsed });
+      await refresh();
+    } catch {
+      setCollapsed(collapsed);
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -17,12 +30,14 @@ export function CategoryGroup({ category }: { category: Category }) {
         type="button"
         className="category-header"
         onClick={toggleCollapsed}
-        aria-expanded={!category.collapsed}
+        disabled={saving}
+        aria-expanded={!collapsed}
+        aria-busy={saving}
       >
-        <span className={`chevron ${category.collapsed ? "collapsed" : ""}`}>▾</span>
+        <span className={`chevron ${collapsed ? "collapsed" : ""}`}>▾</span>
         <span>{category.name}</span>
       </button>
-      {!category.collapsed && (
+      {!collapsed && (
         <div className="category-apps">
           {[...category.apps]
             .sort((a, b) => a.order - b.order)
