@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import { useConfig } from "../../context/ConfigContext";
@@ -373,13 +373,8 @@ export function CategoryManager() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const categories = config ? [...config.categories].sort((a, b) => a.order - b.order) : [];
-  const selectedCategory = categories.find((c) => c.id === selectedId) ?? null;
-
-  useEffect(() => {
-    if (!selectedId && categories.length > 0) {
-      setSelectedId(categories[0].id);
-    }
-  }, [categories, selectedId]);
+  const activeId = selectedId ?? categories[0]?.id ?? null;
+  const selectedCategory = categories.find((c) => c.id === activeId) ?? null;
 
   if (!config) return null;
 
@@ -419,7 +414,7 @@ export function CategoryManager() {
             <div key={category.id} className="admin-category-list-item">
               <button
                 type="button"
-                className={category.id === selectedId ? "active" : ""}
+                className={category.id === activeId ? "active" : ""}
                 onClick={() => setSelectedId(category.id)}
               >
                 {category.name}

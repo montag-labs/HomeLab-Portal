@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import { useConfig } from "../../context/ConfigContext";
@@ -27,7 +27,7 @@ export function Logs() {
 
   const selectedLog = logs.find((log) => log.id === selectedId);
 
-  const loadLogs = async () => {
+  const loadLogs = useCallback(async () => {
     setLoading(true);
     try {
       const [nextLogs, nextPolicy] = await Promise.all([api.getLogs(), api.getLogPolicy()]);
@@ -40,9 +40,9 @@ export function Logs() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t]);
 
-  const loadContent = async (id: string) => {
+  const loadContent = useCallback(async (id: string) => {
     if (!id) return;
     setContentLoading(true);
     try {
@@ -55,15 +55,15 @@ export function Logs() {
     } finally {
       setContentLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     void loadLogs();
-  }, []);
+  }, [loadLogs]);
 
   useEffect(() => {
     void loadContent(selectedId);
-  }, [selectedId]);
+  }, [loadContent, selectedId]);
 
   useEffect(() => {
     if (config?.settings.logPolicy) setPolicy(config.settings.logPolicy);
