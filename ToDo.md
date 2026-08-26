@@ -46,3 +46,4 @@
 - [x] LXC-Installation und automatische Updates auf den aktuellen Node.js-LTS-Stand aktualisieren. (v1.1.9)
 - [x] LXC-Installation und automatische Updates ausdrücklich auf Node.js 26 umstellen. (v1.1.10)
 - [x] Ein-/Ausklappen der Kategorien nach dem Dependency-Update reparieren. (v1.1.11)
+- [x] Verbliebene React-19-/TypeScript-7-Kompatibilitätswarnungen in Logs und Kategorieverwaltung beheben. (v1.1.12)

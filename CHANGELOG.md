@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.1.12] - 2026-08-26
+
+### Behoben
+
+- React-19-/TypeScript-7-Kompatibilitätswarnungen bei Log-Effekten und der Kategorieauswahl behoben.
+
 ## [1.1.11] - 2026-08-26
 
 ### Behoben
