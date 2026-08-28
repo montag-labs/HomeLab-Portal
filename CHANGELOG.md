@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.6] - 2026-08-28
+
+### Behoben
+
+- Theme-Auswahl auf Portal und Administration angewendet.
+- Umschalten zwischen hellem und dunklem Theme als Kachel im Admin-Header ergänzt.
+
 ## [1.3.5] - 2026-08-28
 
 ### Behoben

@@ -19,6 +19,7 @@
 
 ## Bereits umgesetzt
 
+- [x] Theme-Auswahl für Portal und Administration korrigieren und Theme-Umschaltung im Admin-Header ergänzen. (v1.3.6)
 - [x] Innenabstände der Admin-Kacheln wiederherstellen und 5px auf äußere Kachelabstände beschränken. (v1.3.5)
 - [x] Öffentliches Portal-Logo durch bereitgestellte PNG-Bildmarke ersetzen. (v1.3.4)
 - [x] Portal-Logo als Kachel im Stil der Kategorien- und Dienste-Zähler gestalten. (v1.3.3)

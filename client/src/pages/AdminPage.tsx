@@ -9,6 +9,7 @@ import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
 import { Logs } from "./admin/Logs";
 import { AdminLogin } from "../components/AdminLogin";
+import { ThemeToggle } from "../components/ThemeToggle";
 import { useAuth } from "../hooks/useAuth";
 import {
   ArrowLeft,
@@ -123,7 +124,10 @@ export function AdminPage() {
             <span>{t("admin.areaLabel")}</span>
             <h1>{currentTitle}</h1>
           </div>
-          <span className="admin-header-status"><ShieldCheck size={16} />{t("admin.secureSession")}</span>
+          <div className="admin-header-actions">
+            <ThemeToggle />
+            <span className="admin-header-status"><ShieldCheck size={16} />{t("admin.secureSession")}</span>
+          </div>
         </header>
         <main className="admin-content">
           {tab === "general" && <GeneralSettings />}
