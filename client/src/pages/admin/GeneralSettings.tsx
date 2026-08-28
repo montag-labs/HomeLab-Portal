@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
-import { useConfig } from "../../context/ConfigContext";
+import { useConfig } from "../../hooks/useConfig";
 import type { Language, ThemeMode } from "../../types";
+import { AdminPasswordSettings } from "../../components/AdminPasswordSettings";
 
 export function GeneralSettings() {
   const { config, refresh } = useConfig();
@@ -110,6 +111,7 @@ export function GeneralSettings() {
           />
         </div>
       </div>
+      <AdminPasswordSettings />
     </div>
   );
 }

@@ -55,13 +55,20 @@ Das Portal ist anschließend standardmäßig unter http://localhost:80 erreichba
 ## Docker Compose
 
 ```bash
+export ADMIN_PASSWORD='ein-langes-zufaelliges-passwort'
 docker compose pull
 docker compose up -d
 ```
 
 Das öffentliche Image liegt unter `montaglabs/homelab-portal`. Die Anwendung ist unter http://localhost:4000 erreichbar. Die Konfiguration wird aus `server/data` in den Container gemountet und bleibt bei einem Container-Update erhalten.
 
-Compose zieht das Image wegen `pull_policy: always` bei jedem Start neu; der produktive Compose-Stack baut nicht lokal.
+Compose zieht das Image wegen `pull_policy: always` bei jedem Start neu; der produktive Compose-Stack baut nicht lokal. Das initiale Admin-Passwort muss über `ADMIN_PASSWORD` oder eine nicht versionierte `.env`-Datei gesetzt werden. Spätere Änderungen sind im Adminbereich unter „Allgemein“ möglich und werden persistent in `server/data/admin-password` gespeichert.
+
+Der Container läuft als unprivilegierter Benutzer mit schreibgeschütztem Root-Dateisystem. Auf Linux müssen die eingebundenen Verzeichnisse für UID/GID `1000:1000` schreibbar sein:
+
+```bash
+sudo chown -R 1000:1000 server/data
+```
 
 Für einen lokalen Build kann das Image separat gebaut werden:
 
@@ -86,7 +93,7 @@ Die Rotation wird nach Tag, Woche, Monat oder Jahr ausgewählt. `archiveCount` b
 
 Im LXC wird die Rotation täglich über `homelab-portal-log-rotation.timer` geprüft. Docker verwendet den persistenten Host-Ordner `./server/data/logs`, der nach `/var/log/homelab-portal` gemountet wird. Auf Docker-Hosts kann `scripts/rotate-logs.sh` über Cron oder einen Host-Timer ausgeführt werden. Das Portal benötigt dafür keinen Docker-Socket.
 
-Das Logmodul ist bis zur Einführung der Admin-Authentifizierung nicht für ungeschützte öffentliche Umgebungen vorgesehen.
+Das Logmodul und alle administrativen API-Endpunkte sind durch die Admin-Anmeldung und CSRF-Tokens geschützt.
 
 Das Image wird durch GitHub Actions bei jedem Release-Tag automatisch gebaut und zu Docker Hub veröffentlicht. Dafür müssen im GitHub-Repository die Secrets `DOCKERHUB_USERNAME` und `DOCKERHUB_TOKEN` hinterlegt sein.
 
@@ -147,9 +154,17 @@ Die Datei wird nicht versioniert. Eine Startvorlage befindet sich in [server/dat
 
 Im Administrationsbereich prüft das Modul „Updates“ die installierte Version gegen das neueste stabile GitHub-Release. Die Prüfung verwendet einen kurzen Cache und blockiert den Portalbetrieb nicht, wenn GitHub nicht erreichbar ist.
 
-Für den LXC-Betrieb kann der Modus mit `UPDATE_MODE=lxc` gesetzt werden. Die Versionsprüfung ist dann verfügbar; der eigentliche Update-Script-Aufruf wird erst nach Einrichtung der beschriebenen Authentifizierung und `sudoers`-Freigabe aktiviert.
+Für den LXC-Betrieb setzt das Installationsscript `UPDATE_MODE=lxc`. Der Updatebutton schreibt nach erfolgreicher Admin- und Token-Prüfung ausschließlich eine feste Triggerdatei; eine systemd-Path-Unit startet das root-eigene Update-Script.
 
 Für den UI-Updatebutton erzeugt das Script bei der LXC-Installation automatisch ein Update-Token. Das Token wird beim ersten Öffnen einmalig im Popup angezeigt, muss sicher gespeichert und anschließend im Adminbereich eingegeben werden.
+
+Für die Admin-Anmeldung erzeugt die LXC-Installation außerdem ein zufälliges Passwort:
+
+```bash
+sudo cat /var/lib/homelab-portal/admin-password
+```
+
+Das Passwort kann anschließend im Adminbereich unter „Allgemein“ geändert werden. Die Datei bleibt unter `/var/lib/homelab-portal/admin-password` persistent.
 
 Ein neues Token kann im LXC-Terminal mit `sudo /usr/local/sbin/homelab-portal-reset-token` erzeugt werden. Beim nächsten Öffnen des Portals wird es einmalig angezeigt.
 
@@ -175,7 +190,9 @@ Der Server liefert im Produktivbetrieb das gebaute Frontend aus `client/dist` au
 
 ## Sicherheit
 
-Die aktuelle Anwendung besitzt keine eigene Authentifizierung. Sie ist für den Betrieb im vertrauenswürdigen Heimnetz vorgesehen. Port 4000 nicht ungeschützt aus dem Internet veröffentlichen. Vor einer WebUI-Updatefunktion müssen insbesondere Admin-Authentifizierung, feste Updatequellen, Locking, Backups und ein Healthcheck umgesetzt werden.
+Der Administrationsbereich verwendet eine serverseitige Sitzung mit `HttpOnly`-/`SameSite`-Cookie und CSRF-Schutz. Das öffentliche Portal bleibt ohne Anmeldung verfügbar. Die Status-API prüft ausschließlich konfigurierte HTTP(S)-Ziele. Trotz dieser Schutzmaßnahmen sollte das Portal nur über HTTPS und einen vertrauenswürdigen Reverse Proxy veröffentlicht werden.
+
+Selbstsignierte Zertifikate werden standardmäßig abgelehnt. Für ein ausschließlich vertrauenswürdiges Homelab kann `ALLOW_INSECURE_TLS=true` gesetzt werden.
 
 Sicherheitsprobleme bitte nicht öffentlich als Issue melden. Hinweise stehen in [SECURITY.md](SECURITY.md).
 
@@ -185,4 +202,4 @@ Fehlerberichte und Verbesserungsvorschläge sind willkommen. Bitte zuerst die [B
 
 ## Lizenz
 
-Für dieses Repository ist derzeit keine Open-Source-Lizenz angegeben. Ohne Lizenz gelten die gesetzlichen Urheberrechte; eine Nutzung, Weitergabe oder Änderung ist daher nicht automatisch erlaubt.
+Dieses Projekt steht unter der MIT-Lizenz. Details stehen in [LICENSE](LICENSE).

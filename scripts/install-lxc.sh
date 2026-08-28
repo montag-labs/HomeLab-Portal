@@ -9,6 +9,9 @@ SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 LOCK_FILE="/run/homelab-portal-install.lock"
 readonly TOKEN_DIR="/var/lib/homelab-portal"
 readonly TOKEN_FILE="${TOKEN_DIR}/update-token"
+readonly ADMIN_PASSWORD_FILE="${TOKEN_DIR}/admin-password"
+readonly APP_USER="homelab-portal"
+readonly APP_GROUP="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOG_DIR="/var/log/homelab-portal"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
@@ -33,7 +36,7 @@ load_parameters() {
     value="${value#\"}"
     value="${value%\"}"
     case "${key}" in
-      REPOSITORY_BRANCH|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV)
+      REPOSITORY_BRANCH|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS)
         printf -v "${key}" '%s' "${value}"
         ;;
       *)
@@ -91,6 +94,69 @@ validate_app_environment() {
   fi
 }
 
+ensure_runtime_identity() {
+  getent group "${APP_GROUP}" >/dev/null || groupadd --system "${APP_GROUP}"
+  id -u "${APP_USER}" >/dev/null 2>&1 || useradd --system --gid "${APP_GROUP}" \
+    --home-dir "${TOKEN_DIR}" --shell /usr/sbin/nologin "${APP_USER}"
+  install -d -o root -g "${APP_GROUP}" -m 770 "${TOKEN_DIR}"
+  install -d -o "${APP_USER}" -g "${APP_GROUP}" -m 750 "${LOG_DIR}"
+}
+
+ensure_runtime_secrets() {
+  if [[ ! -f "${TOKEN_FILE}" ]]; then openssl rand -hex 32 > "${TOKEN_FILE}"; fi
+  if [[ ! -f "${ADMIN_PASSWORD_FILE}" ]]; then openssl rand -base64 24 > "${ADMIN_PASSWORD_FILE}"; fi
+  chown root:"${APP_GROUP}" "${TOKEN_FILE}" "${ADMIN_PASSWORD_FILE}"
+  chmod 640 "${TOKEN_FILE}" "${ADMIN_PASSWORD_FILE}"
+}
+
+write_service_file() {
+  cat > "${SERVICE_FILE}" <<EOF
+[Unit]
+Description=HomeLab Portal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=${APP_USER}
+Group=${APP_GROUP}
+UMask=0027
+WorkingDirectory=${APP_DIR}
+ExecStart=/usr/bin/npm start
+Restart=on-failure
+RestartSec=5
+Environment=NODE_ENV=${APP_ENV}
+Environment=UPDATE_MODE=lxc
+Environment=PORT=${HOMELAB_PORT}
+Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
+Environment=UPDATE_TRIGGER_FILE=/run/homelab-portal/update-request
+Environment=UPDATE_TOKEN_FILE=${TOKEN_FILE}
+Environment=ADMIN_PASSWORD_FILE=${ADMIN_PASSWORD_FILE}
+Environment=ADMIN_PASSWORD_STORE_FILE=${ADMIN_PASSWORD_FILE}
+EnvironmentFile=-${CONFIG_FILE}
+NoNewPrivileges=true
+RuntimeDirectory=homelab-portal
+RuntimeDirectoryMode=0750
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+RestrictSUIDSGID=true
+LockPersonality=true
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ReadWritePaths=${APP_DIR}/server/data ${TOKEN_DIR} ${LOG_DIR}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+  chmod 600 "${SERVICE_FILE}"
+}
+
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Dieses Script muss als root ausgeführt werden." >&2
   exit 1
@@ -122,7 +188,7 @@ export NPM_CONFIG_UPDATE_NOTIFIER=false
 
 echo "Installiere Systempakete ..."
 apt-get update
-apt-get install -y ca-certificates curl git openssl sudo
+apt-get install -y ca-certificates curl git openssl
 
 echo "Aktualisiere Node.js auf Version 26 ..."
 curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x | bash -
@@ -130,6 +196,8 @@ apt-get install -y nodejs
 
 node --version
 npm --version
+ensure_runtime_identity
+ensure_runtime_secrets
 
 if [[ -e "${APP_DIR}" ]]; then
   if [[ ! -d "${APP_DIR}/.git" ]]; then
@@ -148,37 +216,9 @@ if [[ -e "${APP_DIR}" ]]; then
   validate_port
   validate_app_environment
 
-  install -d -m 700 "${TOKEN_DIR}"
-  if [[ ! -f "${TOKEN_FILE}" ]]; then
-    openssl rand -hex 32 > "${TOKEN_FILE}"
-    chmod 600 "${TOKEN_FILE}"
-  fi
-
   if [[ "${SWITCH_PORT}" == true ]]; then
     systemctl stop "${SERVICE_NAME}" 2>/dev/null || true
-    cat > "${SERVICE_FILE}" <<EOF
-[Unit]
-Description=HomeLab Portal
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-WorkingDirectory=${APP_DIR}
-ExecStart=/usr/bin/npm start
-Restart=on-failure
-RestartSec=5
-Environment=NODE_ENV=${APP_ENV}
-Environment=UPDATE_MODE=lxc
-Environment=PORT=${HOMELAB_PORT}
-Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
-Environment=UPDATE_TOKEN_FILE=/var/lib/homelab-portal/update-token
-EnvironmentFile=-${CONFIG_FILE}
-
-[Install]
-WantedBy=multi-user.target
-EOF
-    chmod 600 "${SERVICE_FILE}"
+    write_service_file
     systemctl daemon-reload
     systemctl enable --now "${SERVICE_NAME}"
     HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
@@ -252,11 +292,6 @@ else
   validate_port
   validate_app_environment
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
-  install -d -m 700 "${TOKEN_DIR}"
-  if [[ ! -f "${TOKEN_FILE}" ]]; then
-    openssl rand -hex 32 > "${TOKEN_FILE}"
-    chmod 600 "${TOKEN_FILE}"
-  fi
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
   git clone --depth 1 --branch "${REPOSITORY_BRANCH}" "${REPOSITORY_URL}" "${APP_DIR}"
@@ -268,6 +303,9 @@ else
   npm run build
 fi
 
+install -d -o "${APP_USER}" -g "${APP_GROUP}" -m 750 "${APP_DIR}/server/data"
+chown -R "${APP_USER}:${APP_GROUP}" "${APP_DIR}/server/data" "${LOG_DIR}"
+
 install -d -m 700 "$(dirname "${CONFIG_FILE}")"
 if [[ ! -f "${CONFIG_FILE}" && -f "scripts/lxc.config.example" ]]; then
   install -m 600 scripts/lxc.config.example "${CONFIG_FILE}"
@@ -278,34 +316,14 @@ install -m 750 scripts/reset-update-token.sh /usr/local/sbin/homelab-portal-rese
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
 install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer
-
-cat > "${SERVICE_FILE}" <<EOF
-[Unit]
-Description=HomeLab Portal
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=simple
-WorkingDirectory=${APP_DIR}
-ExecStart=/usr/bin/npm start
-Restart=on-failure
-RestartSec=5
-Environment=NODE_ENV=${APP_ENV}
-Environment=UPDATE_MODE=lxc
-Environment=PORT=${HOMELAB_PORT}
-Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
-Environment=UPDATE_TOKEN_FILE=${TOKEN_FILE}
-EnvironmentFile=-${CONFIG_FILE}
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-chmod 600 "${SERVICE_FILE}"
+install -m 644 scripts/homelab-portal-update.service /etc/systemd/system/homelab-portal-update.service
+install -m 644 scripts/homelab-portal-update.path /etc/systemd/system/homelab-portal-update.path
+rm -f /etc/sudoers.d/homelab-portal-update
+write_service_file
 systemctl daemon-reload
 systemctl enable --now "${SERVICE_NAME}"
 systemctl enable --now homelab-portal-log-rotation.timer
+systemctl enable --now homelab-portal-update.path
 
 HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 for attempt in {1..30}; do

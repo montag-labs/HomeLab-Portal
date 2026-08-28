@@ -3,4 +3,5 @@ dist/
 *.log
 .env
 server/data/config.json
+server/data/admin-password
 next.md

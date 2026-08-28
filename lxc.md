@@ -23,7 +23,7 @@ Die Installation kann direkt aus diesem Repository gestartet werden:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Das Script installiert die benötigten Systempakete, Node.js 26, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Anschließend wartet es bis zu 30 Sekunden auf den Healthcheck und zeigt die erkannte LXC-IP mit Port an. Wird derselbe Aufruf später erneut gestartet, prüft das Script die installierte Version und aktualisiert nur bei einem neuen Stand. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
+Das Script installiert die benötigten Systempakete, Node.js 26, die Anwendung unter `/opt/homelab-portal` und den systemd-Service. Der Dienst läuft als unprivilegierter Benutzer `homelab-portal` mit systemd-Sandboxing. Anschließend wartet es bis zu 30 Sekunden auf den Healthcheck. Vor dem Update wird die Konfiguration gesichert; bei einem Build- oder Healthcheck-Fehler wird ein Rollback versucht.
 
 Bei einer Neuinstallation fragt das Script nach dem Portal-Port. Der Standardwert `80` ist bereits eingetragen; mit Enter wird er übernommen. Bei einer bestehenden Installation wird der bisher verwendete Port automatisch beibehalten. Ein Port kann jederzeit über `HOMELAB_PORT` vorgegeben werden.
 
@@ -32,6 +32,9 @@ Die laufende Installation wird über `/etc/homelab-portal/lxc.config` konfigurie
 `APP_ENV=production` ist der Standard. Für DEV die Zeile `APP_ENV=development` aktivieren. Dann wird die DEV-API registriert und im Adminbereich der Tab „DEV-Diagnose“ eingeblendet. Auf einer öffentlich erreichbaren Instanz darf DEV nicht aktiviert werden.
 
 Für den Updatebutton in der WebUI erzeugt das Script automatisch ein Update-Token. Beim ersten Öffnen des Portals wird es einmalig in einem Popup angezeigt. Das Token wird nicht in der Anwendung gespeichert, sondern als geschützte Datei unter `/var/lib/homelab-portal/update-token` verwaltet.
+
+Das automatisch erzeugte Admin-Passwort liegt in `/var/lib/homelab-portal/admin-password` und kann mit `sudo cat /var/lib/homelab-portal/admin-password` angezeigt werden.
+Es kann außerdem im angemeldeten Adminbereich unter „Allgemein“ geändert werden. Dabei werden andere aktive Admin-Sitzungen beendet.
 
 Den Port einer bestehenden Installation kann man ohne Update mit `--switch` ändern:
 
@@ -186,7 +189,7 @@ Der automatische Ablauf protokolliert seine Ausgaben in `/var/log/homelab-portal
 
 ## 8. Update-Script für LXC
 
-Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Der UI-Aufruf startet deshalb über `systemd-run` eine eigene transient Unit. So kann das Update den Portal-Service stoppen, ohne dass das Update-Script selbst beendet wird.
+Die Anwendung kann sich nicht verlässlich selbst aktualisieren, während ihr eigener Node-Prozess ersetzt und neu gestartet wird. Der UI-Aufruf schreibt deshalb nur eine feste Triggerdatei unter `/run/homelab-portal`. Eine systemd-Path-Unit startet daraufhin ausschließlich den root-eigenen Update-Service. Der Node-Prozess erhält weder `sudo` noch allgemeine Root-Rechte.
 
 Beispiel für `/usr/local/sbin/homelab-portal-update`:
 
@@ -238,7 +241,7 @@ Vor einem Update-Button in der WebUI müssen mindestens folgende Punkte umgesetz
 4. Ein Lock gegen parallele Updates.
 5. Statusanzeige für `running`, `success` und `failed`.
 6. Backup und Healthcheck vor einer Erfolgsmeldung.
-7. Begrenzte Berechtigung, idealerweise über einen eigenen Systembenutzer und eine enge `sudoers`-Regel.
+7. Unprivilegierter Dienstbenutzer und ein fester systemd-Path-Trigger statt allgemeiner Root- oder `sudo`-Rechte.
 
 Das Update-Script darf niemals direkt mit Daten aus einem Formular zusammengesetzt werden.
 

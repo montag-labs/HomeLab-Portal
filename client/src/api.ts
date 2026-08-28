@@ -1,15 +1,22 @@
-import type { AppEntry, Category, LogContent, LogPolicy, LogSource, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+
+let csrfToken = "";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, {
     headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
     ...options,
+    ...(options?.method && !["GET", "HEAD"].includes(options.method)
+      ? { headers: { "Content-Type": "application/json", "X-CSRF-Token": csrfToken, ...options.headers } }
+      : {}),
   });
   if (!res.ok) {
     let message = `Request failed: ${res.status} ${res.statusText}`;
     try {
-      const body = (await res.json()) as { message?: unknown };
+      const body = (await res.json()) as { message?: unknown; error?: unknown };
       if (typeof body.message === "string") message = body.message;
+      else if (typeof body.error === "string") message = body.error;
     } catch {
       // Keep the HTTP error when the response has no JSON body.
     }
@@ -22,6 +29,28 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  getAuthSession: async () => {
+    const session = await request<AuthSession>("/api/auth/session");
+    csrfToken = session.csrfToken ?? "";
+    return session;
+  },
+  login: async (password: string) => {
+    const session = await request<AuthSession>("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ password }),
+    });
+    csrfToken = session.csrfToken ?? "";
+    return session;
+  },
+  logout: async () => {
+    await request<void>("/api/auth/logout", { method: "POST" });
+    csrfToken = "";
+  },
+  changeAdminPassword: (currentPassword: string, newPassword: string) =>
+    request<void>("/api/auth/password", {
+      method: "PUT",
+      body: JSON.stringify({ currentPassword, newPassword }),
+    }),
   getConfig: () => request<PortalConfig>("/api/config"),
   updateConfig: (config: PortalConfig) =>
     request<PortalConfig>("/api/config", {

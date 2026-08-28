@@ -1,18 +1,28 @@
 import { Router } from "express";
-import { spawn } from "node:child_process";
-import { access } from "node:fs/promises";
+import { access, writeFile } from "node:fs/promises";
+import { timingSafeEqual } from "node:crypto";
 import { getUpdateStatus } from "../services/updateService.js";
 import {
   acknowledgeUpdateToken,
   getPendingUpdateToken,
   readUpdateToken,
 } from "../services/updateTokenService.js";
+import { requireAdmin } from "../middleware/auth.js";
 
 export const updateRouter = Router();
+
+function tokensMatch(actual: string | undefined, expected: string): boolean {
+  if (!actual) return false;
+  const actualBuffer = Buffer.from(actual);
+  const expectedBuffer = Buffer.from(expected);
+  return actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer);
+}
 
 updateRouter.get("/update", async (_req, res) => {
   res.json(await getUpdateStatus());
 });
+
+updateRouter.use("/update", requireAdmin);
 
 updateRouter.post("/update/check", async (_req, res) => {
   res.json(await getUpdateStatus(true));
@@ -32,7 +42,7 @@ updateRouter.post("/update/token/confirm", async (req, res) => {
 updateRouter.post("/update/install", async (req, res) => {
   const configuredToken = await readUpdateToken();
   const suppliedToken = req.get("x-homelab-update-token");
-  if (!configuredToken || suppliedToken !== configuredToken) {
+  if (!configuredToken || !tokensMatch(suppliedToken, configuredToken)) {
     res.status(403).json({ state: "rejected", message: "Update ist nicht autorisiert." });
     return;
   }
@@ -42,18 +52,13 @@ updateRouter.post("/update/install", async (req, res) => {
   }
 
   const script = process.env.UPDATE_SCRIPT ?? "/usr/local/sbin/homelab-portal-update";
+  const trigger = process.env.UPDATE_TRIGGER_FILE ?? "/run/homelab-portal/update-request";
   try {
     await access(script);
-    await access("/usr/bin/systemd-run");
   } catch {
-    res.status(503).json({ state: "rejected", message: "Update-Script oder systemd-run ist nicht eingerichtet." });
+    res.status(503).json({ state: "rejected", message: "Update-Script ist nicht eingerichtet." });
     return;
   }
-  const child = spawn(
-    "systemd-run",
-    ["--quiet", "--no-block", "--collect", "--unit=homelab-portal-update", script],
-    { detached: true, stdio: "ignore" },
-  );
-  child.unref();
+  await writeFile(trigger, `${new Date().toISOString()}\n`, { encoding: "utf8", mode: 0o600 });
   res.status(202).json({ state: "updating", message: "Update wurde gestartet." });
 });

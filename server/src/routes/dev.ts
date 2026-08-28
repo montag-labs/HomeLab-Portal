@@ -3,8 +3,10 @@ import os from "node:os";
 import { readConfig } from "../services/configStore.js";
 import { getUpdateStatus } from "../services/updateService.js";
 import { checkReachability } from "./status.js";
+import { requireAdmin } from "../middleware/auth.js";
 
 export const devRouter = Router();
+devRouter.use("/dev", requireAdmin);
 
 devRouter.get("/dev/enabled", (_req, res) => {
   res.json({ enabled: true });

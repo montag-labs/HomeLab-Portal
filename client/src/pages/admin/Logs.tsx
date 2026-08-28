@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
-import { useConfig } from "../../context/ConfigContext";
+import { useConfig } from "../../hooks/useConfig";
 import type { LogPolicy, LogRotation, LogSource } from "../../types";
 
 const DEFAULT_POLICY: LogPolicy = { rotation: "day", archiveCount: 7 };
@@ -19,7 +19,7 @@ export function Logs() {
   const [selectedId, setSelectedId] = useState("");
   const [content, setContent] = useState("");
   const [truncated, setTruncated] = useState(false);
-  const [policy, setPolicy] = useState<LogPolicy>(DEFAULT_POLICY);
+  const [policy, setPolicy] = useState<LogPolicy>(() => config?.settings.logPolicy ?? DEFAULT_POLICY);
   const [loading, setLoading] = useState(true);
   const [contentLoading, setContentLoading] = useState(false);
   const [error, setError] = useState("");
@@ -58,16 +58,16 @@ export function Logs() {
   }, [t]);
 
   useEffect(() => {
+    // Async API loading is the external synchronization performed by this effect.
+    // oxlint-disable-next-line react/set-state-in-effect
     void loadLogs();
   }, [loadLogs]);
 
   useEffect(() => {
+    // The selected external log source determines which API resource is loaded.
+    // oxlint-disable-next-line react/set-state-in-effect
     void loadContent(selectedId);
   }, [loadContent, selectedId]);
-
-  useEffect(() => {
-    if (config?.settings.logPolicy) setPolicy(config.settings.logPolicy);
-  }, [config?.settings.logPolicy]);
 
   const refreshAfterAction = async (message: string) => {
     await loadLogs();

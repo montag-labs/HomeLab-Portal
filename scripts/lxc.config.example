@@ -53,3 +53,14 @@
 # Erlaubt: ganze Zahl von 1 bis 65535.
 # Standard: 80.
 # HOMELAB_PORT=80
+
+# Reverse-Proxy-Header nur vertrauen, wenn das Portal ausschließlich über
+# einen vertrauenswürdigen lokalen Reverse Proxy erreicht wird.
+# TRUST_PROXY=false
+
+# Secure-Cookies auch ohne erkannten HTTPS-Reverse-Proxy erzwingen.
+# FORCE_SECURE_COOKIES=false
+
+# TLS-Zertifikatsprüfung für Erreichbarkeitstests deaktivieren.
+# Nur für Homelab-Dienste mit selbstsignierten Zertifikaten aktivieren.
+# ALLOW_INSECURE_TLS=false

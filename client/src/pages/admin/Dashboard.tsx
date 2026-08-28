@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
-import { useConfig } from "../../context/ConfigContext";
+import { useConfig } from "../../hooks/useConfig";
 import type { GrafanaSettings } from "../../types";
 
 const defaultGrafana: GrafanaSettings = {
@@ -17,11 +17,9 @@ export function Dashboard() {
   const { config, refresh } = useConfig();
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
-  const [grafanaDraft, setGrafanaDraft] = useState<GrafanaSettings>(defaultGrafana);
-
-  useEffect(() => {
-    setGrafanaDraft({ ...defaultGrafana, ...config?.settings.grafana });
-  }, [config?.settings.grafana]);
+  const [grafanaDraft, setGrafanaDraft] = useState<GrafanaSettings>(
+    () => ({ ...defaultGrafana, ...config?.settings.grafana }),
+  );
 
   if (!config) return null;
 

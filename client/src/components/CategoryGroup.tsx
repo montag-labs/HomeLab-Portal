@@ -1,7 +1,7 @@
 import type { Category } from "../types";
 import { useState } from "react";
 import { api } from "../api";
-import { useConfig } from "../context/ConfigContext";
+import { useConfig } from "../hooks/useConfig";
 import { AppCard } from "./AppCard";
 
 export function CategoryGroup({ category }: { category: Category }) {

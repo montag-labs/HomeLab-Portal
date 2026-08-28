@@ -5,6 +5,7 @@ readonly CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
 TOKEN_DIR="/var/lib/homelab-portal"
 TOKEN_FILE="${TOKEN_DIR}/update-token"
 readonly SERVICE_NAME="homelab-portal"
+readonly APP_GROUP="homelab-portal"
 
 if [[ -f "${CONFIG_FILE}" ]]; then
   while IFS= read -r line || [[ -n "${line}" ]]; do
@@ -32,9 +33,10 @@ if ! command -v openssl >/dev/null 2>&1; then
   exit 1
 fi
 
-install -d -m 700 "${TOKEN_DIR}"
+install -d -o root -g "${APP_GROUP}" -m 770 "${TOKEN_DIR}"
 printf '%s\n' "$(openssl rand -hex 32)" > "${TOKEN_FILE}"
-chmod 600 "${TOKEN_FILE}"
+chown root:"${APP_GROUP}" "${TOKEN_FILE}"
+chmod 640 "${TOKEN_FILE}"
 rm -f "${TOKEN_DIR}/update-token-acknowledged"
 systemctl restart "${SERVICE_NAME}"
 

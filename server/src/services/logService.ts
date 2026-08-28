@@ -3,7 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import { createGzip } from "node:zlib";
-import { readConfig, writeConfig } from "./configStore.js";
+import { mutateConfig, readConfig } from "./configStore.js";
 import type { LogContent, LogPolicy, LogSource } from "../types.js";
 
 const LOG_DIR = process.env.LOG_DIR ?? "/var/log/homelab-portal";
@@ -178,9 +178,9 @@ export async function getLogPolicy(): Promise<LogPolicy> {
 }
 
 export async function updateLogPolicy(policy: LogPolicy): Promise<LogPolicy> {
-  const config = await readConfig();
-  config.settings.logPolicy = policy;
-  await writeConfig(config);
+  await mutateConfig((config) => {
+    config.settings.logPolicy = policy;
+  });
   for (const definition of LOG_DEFINITIONS) {
     await removeOldArchives(definition.id, policy.archiveCount);
   }
