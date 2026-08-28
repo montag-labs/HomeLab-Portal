@@ -32,14 +32,13 @@ Konfigurationsexporte aus dem Admin-Bereich enthalten kein Admin-Passwort.
 
 ## Logs
 
-Der Admin-Bereich kennt feste, nicht frei wählbare Logquellen:
+Der Admin-Bereich zeigt nur Logquellen, die zum aktiven Betriebsmodus passen:
 
-- Installation
-- LXC-Update
-- Docker-Update
-- Portal-Service
-- Healthcheck
-- Backup und Rollback
+- LXC: Installation und LXC-Update
+- Docker: Docker-Update
+- Beide Betriebsmodi: Portal-Service, Healthcheck sowie Backup und Rollback
+
+Damit werden Docker-Logs in einer LXC-Installation und LXC-Logs in einer Docker-Installation weder aufgelistet noch über die Log-API bereitgestellt.
 
 Logs können angezeigt, heruntergeladen, als `.gz` archiviert und geleert werden. Pro Ansicht wird höchstens das letzte MiB gelesen.
 
