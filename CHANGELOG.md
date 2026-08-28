@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.10] - 2026-08-28
+
+### Behoben
+
+- Hell-/Dunkel-Umschaltung im öffentlichen Portal funktioniert ohne Admin-Anmeldung und wird lokal im Browser gespeichert.
+- Grafana-Dashboards folgen der lokal ausgewählten Darstellung.
+
 ## [1.3.9] - 2026-08-28
 
 ### Geändert
