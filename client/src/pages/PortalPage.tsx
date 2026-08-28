@@ -28,7 +28,9 @@ export function PortalPage() {
       <div className="portal-workspace">
         <header className="portal-header">
           <div className="portal-brand-card">
-            <span className="portal-summary-icon"><Server size={18} aria-hidden="true" /></span>
+            <span className="portal-brand-image">
+              <img src="/icons/homelab-portal.png" alt="" />
+            </span>
             <span>
               <strong>{t("app.title")}</strong>
               <span className={`portal-brand-status portal-brand-status-${versionState}`}>

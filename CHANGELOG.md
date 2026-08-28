@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.4] - 2026-08-28
+
+### Geändert
+
+- Öffentliches Header-Logo durch die bereitgestellte PNG-Bildmarke ersetzt.
+
 ## [1.3.3] - 2026-08-28
 
 ### Geändert
