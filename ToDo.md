@@ -19,6 +19,7 @@
 
 ## Bereits umgesetzt
 
+- [x] Theme-Umschalter in den öffentlichen Portal-Header neben Kategorien und Dienste verschieben. (v1.3.7)
 - [x] Theme-Auswahl für Portal und Administration korrigieren und Theme-Umschaltung im Admin-Header ergänzen. (v1.3.6)
 - [x] Innenabstände der Admin-Kacheln wiederherstellen und 5px auf äußere Kachelabstände beschränken. (v1.3.5)
 - [x] Öffentliches Portal-Logo durch bereitgestellte PNG-Bildmarke ersetzen. (v1.3.4)

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
+import { ThemeToggle } from "../components/ThemeToggle";
 import { Boxes, Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
@@ -47,6 +48,7 @@ export function PortalPage() {
               <span className="portal-summary-icon"><Server size={18} aria-hidden="true" /></span>
               <span><strong>{serviceCount}</strong>{t("portal.services")}</span>
             </div>
+            <ThemeToggle />
           </div>
         </header>
         <main className="portal-main">

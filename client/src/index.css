@@ -1741,6 +1741,7 @@ img.admin-icon-option-preview {
 
 .theme-toggle-tile {
   display: inline-flex;
+  min-width: 7.75rem;
   min-height: 3.1rem;
   align-items: center;
   gap: 0.55rem;
