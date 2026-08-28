@@ -22,6 +22,11 @@
     "services": "Services",
     "dashboardDescription": "Live metrics and system status from Grafana."
   },
+  "theme": {
+    "title": "Theme",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
   "auth": {
     "title": "Administration sign-in",
     "description": "Sign in to manage services, categories, and system settings.",

@@ -22,6 +22,11 @@
     "services": "Dienste",
     "dashboardDescription": "Live-Metriken und Systemstatus aus Grafana."
   },
+  "theme": {
+    "title": "Theme",
+    "switchToLight": "Helles Theme aktivieren",
+    "switchToDark": "Dunkles Theme aktivieren"
+  },
   "auth": {
     "title": "Administration anmelden",
     "description": "Melde dich an, um Dienste, Kategorien und Systemeinstellungen zu verwalten.",

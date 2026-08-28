@@ -8,6 +8,10 @@
   --logo-surface: #202b3c;
   --logo-contrast: #fff8e7;
   --logo-highlight: #f7c95c;
+  --admin-sidebar-bg: #e7edf5;
+  --admin-sidebar-text: #253247;
+  --admin-sidebar-muted: #607086;
+  --admin-sidebar-border: rgb(37 50 71 / 14%);
 }
 
 :root[data-theme="dark"] {
@@ -19,6 +23,10 @@
   --logo-surface: #f4f5f7;
   --logo-contrast: #121316;
   --logo-highlight: #2563eb;
+  --admin-sidebar-bg: #0c1422;
+  --admin-sidebar-text: #f8fafc;
+  --admin-sidebar-muted: rgb(255 255 255 / 55%);
+  --admin-sidebar-border: rgb(255 255 255 / 9%);
 }
 
 * {
@@ -1551,10 +1559,8 @@ img.admin-icon-option-preview {
   flex-direction: column;
   padding: 5px;
   overflow-y: auto;
-  color: #f8fafc;
-  background:
-    linear-gradient(155deg, rgb(12 20 34 / 98%), rgb(20 34 55 / 97%)),
-    var(--logo-surface);
+  color: var(--admin-sidebar-text);
+  background: var(--admin-sidebar-bg);
 }
 
 .admin-sidebar-brand {
@@ -1562,7 +1568,7 @@ img.admin-icon-option-preview {
   align-items: center;
   gap: 0.75rem;
   padding: 0.2rem 0.55rem;
-  color: #fff;
+  color: var(--admin-sidebar-text);
   font-size: 1rem;
   font-weight: 750;
   letter-spacing: -0.025em;
@@ -1587,7 +1593,7 @@ img.admin-icon-option-preview {
 
 .admin-sidebar-label {
   margin: 2.25rem 0.7rem 0.7rem;
-  color: rgb(255 255 255 / 38%);
+  color: var(--admin-sidebar-muted);
   font-size: 0.65rem;
   font-weight: 750;
   letter-spacing: 0.13em;
@@ -1607,7 +1613,7 @@ img.admin-icon-option-preview {
   padding: 0.72rem 0.8rem;
   border: 1px solid transparent;
   border-radius: 10px;
-  color: rgb(255 255 255 / 62%);
+  color: var(--admin-sidebar-muted);
   background: transparent;
   font-size: 0.84rem;
   font-weight: 600;
@@ -1616,14 +1622,14 @@ img.admin-icon-option-preview {
 }
 
 .admin-tabs button:hover {
-  border-color: rgb(255 255 255 / 7%);
-  color: #fff;
-  background: rgb(255 255 255 / 5%);
+  border-color: var(--admin-sidebar-border);
+  color: var(--admin-sidebar-text);
+  background: color-mix(in srgb, var(--admin-sidebar-text) 7%, transparent);
 }
 
 .admin-tabs button.active {
-  border-color: rgb(255 255 255 / 10%);
-  color: #fff;
+  border-color: var(--admin-sidebar-border);
+  color: var(--admin-sidebar-text);
   background: color-mix(in srgb, var(--accent-color) 74%, transparent);
   box-shadow: 0 9px 22px color-mix(in srgb, var(--accent-color) 15%, transparent);
 }
@@ -1633,7 +1639,7 @@ img.admin-icon-option-preview {
   gap: 0.35rem;
   margin-top: auto;
   padding-top: 1rem;
-  border-top: 1px solid rgb(255 255 255 / 9%);
+  border-top: 1px solid var(--admin-sidebar-border);
 }
 
 .admin-session-status {
@@ -1652,12 +1658,12 @@ img.admin-icon-option-preview {
 .admin-session-status span {
   display: grid;
   gap: 0.1rem;
-  color: rgb(255 255 255 / 43%);
+  color: var(--admin-sidebar-muted);
   font-size: 0.67rem;
 }
 
 .admin-session-status strong {
-  color: rgb(255 255 255 / 80%);
+  color: var(--admin-sidebar-text);
   font-size: 0.73rem;
 }
 
@@ -1669,15 +1675,15 @@ img.admin-icon-option-preview {
   padding: 0.62rem 0.7rem;
   border: 0;
   border-radius: 9px;
-  color: rgb(255 255 255 / 55%);
+  color: var(--admin-sidebar-muted);
   background: transparent;
   font: 600 0.77rem/1.2 inherit;
   text-decoration: none;
 }
 
 .admin-sidebar-action:hover {
-  color: #fff;
-  background: rgb(255 255 255 / 5%);
+  color: var(--admin-sidebar-text);
+  background: color-mix(in srgb, var(--admin-sidebar-text) 7%, transparent);
 }
 
 .admin-workspace {
@@ -1725,6 +1731,53 @@ img.admin-icon-option-preview {
   background: color-mix(in srgb, #22c55e 8%, var(--bg));
   font-size: 0.72rem;
   font-weight: 650;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-toggle-tile {
+  display: inline-flex;
+  min-height: 3.1rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  background: var(--bg-elevated);
+  text-align: left;
+}
+
+.theme-toggle-tile:hover {
+  border-color: var(--accent-color);
+}
+
+.theme-toggle-icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  background: var(--accent-color);
+}
+
+.theme-toggle-tile > span:last-child {
+  display: grid;
+  gap: 0.05rem;
+}
+
+.theme-toggle-tile strong {
+  font-size: 0.78rem;
+}
+
+.theme-toggle-tile small {
+  color: var(--text-muted);
+  font-size: 0.68rem;
 }
 
 :root[data-theme="dark"] .admin-header-status {
