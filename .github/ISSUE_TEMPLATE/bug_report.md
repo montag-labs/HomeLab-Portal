@@ -18,15 +18,15 @@ Beschreibe den Fehler kurz und konkret.
 
 ## Erwartetes Verhalten
 
-## Tatsaechliches Verhalten
+## Tatsächliches Verhalten
 
 ## Umgebung
 
 - Version oder Commit:
-- Betrieb: [ ] Node.js [ ] Docker Compose [ ] LXC
+- Betrieb: [ ] Lokale Entwicklung [ ] Docker Compose [ ] LXC
 - Browser:
 - Betriebssystem:
 
-## Zusaetzliche Informationen
+## Zusätzliche Informationen
 
-Keine Passwoerter, Tokens, privaten IP-Adressen oder vertraulichen Konfigurationsdateien einfuegen.
+Keine Passwörter, Tokens, privaten IP-Adressen oder vertraulichen Konfigurationsdateien einfügen.

@@ -8,7 +8,7 @@ assignees: ""
 
 ## Problem oder Anlass
 
-Welches Problem soll geloest werden?
+Welches Problem soll gelöst werden?
 
 ## Vorschlag
 
@@ -18,4 +18,4 @@ Beschreibe die gewünschte Funktion oder Änderung.
 
 Optional: Wie könnte die Umsetzung aussehen?
 
-## Zusaetzliche Informationen
+## Zusätzliche Informationen

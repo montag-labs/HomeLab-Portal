@@ -1,24 +1,47 @@
 # Sicherheit
 
-## Aktueller Sicherheitsstatus
+## Sicherheitsmodell
 
-HomeLab-Portal besitzt derzeit keine eigene Authentifizierung und ist für den Betrieb in einem vertrauenswürdigen Heimnetz vorgesehen.
+Das öffentliche Portal ist ohne Anmeldung erreichbar. Es zeigt die konfigurierten Kategorien, Dienste, URLs, Statusinformationen und gegebenenfalls das eingebettete Grafana-Dashboard. Diese Inhalte dürfen daher keine Geheimnisse enthalten.
 
-- Port 4000 nicht direkt ins Internet exponieren.
-- Einen Reverse Proxy mit HTTPS und Authentifizierung verwenden, wenn Zugriff außerhalb des Heimnetzes erforderlich ist.
-- `server/data/config.json` enthält lokale Infrastruktur-URLs und darf nicht veröffentlicht werden.
-- Grafana-Zugangsdaten niemals in Portal-Konfiguration, URL, Issue oder Pull Request speichern.
+Der Admin-Bereich und alle verändernden oder administrativen API-Routen sind geschützt durch:
 
-## Sicherheitsluecke melden
+- serverseitige Sitzungen mit acht Stunden Laufzeit
+- `HttpOnly`- und `SameSite=Strict`-Session-Cookies
+- `Secure`-Cookies bei HTTPS oder aktivem `FORCE_SECURE_COOKIES`
+- CSRF-Token für schreibende Anfragen
+- zeitkonstante Passwortvergleiche
+- Begrenzung auf fünf Loginversuche pro IP innerhalb von 15 Minuten
+- Mindestlänge von 12 Zeichen bei Passwortänderungen
 
-Bitte melde Sicherheitsprobleme nicht öffentlich über GitHub Issues. Erstelle stattdessen einen privaten Security-Report im GitHub-Repository. Falls diese Funktion nicht aktiviert ist, kontaktiere die Maintainer direkt über das Repository-Profil.
+Sitzungen werden nur im Arbeitsspeicher gehalten und gehen bei einem Serverneustart verloren.
 
-Bitte beschreibe:
+## Empfehlungen für den Betrieb
+
+- Portal und Admin-Bereich nicht ungeschützt aus dem Internet veröffentlichen.
+- Einen vertrauenswürdigen Reverse Proxy mit HTTPS verwenden.
+- `TRUST_PROXY=true` nur setzen, wenn das Backend ausschließlich über diesen Proxy erreichbar ist.
+- Bei ausschließlichem HTTPS-Betrieb `FORCE_SECURE_COOKIES=true` setzen.
+- Ein langes, zufälliges Admin-Passwort verwenden und die Passwortdatei sichern.
+- `server/data/config.json` nicht veröffentlichen; sie kann interne Namen, IP-Adressen und URLs enthalten.
+- Keine Grafana-Zugangsdaten in URLs oder Portal-Konfiguration speichern.
+- `ALLOW_INSECURE_TLS=true` nur für kontrollierte Homelab-Ziele mit selbstsignierten Zertifikaten verwenden.
+- `APP_ENV=development` nicht auf öffentlich erreichbaren Instanzen aktivieren.
+
+Docker läuft ohne Root-Rechte, mit schreibgeschütztem Root-Dateisystem, entfernten Linux-Capabilities und `no-new-privileges`. Die LXC-Installation verwendet einen unprivilegierten Dienstbenutzer und systemd-Sandboxing. Updateaktionen sind auf feste Skripte und Quellen begrenzt.
+
+Weitere Hinweise stehen in der [Betriebsdokumentation](docs/operations.md).
+
+## Sicherheitslücke melden
+
+Sicherheitsprobleme bitte nicht öffentlich über GitHub Issues melden. Stattdessen einen privaten Security-Report im GitHub-Repository erstellen. Falls diese Funktion nicht verfügbar ist, die Maintainer über das Repository-Profil kontaktieren.
+
+Der Bericht sollte enthalten:
 
 - betroffene Version oder Commit-ID
 - reproduzierbare Schritte
-- erwartetes und tatsaechliches Verhalten
+- erwartetes und tatsächliches Verhalten
 - mögliche Auswirkungen
-- vorhandene Gegenmassnahmen
+- bereits getestete Gegenmaßnahmen
 
-Bitte keine produktiven IP-Adressen, Passwoerter, Tokens oder Screenshots mit vertraulichen Daten mitsenden.
+Keine produktiven IP-Adressen, Passwörter, Tokens, Konfigurationsdateien oder Screenshots mit vertraulichen Daten mitsenden.
