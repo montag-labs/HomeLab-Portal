@@ -4,7 +4,6 @@ import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
 import { Boxes, Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
-import { BrandLogo } from "../components/BrandLogo";
 import { useConfig } from "../hooks/useConfig";
 import type { UpdateStatus } from "../types";
 
@@ -28,12 +27,14 @@ export function PortalPage() {
       <Sidebar />
       <div className="portal-workspace">
         <header className="portal-header">
-          <div className="portal-header-brand">
-            <BrandLogo
-              version={updateStatus?.installedVersion ?? "-"}
-              status={versionStatus}
-              statusState={versionState}
-            />
+          <div className="portal-brand-card">
+            <span className="portal-summary-icon"><Server size={18} aria-hidden="true" /></span>
+            <span>
+              <strong>{t("app.title")}</strong>
+              <span className={`portal-brand-status portal-brand-status-${versionState}`}>
+                v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
+              </span>
+            </span>
           </div>
           <div className="portal-summary" aria-label={t("portal.summary")}>
             <div className="portal-summary-item">
