@@ -1,5 +1,6 @@
 import type { Category } from "../types";
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { AppCard } from "./AppCard";
 
 export function CategoryGroup({ category }: { category: Category }) {
@@ -33,7 +34,7 @@ export function CategoryGroup({ category }: { category: Category }) {
         onClick={toggleCollapsed}
         aria-expanded={!collapsed}
       >
-        <span className={`chevron ${collapsed ? "collapsed" : ""}`}>▾</span>
+        <ChevronDown className={`chevron ${collapsed ? "collapsed" : ""}`} size={16} aria-hidden="true" />
         <span>{category.name}</span>
       </button>
       {!collapsed && (

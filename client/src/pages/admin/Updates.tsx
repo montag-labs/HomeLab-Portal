@@ -8,7 +8,6 @@ export function Updates() {
   const [status, setStatus] = useState<UpdateStatus | null>(null);
   const [checking, setChecking] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [token, setToken] = useState("");
 
   const checkForUpdates = async () => {
     setChecking(true);
@@ -22,12 +21,12 @@ export function Updates() {
   };
 
   const installUpdate = async () => {
-    if (status?.capabilities.mode !== "lxc" || !status.updateAvailable || !token) {
+    if (status?.capabilities.mode !== "lxc" || !status.updateAvailable) {
       return;
     }
     setUpdating(true);
     try {
-      const result = await api.installUpdate(token);
+      const result = await api.installUpdate();
       setStatus((current) => (current ? { ...current, state: "updating", error: result.message } : current));
       waitForServerRestart(status.latestVersion);
     } catch (error) {
@@ -120,29 +119,17 @@ export function Updates() {
               {t("admin.viewRelease")}
             </a>
           )}
-          {status?.capabilities.mode === "lxc" && (
-            <input
-              className="update-token-input"
-              type="password"
-              value={token}
-              placeholder={t("admin.updateToken")}
-              aria-label={t("admin.updateToken")}
-              onChange={(event) => setToken(event.target.value)}
-            />
-          )}
           <button
             type="button"
             className="btn"
-            disabled={status?.capabilities.mode !== "lxc" || !status.updateAvailable || !token || updating}
+            disabled={status?.capabilities.mode !== "lxc" || !status.updateAvailable || updating}
             onClick={installUpdate}
             title={
               status?.capabilities.mode !== "lxc"
                 ? status?.capabilities.reason
                 : !status.updateAvailable
                   ? t("admin.noUpdateAvailable")
-                  : !token
-                    ? t("admin.updateTokenRequired")
-                    : undefined
+                  : undefined
             }
           >
             {updating ? t("admin.installingUpdate") : t("admin.installUpdate")}

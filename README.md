@@ -154,9 +154,7 @@ Die Datei wird nicht versioniert. Eine Startvorlage befindet sich in [server/dat
 
 Im Administrationsbereich prüft das Modul „Updates“ die installierte Version gegen das neueste stabile GitHub-Release. Die Prüfung verwendet einen kurzen Cache und blockiert den Portalbetrieb nicht, wenn GitHub nicht erreichbar ist.
 
-Für den LXC-Betrieb setzt das Installationsscript `UPDATE_MODE=lxc`. Der Updatebutton schreibt nach erfolgreicher Admin- und Token-Prüfung ausschließlich eine feste Triggerdatei; eine systemd-Path-Unit startet das root-eigene Update-Script.
-
-Für den UI-Updatebutton erzeugt das Script bei der LXC-Installation automatisch ein Update-Token. Das Token wird beim ersten Öffnen einmalig im Popup angezeigt, muss sicher gespeichert und anschließend im Adminbereich eingegeben werden.
+Für den LXC-Betrieb setzt das Installationsscript `UPDATE_MODE=lxc`. Der Updatebutton schreibt nach erfolgreicher Prüfung der Admin-Sitzung und des CSRF-Tokens ausschließlich eine feste Triggerdatei; eine systemd-Path-Unit startet das root-eigene Update-Script.
 
 Für die Admin-Anmeldung erzeugt die LXC-Installation außerdem ein zufälliges Passwort:
 
@@ -165,8 +163,6 @@ sudo cat /var/lib/homelab-portal/admin-password
 ```
 
 Das Passwort kann anschließend im Adminbereich unter „Allgemein“ geändert werden. Die Datei bleibt unter `/var/lib/homelab-portal/admin-password` persistent.
-
-Ein neues Token kann im LXC-Terminal mit `sudo /usr/local/sbin/homelab-portal-reset-token` erzeugt werden. Beim nächsten Öffnen des Portals wird es einmalig angezeigt.
 
 Bei Docker wird `UPDATE_MODE=docker` verwendet. Das Portal zeigt die verfügbare Version und den GitHub-Release-Link an. Das eigentliche Update wird sicher hostseitig mit `docker compose pull` und `docker compose up -d` ausgeführt. Der Docker-Socket wird nicht in den Container eingebunden.
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, MonitorUp } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useConfig } from "../hooks/useConfig";
 import type { GrafanaSettings } from "../types";
@@ -13,6 +13,7 @@ export function GrafanaPanelStub() {
   if (!settings?.enabled || !settings.url) {
     return (
       <section className="grafana-panel grafana-panel-empty">
+        <span className="grafana-empty-icon"><MonitorUp size={26} aria-hidden="true" /></span>
         <p>{t("dashboard.grafanaDisabled")}</p>
       </section>
     );

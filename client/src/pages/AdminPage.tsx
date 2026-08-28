@@ -9,7 +9,6 @@ import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
 import { Logs } from "./admin/Logs";
 import { AdminLogin } from "../components/AdminLogin";
-import { UpdateTokenNotice } from "../components/UpdateTokenNotice";
 import { useAuth } from "../hooks/useAuth";
 import {
   ArrowLeft,
@@ -118,7 +117,6 @@ export function AdminPage() {
           </button>
         </div>
       </aside>
-      <UpdateTokenNotice />
       <div className="admin-workspace">
         <header className="admin-header">
           <div>

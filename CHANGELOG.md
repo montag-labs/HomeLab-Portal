@@ -6,6 +6,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-28
+
+### Hinzugefügt
+
+- Öffentliche Portalansicht mit einheitlichem Design, Übersichtsheader und Zählern für Kategorien und Dienste erweitert.
+
+### Geändert
+
+- Navigation, Kategorien, App-Karten, Grafana-Fläche und Spendenlinks responsiv an das Design des Adminbereichs angepasst.
+- LXC-Updates werden jetzt ausschließlich über die geschützte Admin-Sitzung und den sitzungsgebundenen CSRF-Token autorisiert.
+- Veraltete Update-Token-Eingabe, Einmal-Popup, API-Routen, Token-Dateien und Reset-Hilfsscript entfernt.
+- LXC-Upgrades bereinigen vorhandene Update-Token-Artefakte automatisch.
+
 ## [1.2.1] - 2026-08-28
 
 ### Behoben

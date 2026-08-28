@@ -13,6 +13,15 @@
     "portal": "Portal",
     "admin": "Administration"
   },
+  "portal": {
+    "overview": "Portal overview",
+    "welcome": "Welcome to your homelab",
+    "description": "All services and system information in one central place.",
+    "summary": "Portal summary",
+    "categories": "Categories",
+    "services": "Services",
+    "dashboardDescription": "Live metrics and system status from Grafana."
+  },
   "auth": {
     "title": "Administration sign-in",
     "description": "Sign in to manage services, categories, and system settings.",
@@ -82,8 +91,6 @@
     "installUpdate": "Install update",
     "installingUpdate": "Starting update …",
     "noUpdateAvailable": "No newer update is available.",
-    "updateTokenRequired": "Enter the update token first.",
-    "updateToken": "Update token",
     "updateStartError": "The update could not be started.",
     "updateCheckError": "The GitHub version could not be checked.",
     "updateStates": {
@@ -154,11 +161,5 @@
     "openInGrafana": "Open in Grafana",
     "loading": "Loading Grafana …",
     "loginHint": "If the dashboard does not load here, open it in a new tab and sign in there."
-  },
-  "updateToken": {
-    "title": "Save update token",
-    "description": "This token is shown only once. Save it in a secure place now.",
-    "confirm": "I have securely saved the token.",
-    "continue": "Continue"
   }
 }
