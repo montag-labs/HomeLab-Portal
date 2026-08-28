@@ -6,6 +6,29 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-28
+
+### Hinzugefügt
+
+- Admin-Authentifizierung mit serverseitigen Sitzungen, geschützten Cookies, CSRF-Schutz und begrenzten Loginversuchen eingeführt.
+- Admin-Passwort kann jetzt über die Weboberfläche geändert und für Node.js, Docker und LXC persistent gespeichert werden.
+- Neue responsive Anmeldemaske und ein einheitlich gestalteter Administrationsbereich mit Navigation, Statusanzeige und überarbeiteten Formularen ergänzt.
+
+### Geändert
+
+- Docker-Container läuft als unprivilegierter Benutzer mit schreibgeschütztem Root-Dateisystem, entfernten Capabilities und `no-new-privileges`.
+- LXC-Service läuft als eigener Systembenutzer mit systemd-Sandboxing und festem systemd-Path-Trigger für privilegierte Updates.
+- React-Contexts und abgeleitete UI-Zustände neu strukturiert; Frontend-Lint läuft ohne Warnungen.
+- Dokumentation für Authentifizierung, Passwortverwaltung sowie Docker- und LXC-Härtung aktualisiert.
+
+### Sicherheit
+
+- Konfigurations-, Log-, Diagnose-, Update-Token- und mutierende API-Endpunkte durch Admin-Authentifizierung geschützt.
+- Statusprüfung auf konfigurierte HTTP(S)-Ziele begrenzt und gegen frei nutzbare SSRF-Anfragen abgesichert.
+- TLS-Zertifikatsprüfung standardmäßig aktiviert; unsichere Homelab-Zertifikate erfordern ein explizites Opt-in.
+- Sicherheitsheader, Content Security Policy, Request-Größenlimit und zentrale API-Fehlerbehandlung ergänzt.
+- Konfigurationszugriffe vollständig serialisiert, validiert und auf atomare Schreibvorgänge umgestellt.
+
 ## [1.1.12] - 2026-08-26
 
 ### Behoben
