@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import { useConfig } from "../../hooks/useConfig";
-import type { Language, ThemeMode } from "../../types";
+import type { Language } from "../../types";
 import { AdminPasswordSettings } from "../../components/AdminPasswordSettings";
 
 export function GeneralSettings() {
@@ -56,17 +56,6 @@ export function GeneralSettings() {
           >
             <option value="de">Deutsch</option>
             <option value="en">English</option>
-          </select>
-        </label>
-        <label className="admin-field">
-          {t("admin.theme")}
-          <select
-            value={settings.theme}
-            disabled={saving}
-            onChange={(e) => update({ theme: e.target.value as ThemeMode })}
-          >
-            <option value="light">{t("admin.themeLight")}</option>
-            <option value="dark">{t("admin.themeDark")}</option>
           </select>
         </label>
         <label className="admin-field">

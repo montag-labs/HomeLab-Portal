@@ -2,8 +2,9 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Eye, EyeOff, House, LockKeyhole, Server, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, House, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
+import { BrandIdentity } from "./BrandIdentity";
 
 export function AdminLogin() {
   const { t } = useTranslation();
@@ -31,8 +32,7 @@ export function AdminLogin() {
       <section className="admin-login-shell">
         <aside className="admin-login-hero" aria-label={t("auth.securityTitle")}>
           <div className="admin-login-brand">
-            <span className="admin-login-brand-mark"><Server size={25} strokeWidth={1.8} /></span>
-            <span>HomeLab<span>-Portal</span></span>
+            <BrandIdentity />
           </div>
           <div className="admin-login-hero-copy">
             <span className="admin-login-badge"><ShieldCheck size={15} /> {t("auth.protectedArea")}</span>

@@ -115,6 +115,30 @@ button {
   height: auto;
 }
 
+.brand-identity-image {
+  display: grid;
+  width: 2.2rem;
+  height: 2.2rem;
+  flex: 0 0 auto;
+  place-items: center;
+}
+
+.brand-identity-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-identity-copy {
+  display: grid;
+  gap: 0.05rem;
+}
+
+.brand-identity-copy strong {
+  font: inherit;
+}
+
 .brand-logo-mark {
   fill: var(--accent-color);
 }
@@ -561,22 +585,6 @@ button {
   letter-spacing: -0.02em;
 }
 
-.admin-login-brand > span:last-child span {
-  color: var(--logo-highlight);
-}
-
-.admin-login-brand-mark {
-  display: grid;
-  width: 2.75rem;
-  height: 2.75rem;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 16%);
-  border-radius: 12px;
-  color: #fff;
-  background: var(--accent-color);
-  box-shadow: 0 10px 24px color-mix(in srgb, var(--accent-color) 28%, transparent);
-}
-
 .admin-login-hero-copy {
   position: relative;
   z-index: 1;
@@ -868,20 +876,6 @@ button {
   .admin-login-card {
     padding: 2rem 1.25rem;
   }
-}
-
-.admin-header {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-elevated);
-}
-
-.admin-header > a {
-  font-weight: 600;
-  text-decoration: none;
 }
 
 .admin-tabs {
@@ -1585,22 +1579,6 @@ img.admin-icon-option-preview {
   text-decoration: none;
 }
 
-.admin-sidebar-brand > span:last-child span {
-  color: var(--logo-highlight);
-}
-
-.admin-sidebar-brand-mark {
-  display: grid;
-  width: 2.55rem;
-  height: 2.55rem;
-  flex: 0 0 auto;
-  place-items: center;
-  border: 1px solid rgb(255 255 255 / 14%);
-  border-radius: 11px;
-  background: var(--accent-color);
-  box-shadow: 0 9px 20px color-mix(in srgb, var(--accent-color) 25%, transparent);
-}
-
 .admin-sidebar-label {
   margin: 2.25rem 0.7rem 0.7rem;
   color: var(--admin-sidebar-muted);
@@ -1700,55 +1678,6 @@ img.admin-icon-option-preview {
   min-width: 0;
 }
 
-.admin-header {
-  display: flex;
-  min-height: 6.3rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 5px;
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg) 92%, transparent);
-}
-
-.admin-header > div {
-  display: grid;
-  gap: 0.25rem;
-}
-
-.admin-header > div > span {
-  color: var(--accent-color);
-  font-size: 0.66rem;
-  font-weight: 750;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.admin-header h1 {
-  margin: 0;
-  font-size: clamp(1.45rem, 2.5vw, 1.9rem);
-  letter-spacing: -0.035em;
-}
-
-.admin-header-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.45rem 0.7rem;
-  border: 1px solid color-mix(in srgb, #22c55e 22%, var(--border));
-  border-radius: 999px;
-  color: #15803d;
-  background: color-mix(in srgb, #22c55e 8%, var(--bg));
-  font-size: 0.72rem;
-  font-weight: 650;
-}
-
-.admin-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .theme-toggle-tile {
   display: inline-flex;
   min-width: 7.75rem;
@@ -1789,10 +1718,6 @@ img.admin-icon-option-preview {
 .theme-toggle-tile small {
   color: var(--text-muted);
   font-size: 0.68rem;
-}
-
-:root[data-theme="dark"] .admin-header-status {
-  color: #86efac;
 }
 
 .admin-content {
@@ -2019,19 +1944,12 @@ img.admin-icon-option-preview {
     font-size: 0;
   }
 
-  .admin-header {
-    min-height: 5.5rem;
-  }
 }
 
 @media (max-width: 720px) {
   .admin-category-manager-layout,
   .admin-log-layout {
     grid-template-columns: 1fr;
-  }
-
-  .admin-header-status {
-    display: none;
   }
 
   .admin-content {
@@ -2046,10 +1964,6 @@ img.admin-icon-option-preview {
 @media (max-width: 460px) {
   .admin-sidebar-brand {
     max-width: calc(100% - 5.5rem);
-  }
-
-  .admin-header {
-    padding: 1rem 1.15rem;
   }
 
   .update-details {
@@ -2436,21 +2350,6 @@ img.admin-icon-option-preview {
   border-radius: 9px;
   color: #fff;
   background: var(--accent-color);
-}
-
-.portal-brand-image {
-  display: grid;
-  width: 2.2rem;
-  height: 2.2rem;
-  flex: 0 0 auto;
-  place-items: center;
-}
-
-.portal-brand-image img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
 }
 
 .portal-brand-card > span:last-child,
