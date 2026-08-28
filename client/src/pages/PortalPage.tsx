@@ -1,24 +1,39 @@
+import { useEffect, useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
 import { Boxes, ChartNoAxesCombined, Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { api } from "../api";
+import { BrandLogo } from "../components/BrandLogo";
 import { useConfig } from "../hooks/useConfig";
+import type { UpdateStatus } from "../types";
 
 export function PortalPage() {
   const { t } = useTranslation();
   const { config } = useConfig();
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(null);
   const categoryCount = config?.categories.length ?? 0;
   const serviceCount = config?.categories.reduce((total, category) => total + category.apps.length, 0) ?? 0;
+  const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
+  const versionStatus = updateStatus
+    ? t(`app.versionStates.${versionState}`)
+    : t("app.versionStates.loading");
+
+  useEffect(() => {
+    api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
+  }, []);
 
   return (
     <div className="portal-layout">
       <Sidebar />
       <div className="portal-workspace">
         <header className="portal-header">
-          <div className="portal-header-copy">
-            <span className="portal-eyebrow">{t("portal.overview")}</span>
-            <h1>{t("portal.welcome")}</h1>
-            <p>{t("portal.description")}</p>
+          <div className="portal-header-brand">
+            <BrandLogo
+              version={updateStatus?.installedVersion ?? "-"}
+              status={versionStatus}
+              statusState={versionState}
+            />
           </div>
           <div className="portal-summary" aria-label={t("portal.summary")}>
             <div className="portal-summary-item">
