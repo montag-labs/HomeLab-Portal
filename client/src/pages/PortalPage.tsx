@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
-import { Boxes, ChartNoAxesCombined, Server } from "lucide-react";
+import { Boxes, Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { BrandLogo } from "../components/BrandLogo";
@@ -47,18 +47,7 @@ export function PortalPage() {
           </div>
         </header>
         <main className="portal-main">
-          <section className="portal-dashboard-section">
-            <div className="portal-section-heading">
-              <span className="portal-section-icon">
-                <ChartNoAxesCombined size={21} aria-hidden="true" />
-              </span>
-              <div>
-                <h2>{t("dashboard.title")}</h2>
-                <p>{t("portal.dashboardDescription")}</p>
-              </div>
-            </div>
-            <GrafanaPanelStub />
-          </section>
+          <GrafanaPanelStub />
         </main>
       </div>
     </div>

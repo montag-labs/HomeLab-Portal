@@ -19,6 +19,7 @@
 
 ## Bereits umgesetzt
 
+- [x] Grafana-Dashboard im öffentlichen Portal auf die gesamte Fläche unterhalb des Headers erweitern. (v1.3.2)
 - [x] Öffentlichen Portal-Header verdichten, Logo in den Header verschieben und die Navigation weiter nach oben rücken. (v1.3.1)
 - [x] GitHub-README, Beitragsrichtlinien, Security-Hinweise, Issue-Templates und CI ergänzt.
 - [x] Konfigurierbares Grafana-Dashboard per Iframe implementiert. (v0.1.0)
