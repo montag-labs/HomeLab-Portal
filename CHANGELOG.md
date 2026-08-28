@@ -6,6 +6,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.11] - 2026-08-28
+
+### Geändert
+
+- Portal, Admin-Anmeldung und Administrationsbereich verwenden dieselbe Logo-Grafik und gemeinsame Branding-Komponente.
+- Admin-Header entfernt und die Inhaltsfläche entsprechend vereinfacht.
+- Wirkungslosen Theme-Wähler aus den allgemeinen Admin-Einstellungen entfernt; die Darstellung wird weiterhin direkt im Portal umgeschaltet.
+
 ## [1.3.10] - 2026-08-28
 
 ### Behoben

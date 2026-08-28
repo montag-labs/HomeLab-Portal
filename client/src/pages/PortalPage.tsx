@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Sidebar } from "../components/Sidebar";
 import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
 import { ThemeToggle } from "../components/ThemeToggle";
+import { BrandIdentity } from "../components/BrandIdentity";
 import { Boxes, Server } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
@@ -29,15 +30,13 @@ export function PortalPage() {
       <div className="portal-workspace">
         <header className="portal-header">
           <div className="portal-brand-card">
-            <span className="portal-brand-image">
-              <img src="/icons/homelab-portal.png" alt="" />
-            </span>
-            <span>
-              <strong>{t("app.title")}</strong>
-              <span className={`portal-brand-status portal-brand-status-${versionState}`}>
+            <BrandIdentity
+              details={(
+                <span className={`portal-brand-status portal-brand-status-${versionState}`}>
                 v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
-              </span>
-            </span>
+                </span>
+              )}
+            />
           </div>
           <div className="portal-summary" aria-label={t("portal.summary")}>
             <div className="portal-summary-item">

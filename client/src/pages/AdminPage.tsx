@@ -9,6 +9,7 @@ import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
 import { Logs } from "./admin/Logs";
 import { AdminLogin } from "../components/AdminLogin";
+import { BrandIdentity } from "../components/BrandIdentity";
 import { useAuth } from "../hooks/useAuth";
 import {
   ArrowLeft,
@@ -18,7 +19,6 @@ import {
   LogOut,
   RefreshCw,
   ScrollText,
-  Server,
   Settings2,
   ShieldCheck,
 } from "lucide-react";
@@ -37,21 +37,11 @@ export function AdminPage() {
   if (loading) return <main className="admin-login"><p>{t("auth.loading")}</p></main>;
   if (!session?.authenticated) return <AdminLogin />;
 
-  const currentTitle = {
-    general: t("admin.general"),
-    categories: t("admin.categories"),
-    dashboard: t("admin.dashboard"),
-    updates: t("admin.updates"),
-    logs: t("admin.logs"),
-    dev: t("admin.devDebug"),
-  }[tab];
-
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
         <Link className="admin-sidebar-brand" to="/">
-          <span className="admin-sidebar-brand-mark"><Server size={21} /></span>
-          <span>HomeLab<span>-Portal</span></span>
+          <BrandIdentity />
         </Link>
         <div className="admin-sidebar-label">{t("nav.admin")}</div>
         <nav className="admin-tabs" aria-label={t("nav.admin")}>
@@ -118,13 +108,6 @@ export function AdminPage() {
         </div>
       </aside>
       <div className="admin-workspace">
-        <header className="admin-header">
-          <div>
-            <span>{t("admin.areaLabel")}</span>
-            <h1>{currentTitle}</h1>
-          </div>
-          <span className="admin-header-status"><ShieldCheck size={16} />{t("admin.secureSession")}</span>
-        </header>
         <main className="admin-content">
           {tab === "general" && <GeneralSettings />}
           {tab === "categories" && <CategoryManager />}
