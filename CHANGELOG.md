@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-08-28
+
+### Behoben
+
+- Kategorien im öffentlichen Portal lassen sich wieder zuverlässig auf- und zuklappen. Der persönliche Zustand wird lokal im Browser gespeichert, ohne eine geschützte Admin-API aufzurufen.
+
 ## [1.2.0] - 2026-08-28
 
 ### Hinzugefügt
