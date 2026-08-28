@@ -6,6 +6,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.14] - 2026-08-28
+
+### Geändert
+
+- Dashboard-Modul als Dashboard-Hub mit Aktivierung, Anbieter-Presets, kompakter Konfiguration, Live-Vorschau und neuer Portal-Toolbar vollständig neu gestaltet.
+- Neben Grafana werden Netdata, veröffentlichte Uptime-Kuma-Statusseiten und frei konfigurierbare Dashboard-URLs unterstützt; bestehende Grafana-Konfigurationen werden automatisch migriert.
+- Log-Rotationsleiste verkleinert und Felder sowie Speicheraktion auf Desktop in einer Zeile angeordnet.
+
 ## [1.3.13] - 2026-08-28
 
 ### Geändert

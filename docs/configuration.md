@@ -20,19 +20,24 @@ Unter „Kategorien & Apps“ lassen sich:
 
 Ein Klick auf die App-Karte öffnet bevorzugt die externe Domain und verwendet die lokale Adresse, wenn keine Domain konfiguriert ist. Beide Adressen werden für den gemeinsamen Erreichbarkeitsstatus geprüft und separat als Links angezeigt.
 
-## Grafana
+## Dashboards
 
-Unter „Dashboard“ kann ein Grafana-Dashboard eingebettet werden:
+Unter „Dashboard“ lässt sich eine Monitoring- oder Statusoberfläche direkt in das Portal einbetten. Der Dashboard-Hub bietet vier Varianten:
 
-1. Grafana aktivieren.
-2. Basis- oder Dashboard-URL eintragen.
-3. Optional Dashboard-UID und Slug ergänzen.
-4. Zeitraum und Aktualisierungsintervall wählen.
-5. Einstellungen speichern.
+- **Grafana** für Metriken und eigene Observability-Dashboards
+- **Netdata** für vorkonfigurierte Live-Systemmetriken
+- **Uptime Kuma** für veröffentlichte Statusseiten
+- **Eigene URL** für andere Weboberflächen mit Iframe-Unterstützung
 
-HomeLab-Portal speichert keine Grafana-Zugangsdaten. Grafana muss das Einbetten erlauben, beispielsweise mit `allow_embedding = true`. Drittanbieter-Cookies oder Reverse-Proxy-Regeln können die Anmeldung im Iframe verhindern; in diesem Fall das Dashboard über den angebotenen Link in einem eigenen Tab öffnen.
+Anbieter auswählen, Anzeigename und vollständige URL eintragen, die Live-Vorschau prüfen und das Dashboard aktivieren. Beim Grafana-Preset können zusätzlich UID, Slug, Zeitraum und Aktualisierungsintervall gesetzt werden. Das aktive Portal-Theme wird weiterhin als Grafana-Themeparameter übergeben.
 
-Das aktive Portal-Theme wird als Grafana-Themeparameter weitergegeben.
+HomeLab-Portal speichert keine Zugangsdaten. Der Zielserver muss die Einbettung erlauben; blockierende `X-Frame-Options`- oder `Content-Security-Policy`-Header können vom Portal nicht umgangen werden. Die Portal-Toolbar bietet deshalb immer einen Link zum Öffnen in einem eigenen Tab.
+
+Anbieterspezifische Hinweise:
+
+- [Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/) benötigt bei selbst gehosteten Installationen in der Regel `allow_embedding = true`. Anmeldung und Drittanbieter-Cookies können zusätzliche Reverse-Proxy- oder Cookie-Einstellungen erfordern.
+- Bei [Netdata](https://learn.netdata.cloud/docs/dashboards-and-charts) kann eine lokale Agent-/Parent-URL oder eine erreichbare Cloud-Ansicht verwendet werden. Anmeldung und Tarif können die Einbettung beeinflussen.
+- Für [Uptime Kuma](https://github.com/louislam/uptime-kuma/wiki/Status-Page) sollte eine veröffentlichte Statusseite verwendet werden. `UPTIME_KUMA_DISABLE_FRAME_SAMEORIGIN=true` erlaubt die Iframe-Nutzung, senkt aber den Clickjacking-Schutz und sollte nur bewusst in einer geschützten Umgebung eingesetzt werden.
 
 ## Konfigurationsdatei
 
@@ -56,8 +61,10 @@ Hauptstruktur:
       "rotation": "day",
       "archiveCount": 7
     },
-    "grafana": {
+    "dashboard": {
       "enabled": false,
+      "provider": "grafana",
+      "title": "Grafana",
       "url": "",
       "dashboardUid": "",
       "dashboardSlug": "",
@@ -68,6 +75,8 @@ Hauptstruktur:
   "categories": []
 }
 ```
+
+`provider` akzeptiert `grafana`, `netdata`, `uptime-kuma` oder `custom`. Bestehende Konfigurationen mit dem früheren Feld `settings.grafana` werden beim Lesen automatisch in das neue Dashboard-Format übernommen.
 
 Manuelle Änderungen sollten nur bei gestopptem Dienst und nach einem Backup erfolgen. Der sicherere Weg ist die Admin-Oberfläche oder Export, Bearbeitung und erneuter Import.
 

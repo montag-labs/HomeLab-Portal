@@ -20,7 +20,7 @@
     "summary": "Portal-Zusammenfassung",
     "categories": "Kategorien",
     "services": "Dienste",
-    "dashboardDescription": "Live-Metriken und Systemstatus aus Grafana."
+    "dashboardDescription": "Live-Metriken, Statusseiten und System-Dashboards."
   },
   "theme": {
     "title": "Theme",
@@ -53,6 +53,52 @@
     "secureSession": "Sichere Sitzung",
     "categories": "Kategorien & Apps",
     "dashboard": "Dashboard",
+    "dashboardHubTitle": "Dashboard-Zentrale",
+    "dashboardHubDescription": "Binde das Monitoring- oder Status-Dashboard ein, das zu deinem Homelab passt.",
+    "dashboardEnabled": "Im Portal anzeigen",
+    "dashboardVisible": "Dashboard ist sichtbar",
+    "dashboardHidden": "Dashboard ist ausgeblendet",
+    "dashboardProviderTitle": "Dashboard-Anbieter",
+    "dashboardProviderDescription": "Wähle ein vorbereitetes System oder verwende eine beliebige einbettbare Weboberfläche.",
+    "dashboardProviders": {
+      "grafana": {
+        "title": "Grafana",
+        "description": "Metriken und eigene Observability-Dashboards.",
+        "placeholder": "https://grafana.example.com"
+      },
+      "netdata": {
+        "title": "Netdata",
+        "description": "Live-Systemmetriken mit vorkonfigurierten Ansichten.",
+        "placeholder": "http://netdata.example.com:19999"
+      },
+      "uptime-kuma": {
+        "title": "Uptime Kuma",
+        "description": "Öffentliche Statusseite für Dienste und Verfügbarkeit.",
+        "placeholder": "https://status.example.com/status/homelab"
+      },
+      "custom": {
+        "title": "Eigene URL",
+        "description": "Jede andere Weboberfläche, die Iframes erlaubt.",
+        "placeholder": "https://dashboard.example.com"
+      }
+    },
+    "dashboardConfiguration": "Konfiguration",
+    "dashboardConfigurationDescription": "Name und Zieladresse für die Anzeige im Portal.",
+    "dashboardTitleLabel": "Anzeigename",
+    "dashboardTitlePlaceholder": "Mein Homelab-Dashboard",
+    "dashboardUrl": "Dashboard-URL",
+    "dashboardGrafanaOptions": "Grafana-Optionen",
+    "dashboardGrafanaOptionsDescription": "Optional aus einer Basis-URL automatisch eine Dashboard-URL erzeugen.",
+    "dashboardEmbedNotice": "Der gewählte Dienst muss die Einbettung in einem Iframe erlauben. Zugangsdaten werden vom HomeLab-Portal nicht gespeichert.",
+    "dashboardPreview": "Live-Vorschau",
+    "dashboardPreviewDescription": "Zeigt die konfigurierte Adresse direkt im Admin-Bereich.",
+    "dashboardPreviewEmpty": "URL für die Vorschau fehlt",
+    "dashboardPreviewEmptyDescription": "Trage links eine vollständige HTTP- oder HTTPS-Adresse ein.",
+    "dashboardSaved": "Dashboard-Einstellungen gespeichert.",
+    "dashboardSaveError": "Dashboard-Einstellungen konnten nicht gespeichert werden.",
+    "dashboardSaveHint": "Änderungen werden erst nach dem Speichern im Portal sichtbar.",
+    "dashboardSaving": "Wird gespeichert …",
+    "dashboardSave": "Dashboard speichern",
     "updates": "Updates",
     "logs": "Logs",
     "logsTitle": "System-Logs",
@@ -180,9 +226,11 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "grafanaDisabled": "Grafana ist noch nicht konfiguriert.",
-    "openInGrafana": "In Grafana öffnen",
-    "loading": "Grafana wird geladen …",
-    "loginHint": "Falls das Dashboard hier nicht lädt, öffne es in einem neuen Tab und melde dich dort an."
+    "emptyTitle": "Noch kein Dashboard aktiv",
+    "emptyDescription": "Im Admin-Bereich kannst du Grafana, Netdata, Uptime Kuma oder eine eigene Dashboard-URL einrichten.",
+    "reload": "Dashboard neu laden",
+    "openExternal": "Dashboard in neuem Tab öffnen",
+    "loadingProvider": "{{provider}} wird geladen …",
+    "embedHint": "Falls die Einbettung blockiert wird, öffne das Dashboard über den externen Link."
   }
 }

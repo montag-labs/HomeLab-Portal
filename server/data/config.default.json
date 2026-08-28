@@ -7,8 +7,10 @@
       "rotation": "day",
       "archiveCount": 7
     },
-    "grafana": {
+    "dashboard": {
       "enabled": false,
+      "provider": "grafana",
+      "title": "Grafana",
       "url": "",
       "dashboardUid": "",
       "dashboardSlug": "",
