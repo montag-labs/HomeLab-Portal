@@ -19,6 +19,7 @@
 
 ## Bereits umgesetzt
 
+- [x] Öffentliches Portal-Logo durch bereitgestellte PNG-Bildmarke ersetzen. (v1.3.4)
 - [x] Portal-Logo als Kachel im Stil der Kategorien- und Dienste-Zähler gestalten. (v1.3.3)
 - [x] Abstände im Adminbereich auf 5px verdichten. (v1.3.3)
 - [x] Grafana-Dashboard im öffentlichen Portal auf die gesamte Fläche unterhalb des Headers erweitern. (v1.3.2)
