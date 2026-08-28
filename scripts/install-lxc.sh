@@ -177,8 +177,24 @@ else
 fi
 touch "${LOG_FILE}"
 chmod 640 "${LOG_FILE}"
-exec >>"${LOG_FILE}" 2>&1
+exec > >(tee -a "${LOG_FILE}") 2>&1
 echo "--- ${LOG_LABEL} gestartet: $(date --iso-8601=seconds) ---"
+echo "Fortschritt und Fehler werden gleichzeitig nach ${LOG_FILE} protokolliert."
+
+report_failure() {
+  local exit_code=$?
+  set +e
+  trap - ERR
+  echo "${LOG_LABEL} abgebrochen (Exit-Code ${exit_code}, Zeile ${BASH_LINENO[0]})." >&2
+  echo "Vollständiges Log: ${LOG_FILE}" >&2
+  if [[ -f "${SERVICE_FILE}" ]]; then
+    systemctl --no-pager --full status "${SERVICE_NAME}" || true
+    journalctl -u "${SERVICE_NAME}" -n 100 --no-pager || true
+  fi
+  exit "${exit_code}"
+}
+
+trap report_failure ERR
 
 export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
@@ -232,6 +248,7 @@ if [[ -e "${APP_DIR}" ]]; then
     done
     echo "Portwechsel fehlgeschlagen. Der Service konnte auf Port ${HOMELAB_PORT} nicht erreicht werden." >&2
     systemctl --no-pager --full status "${SERVICE_NAME}" || true
+    journalctl -u "${SERVICE_NAME}" -n 100 --no-pager || true
     exit 1
   fi
 
@@ -338,6 +355,7 @@ done
 
 echo "Der Service wurde gestartet, der Healthcheck ist jedoch fehlgeschlagen." >&2
 systemctl --no-pager --full status "${SERVICE_NAME}" || true
+journalctl -u "${SERVICE_NAME}" -n 100 --no-pager || true
 if declare -F rollback >/dev/null 2>&1; then
   rollback
 fi
