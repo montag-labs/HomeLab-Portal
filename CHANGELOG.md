@@ -13,6 +13,7 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Portal, Admin-Anmeldung und Administrationsbereich verwenden dieselbe Logo-Grafik und gemeinsame Branding-Komponente.
 - Admin-Header entfernt und die Inhaltsfläche entsprechend vereinfacht.
 - Wirkungslosen Theme-Wähler aus den allgemeinen Admin-Einstellungen entfernt; die Darstellung wird weiterhin direkt im Portal umgeschaltet.
+- README auf allgemeine Informationen und Docker-/LXC-Schnellstarts reduziert; Detaildokumentation, Sicherheitsangaben und Beitragsrichtlinien vollständig aktualisiert.
 
 ## [1.3.10] - 2026-08-28
 

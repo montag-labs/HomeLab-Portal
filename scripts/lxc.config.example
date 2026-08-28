@@ -8,7 +8,7 @@
 # - Nach Änderungen: systemctl restart homelab-portal
 #
 # NICHT konfigurierbar:
-# Repository-URL, Token-Verzeichnis, Token-Datei und Update-Token
+# Repository-URL, Update-Modus, Update-Script, Triggerdatei und Passwortpfade
 # sind aus Sicherheitsgründen fest im Script bzw. in der Anwendung definiert.
 
 # Git-Branch der eigenen Repository-Quelle.
@@ -20,10 +20,6 @@
 # production = DEV-API aus, Standardbetrieb.
 # development = DEV-API an und Admin-Tab „DEV-Diagnose“ sichtbar.
 # APP_ENV=production
-
-# Betriebsart für den Update-Status.
-# Erlaubt: lxc.
-# UPDATE_MODE=lxc
 
 # Verzeichnis der Installation.
 # Erlaubt: absoluter Linux-Pfad.
