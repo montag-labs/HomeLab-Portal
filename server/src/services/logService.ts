@@ -9,20 +9,33 @@ import type { LogContent, LogPolicy, LogSource } from "../types.js";
 const LOG_DIR = process.env.LOG_DIR ?? "/var/log/homelab-portal";
 const MAX_READ_BYTES = 1024 * 1024;
 const DEFAULT_POLICY: LogPolicy = { rotation: "day", archiveCount: 7 };
+type LogMode = "lxc" | "docker";
 
 const LOG_DEFINITIONS = [
-  { id: "install", label: "Installation", fileName: "homelab-portal-install.log", writable: true },
-  { id: "update", label: "LXC-Update", fileName: "homelab-portal-update.log", writable: true },
-  { id: "docker-update", label: "Docker-Update", fileName: "homelab-portal-docker-update.log", writable: true },
-  { id: "service", label: "Portal-Service", fileName: "homelab-portal-service.log", writable: true },
-  { id: "healthcheck", label: "Healthcheck", fileName: "homelab-portal-healthcheck.log", writable: true },
-  { id: "backup", label: "Backup und Rollback", fileName: "homelab-portal-backup.log", writable: true },
+  { id: "install", label: "Installation", fileName: "homelab-portal-install.log", writable: true, modes: ["lxc"] },
+  { id: "update", label: "LXC-Update", fileName: "homelab-portal-update.log", writable: true, modes: ["lxc"] },
+  { id: "docker-update", label: "Docker-Update", fileName: "homelab-portal-docker-update.log", writable: true, modes: ["docker"] },
+  { id: "service", label: "Portal-Service", fileName: "homelab-portal-service.log", writable: true, modes: undefined },
+  { id: "healthcheck", label: "Healthcheck", fileName: "homelab-portal-healthcheck.log", writable: true, modes: undefined },
+  { id: "backup", label: "Backup und Rollback", fileName: "homelab-portal-backup.log", writable: true, modes: undefined },
 ] as const;
 
 type LogId = (typeof LOG_DEFINITIONS)[number]["id"];
 
+function getRuntimeMode(): LogMode | undefined {
+  const mode = process.env.UPDATE_MODE;
+  return mode === "lxc" || mode === "docker" ? mode : undefined;
+}
+
+function getVisibleDefinitions() {
+  const mode = getRuntimeMode();
+  if (!mode) return LOG_DEFINITIONS;
+  return LOG_DEFINITIONS.filter((definition) =>
+    definition.modes === undefined || (definition.modes as readonly LogMode[]).includes(mode));
+}
+
 function getDefinition(id: string) {
-  return LOG_DEFINITIONS.find((definition) => definition.id === id);
+  return getVisibleDefinitions().find((definition) => definition.id === id);
 }
 
 function getCurrentPath(id: string): string {
@@ -73,7 +86,7 @@ async function listArchives(id: LogId) {
 
 export async function listLogs(): Promise<LogSource[]> {
   const result: LogSource[] = [];
-  for (const definition of LOG_DEFINITIONS) {
+  for (const definition of getVisibleDefinitions()) {
     const currentPath = getCurrentPath(definition.id);
     let size = 0;
     let modifiedAt: string | undefined;
@@ -181,10 +194,8 @@ export async function updateLogPolicy(policy: LogPolicy): Promise<LogPolicy> {
   await mutateConfig((config) => {
     config.settings.logPolicy = policy;
   });
-  for (const definition of LOG_DEFINITIONS) {
+  for (const definition of getVisibleDefinitions()) {
     await removeOldArchives(definition.id, policy.archiveCount);
   }
   return policy;
 }
-
-export const logIds = LOG_DEFINITIONS.map((definition) => definition.id);

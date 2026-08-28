@@ -6,13 +6,23 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.13] - 2026-08-28
+
+### Geändert
+
+- Log-Modul mit Quellen-Navigation, konsolidierter Log-Anzeige, Schnellaktionen und übersichtlicher Archivverwaltung neu gestaltet.
+- LXC- und Docker-spezifische Logquellen werden nur noch im jeweils passenden Betriebsmodus angezeigt und sind im anderen Modus auch nicht über die Log-API erreichbar.
+
+### Behoben
+
+- LXC-Neuinstallationen verwenden ohne Rückfrage Port 80; ein abweichender Port kann mit `--port PORT` festgelegt werden.
+
 ## [1.3.12] - 2026-08-28
 
 ### Behoben
 
 - LXC-Installation zeigt Fortschritt und Fehler wieder direkt im Terminal und schreibt sie weiterhin ins Installationslog.
 - Fehlgeschlagene LXC-Service-Starts und Healthchecks geben automatisch systemd-Status und Journal-Auszug aus.
-- LXC-Neuinstallationen verwenden ohne Rückfrage Port 80; ein abweichender Port kann mit `--port PORT` festgelegt werden.
 
 ## [1.3.11] - 2026-08-28
 
