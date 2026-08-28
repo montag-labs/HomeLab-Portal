@@ -5,10 +5,26 @@ import { api } from "../api";
 import type { PortalConfig } from "../types";
 import { ConfigContext } from "./config-context";
 
+import type { ThemeMode } from '../types';
+
+const THEME_STORAGE_KEY = 'homelab-portal-theme';
+
+function readStoredTheme(): ThemeMode | null {
+  const theme = localStorage.getItem(THEME_STORAGE_KEY);
+  return theme === 'light' || theme === 'dark' ? theme : null;
+}
+
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<PortalConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [themeOverride, setThemeOverride] = useState<ThemeMode | null>(readStoredTheme);
+  const theme = themeOverride ?? config?.settings.theme ?? 'dark';
+
+  const setTheme = useCallback((nextTheme: ThemeMode) => {
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    setThemeOverride(nextTheme);
+  }, []);
 
   const refresh = useCallback(async () => {
     try {
@@ -29,16 +45,16 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!config) return;
-    document.documentElement.dataset.theme = config.settings.theme;
+    document.documentElement.dataset.theme = theme;
     document.documentElement.style.setProperty(
       "--accent-color",
       config.settings.accentColor
     );
     i18n.changeLanguage(config.settings.language);
-  }, [config]);
+  }, [config, theme]);
 
   return (
-    <ConfigContext.Provider value={{ config, loading, error, refresh }}>
+    <ConfigContext.Provider value={{ config, loading, error, refresh, theme, setTheme }}>
       {children}
     </ConfigContext.Provider>
   );

@@ -6,10 +6,9 @@ import type { GrafanaSettings } from "../types";
 
 export function GrafanaPanelStub() {
   const { t } = useTranslation();
-  const { config } = useConfig();
+  const { config, theme } = useConfig();
   const [loaded, setLoaded] = useState(false);
   const settings = config?.settings.grafana;
-  const theme = config?.settings.theme ?? 'dark';
 
   if (!settings?.enabled || !settings.url) {
     return (
