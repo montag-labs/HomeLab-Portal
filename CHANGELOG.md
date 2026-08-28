@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.8] - 2026-08-28
+
+### Behoben
+
+- Öffentliche Portalnavigation folgt jetzt zuverlässig der Hell-/Dunkel-Theme-Auswahl.
+
 ## [1.3.7] - 2026-08-28
 
 ### Geändert

@@ -12,6 +12,11 @@
   --admin-sidebar-text: #253247;
   --admin-sidebar-muted: #607086;
   --admin-sidebar-border: rgb(37 50 71 / 14%);
+  --portal-sidebar-bg: #eef3f8;
+  --portal-sidebar-text: #203047;
+  --portal-sidebar-muted: #607086;
+  --portal-sidebar-border: rgb(32 48 71 / 14%);
+  --portal-sidebar-item-bg: rgb(32 48 71 / 5%);
 }
 
 :root[data-theme="dark"] {
@@ -27,6 +32,11 @@
   --admin-sidebar-text: #f8fafc;
   --admin-sidebar-muted: rgb(255 255 255 / 55%);
   --admin-sidebar-border: rgb(255 255 255 / 9%);
+  --portal-sidebar-bg: #111827;
+  --portal-sidebar-text: #fff;
+  --portal-sidebar-muted: rgb(255 255 255 / 55%);
+  --portal-sidebar-border: rgb(255 255 255 / 9%);
+  --portal-sidebar-item-bg: rgb(255 255 255 / 4%);
 }
 
 * {
@@ -2163,8 +2173,8 @@ img.admin-icon-option-preview {
   border: 0;
   background:
     radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--accent-color) 22%, transparent), transparent 17rem),
-    #111827;
-  color: #fff;
+    var(--portal-sidebar-bg);
+  color: var(--portal-sidebar-text);
 }
 
 .sidebar-title {
@@ -2174,27 +2184,27 @@ img.admin-icon-option-preview {
 }
 
 .sidebar .brand-logo-name {
-  fill: #fff;
+  fill: var(--portal-sidebar-text);
 }
 
 .sidebar .brand-logo-version,
 .sidebar .brand-logo-version-indicator {
-  fill: rgb(255 255 255 / 52%);
+  fill: var(--portal-sidebar-muted);
 }
 
 .sidebar .brand-logo-server {
-  fill: #182337;
+  fill: color-mix(in srgb, var(--portal-sidebar-text) 88%, var(--portal-sidebar-bg));
 }
 
 .sidebar .brand-logo-prompt {
-  stroke: #fff;
+  stroke: var(--portal-sidebar-text);
 }
 
 .sidebar-categories {
   min-height: 0;
   margin: 0 -0.4rem;
   padding: 0 0.4rem 0.75rem;
-  scrollbar-color: rgb(255 255 255 / 20%) transparent;
+  scrollbar-color: var(--portal-sidebar-border) transparent;
   scrollbar-width: thin;
 }
 
@@ -2208,7 +2218,7 @@ img.admin-icon-option-preview {
   padding: 0.55rem 0.65rem;
   border: 1px solid transparent;
   border-radius: 9px;
-  color: rgb(255 255 255 / 78%);
+  color: var(--portal-sidebar-muted);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.035em;
@@ -2217,9 +2227,9 @@ img.admin-icon-option-preview {
 }
 
 .category-header:hover {
-  border-color: rgb(255 255 255 / 9%);
-  color: #fff;
-  background: rgb(255 255 255 / 6%);
+  border-color: var(--portal-sidebar-border);
+  color: var(--portal-sidebar-text);
+  background: color-mix(in srgb, var(--portal-sidebar-text) 6%, transparent);
 }
 
 .chevron {
@@ -2237,9 +2247,9 @@ img.admin-icon-option-preview {
   gap: 0.7rem;
   padding: 0.65rem 0.7rem;
   overflow: hidden;
-  border-color: rgb(255 255 255 / 8%);
+  border-color: var(--portal-sidebar-border);
   border-radius: 11px;
-  background: rgb(255 255 255 / 4%);
+  background: var(--portal-sidebar-item-bg);
   box-shadow: none;
   transition: transform 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
 }
@@ -2247,7 +2257,7 @@ img.admin-icon-option-preview {
 .app-card:hover {
   transform: translateY(-1px);
   border-color: color-mix(in srgb, var(--accent-color) 60%, transparent);
-  background: rgb(255 255 255 / 7%);
+  background: color-mix(in srgb, var(--portal-sidebar-text) 7%, transparent);
   box-shadow: 0 8px 20px rgb(0 0 0 / 16%);
 }
 
@@ -2260,8 +2270,8 @@ img.admin-icon-option-preview {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 9px;
-  color: #fff;
-  background: rgb(255 255 255 / 8%);
+  color: var(--portal-sidebar-text);
+  background: color-mix(in srgb, var(--portal-sidebar-text) 8%, transparent);
 }
 
 .app-card-icon img {
@@ -2271,18 +2281,18 @@ img.admin-icon-option-preview {
 
 .app-card-name {
   padding-right: 0.85rem;
-  color: #fff;
+  color: var(--portal-sidebar-text);
   font-size: 0.82rem;
 }
 
 .app-card-link {
   max-width: 12rem;
-  color: rgb(255 255 255 / 46%);
+  color: var(--portal-sidebar-muted);
   font-size: 0.66rem;
 }
 
 .app-card-link:hover {
-  color: rgb(255 255 255 / 78%);
+  color: var(--portal-sidebar-text);
 }
 
 .status-dot {
@@ -2290,7 +2300,7 @@ img.admin-icon-option-preview {
   right: 0.7rem;
   width: 0.48rem;
   height: 0.48rem;
-  border: 2px solid #172033;
+  border: 2px solid var(--portal-sidebar-bg);
   box-sizing: content-box;
 }
 
@@ -2301,17 +2311,17 @@ img.admin-icon-option-preview {
   min-height: 2.75rem;
   margin: 0.4rem 0 0;
   padding: 0.7rem 0.8rem;
-  border: 1px solid rgb(255 255 255 / 9%);
+  border: 1px solid var(--portal-sidebar-border);
   border-radius: 10px;
-  color: rgb(255 255 255 / 68%);
+  color: var(--portal-sidebar-muted);
   text-align: left;
   transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
 }
 
 .sidebar-admin-link:hover {
-  border-color: rgb(255 255 255 / 16%);
-  color: #fff;
-  background: rgb(255 255 255 / 7%);
+  border-color: color-mix(in srgb, var(--portal-sidebar-text) 16%, transparent);
+  color: var(--portal-sidebar-text);
+  background: color-mix(in srgb, var(--portal-sidebar-text) 7%, transparent);
 }
 
 .sidebar-admin-arrow {
@@ -2323,8 +2333,8 @@ img.admin-icon-option-preview {
   gap: 0.45rem;
   margin-top: 0.65rem;
   padding-top: 0.75rem;
-  border-color: rgb(255 255 255 / 9%);
-  color: rgb(255 255 255 / 42%);
+  border-color: var(--portal-sidebar-border);
+  color: var(--portal-sidebar-muted);
 }
 
 .sidebar-support-links {
@@ -2340,17 +2350,17 @@ img.admin-icon-option-preview {
   justify-content: center;
   gap: 0.35rem;
   min-height: 2rem;
-  border: 1px solid rgb(255 255 255 / 9%);
+  border: 1px solid var(--portal-sidebar-border);
   border-radius: 8px;
-  color: rgb(255 255 255 / 62%);
+  color: var(--portal-sidebar-muted);
   font-size: 0.68rem;
   font-weight: 650;
   text-decoration: none;
 }
 
 .sidebar-support-link:hover {
-  color: #fff;
-  background: rgb(255 255 255 / 6%);
+  color: var(--portal-sidebar-text);
+  background: color-mix(in srgb, var(--portal-sidebar-text) 6%, transparent);
 }
 
 .sidebar-support-link svg {
@@ -2368,7 +2378,7 @@ img.admin-icon-option-preview {
 
 .sidebar-author-link:hover,
 .sidebar-license-link:hover {
-  color: rgb(255 255 255 / 75%);
+  color: var(--portal-sidebar-text);
   text-decoration: none;
 }
 
