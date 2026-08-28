@@ -7,9 +7,8 @@ APP_DIR="/opt/homelab-portal"
 SERVICE_NAME="homelab-portal"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 LOCK_FILE="/run/homelab-portal-install.lock"
-readonly TOKEN_DIR="/var/lib/homelab-portal"
-readonly TOKEN_FILE="${TOKEN_DIR}/update-token"
-readonly ADMIN_PASSWORD_FILE="${TOKEN_DIR}/admin-password"
+readonly STATE_DIR="/var/lib/homelab-portal"
+readonly ADMIN_PASSWORD_FILE="${STATE_DIR}/admin-password"
 readonly APP_USER="homelab-portal"
 readonly APP_GROUP="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
@@ -97,16 +96,15 @@ validate_app_environment() {
 ensure_runtime_identity() {
   getent group "${APP_GROUP}" >/dev/null || groupadd --system "${APP_GROUP}"
   id -u "${APP_USER}" >/dev/null 2>&1 || useradd --system --gid "${APP_GROUP}" \
-    --home-dir "${TOKEN_DIR}" --shell /usr/sbin/nologin "${APP_USER}"
-  install -d -o root -g "${APP_GROUP}" -m 770 "${TOKEN_DIR}"
+    --home-dir "${STATE_DIR}" --shell /usr/sbin/nologin "${APP_USER}"
+  install -d -o root -g "${APP_GROUP}" -m 770 "${STATE_DIR}"
   install -d -o "${APP_USER}" -g "${APP_GROUP}" -m 750 "${LOG_DIR}"
 }
 
 ensure_runtime_secrets() {
-  if [[ ! -f "${TOKEN_FILE}" ]]; then openssl rand -hex 32 > "${TOKEN_FILE}"; fi
   if [[ ! -f "${ADMIN_PASSWORD_FILE}" ]]; then openssl rand -base64 24 > "${ADMIN_PASSWORD_FILE}"; fi
-  chown root:"${APP_GROUP}" "${TOKEN_FILE}" "${ADMIN_PASSWORD_FILE}"
-  chmod 640 "${TOKEN_FILE}" "${ADMIN_PASSWORD_FILE}"
+  chown root:"${APP_GROUP}" "${ADMIN_PASSWORD_FILE}"
+  chmod 640 "${ADMIN_PASSWORD_FILE}"
 }
 
 write_service_file() {
@@ -130,7 +128,6 @@ Environment=UPDATE_MODE=lxc
 Environment=PORT=${HOMELAB_PORT}
 Environment=UPDATE_SCRIPT=/usr/local/sbin/homelab-portal-update
 Environment=UPDATE_TRIGGER_FILE=/run/homelab-portal/update-request
-Environment=UPDATE_TOKEN_FILE=${TOKEN_FILE}
 Environment=ADMIN_PASSWORD_FILE=${ADMIN_PASSWORD_FILE}
 Environment=ADMIN_PASSWORD_STORE_FILE=${ADMIN_PASSWORD_FILE}
 EnvironmentFile=-${CONFIG_FILE}
@@ -149,7 +146,7 @@ RestrictSUIDSGID=true
 LockPersonality=true
 CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 AmbientCapabilities=CAP_NET_BIND_SERVICE
-ReadWritePaths=${APP_DIR}/server/data ${TOKEN_DIR} ${LOG_DIR}
+ReadWritePaths=${APP_DIR}/server/data ${STATE_DIR} ${LOG_DIR}
 
 [Install]
 WantedBy=multi-user.target
@@ -312,7 +309,7 @@ if [[ ! -f "${CONFIG_FILE}" && -f "scripts/lxc.config.example" ]]; then
   echo "Parameterdatei erstellt: ${CONFIG_FILE}"
 fi
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
-install -m 750 scripts/reset-update-token.sh /usr/local/sbin/homelab-portal-reset-token
+rm -f /usr/local/sbin/homelab-portal-reset-token "${STATE_DIR}/update-token" "${STATE_DIR}/update-token-acknowledged"
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
 install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer

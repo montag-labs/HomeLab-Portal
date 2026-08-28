@@ -31,8 +31,6 @@ Die laufende Installation wird über `/etc/homelab-portal/lxc.config` konfigurie
 
 `APP_ENV=production` ist der Standard. Für DEV die Zeile `APP_ENV=development` aktivieren. Dann wird die DEV-API registriert und im Adminbereich der Tab „DEV-Diagnose“ eingeblendet. Auf einer öffentlich erreichbaren Instanz darf DEV nicht aktiviert werden.
 
-Für den Updatebutton in der WebUI erzeugt das Script automatisch ein Update-Token. Beim ersten Öffnen des Portals wird es einmalig in einem Popup angezeigt. Das Token wird nicht in der Anwendung gespeichert, sondern als geschützte Datei unter `/var/lib/homelab-portal/update-token` verwaltet.
-
 Das automatisch erzeugte Admin-Passwort liegt in `/var/lib/homelab-portal/admin-password` und kann mit `sudo cat /var/lib/homelab-portal/admin-password` angezeigt werden.
 Es kann außerdem im angemeldeten Adminbereich unter „Allgemein“ geändert werden. Dabei werden andere aktive Admin-Sitzungen beendet.
 
@@ -44,15 +42,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 
 Das Script aktualisiert dabei nur die systemd-Service-Datei, startet den Service neu und prüft den neuen Port.
 
-Nach der Installation kann das Token im Adminbereich unter „Updates“ eingegeben werden. Bei einem verfügbaren Update startet der Button das fest installierte `/usr/local/sbin/homelab-portal-update`-Script. Der Serverprozess wird dabei neu gestartet; die Oberfläche lädt sich anschließend automatisch neu.
-
-Token neu setzen:
-
-```bash
-sudo /usr/local/sbin/homelab-portal-reset-token
-```
-
-Das alte Token wird ungültig. Beim nächsten Öffnen des Portals erscheint das neue Token einmalig im Popup.
+Bei einem verfügbaren Update startet der Button im angemeldeten Adminbereich das fest installierte `/usr/local/sbin/homelab-portal-update`-Script. Die Anfrage wird durch die Admin-Sitzung und den CSRF-Schutz abgesichert. Der Serverprozess wird dabei neu gestartet; die Oberfläche lädt sich anschließend automatisch neu.
 
 ## 2. Basissystem vorbereiten
 

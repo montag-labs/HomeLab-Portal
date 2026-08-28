@@ -1,4 +1,4 @@
-import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, PendingUpdateToken, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 let csrfToken = "";
 
@@ -83,16 +83,9 @@ export const api = {
   getUpdateStatus: () => request<UpdateStatus>("/api/update"),
   checkForUpdates: () =>
     request<UpdateStatus>("/api/update/check", { method: "POST" }),
-  installUpdate: (token: string) =>
+  installUpdate: () =>
     request<UpdateStartResult>("/api/update/install", {
       method: "POST",
-      headers: { "Content-Type": "application/json", "X-HomeLab-Update-Token": token },
-    }),
-  getPendingUpdateToken: () => request<PendingUpdateToken>("/api/update/token"),
-  confirmUpdateToken: (token: string) =>
-    request<void>("/api/update/token/confirm", {
-      method: "POST",
-      body: JSON.stringify({ token }),
     }),
   createCategory: (data: Partial<Category>) =>
     request<Category>("/api/categories", {
