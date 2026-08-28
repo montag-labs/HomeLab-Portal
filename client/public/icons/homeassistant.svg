@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Home Assistant icon">
-  <rect width="128" height="128" rx="28" fill="#101827"/>
-  <circle cx="64" cy="64" r="31" fill="#fbbf24"/>
-  <path d="M64 22c18 0 30 12 30 28 0 11-7 20-18 26l-12 7-12-7c-11-6-18-15-18-26 0-16 12-28 30-28zm0 18c-7 0-12 5-12 12 0 7 5 12 12 12s12-5 12-12c0-7-5-12-12-12zm-3 34h6v25h-6zm-18 10h6v15h-6zm30 0h6v15h-6z" fill="#fff" opacity="0.96"/>
-</svg>
