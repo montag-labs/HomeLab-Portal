@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.5] - 2026-08-28
+
+### Behoben
+
+- Innenabstände der Admin-Kacheln wiederhergestellt; 5px bleiben auf äußere Ränder und Kachelabstände beschränkt.
+
 ## [1.3.4] - 2026-08-28
 
 ### Geändert
