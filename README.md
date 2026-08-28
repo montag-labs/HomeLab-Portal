@@ -69,7 +69,13 @@ Das Installationsscript kann vorab unter [scripts/install-lxc.sh](scripts/instal
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Das Script installiert Node.js 26, erstellt einen unprivilegierten Dienstbenutzer, baut die Anwendung und richtet Service, Updatepfad und Logrotation ein. Der vorgeschlagene Standardport ist `80`.
+Das Script installiert Node.js 26, erstellt einen unprivilegierten Dienstbenutzer, baut die Anwendung und richtet Service, Updatepfad und Logrotation ein. Ohne weitere Option verwendet die Installation automatisch Port `80`.
+
+Ein anderer Port kann ohne interaktive Abfrage mit `--port` festgelegt werden:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)" -- --port 8080
+```
 
 Das automatisch erzeugte Admin-Passwort anzeigen:
 
@@ -77,8 +83,8 @@ Das automatisch erzeugte Admin-Passwort anzeigen:
 sudo cat /var/lib/homelab-portal/admin-password
 ```
 
-- Portal: `http://<LXC-IP>`
-- Administration: `http://<LXC-IP>/admin`
+- Portal: `http://<LXC-IP>` beziehungsweise `http://<LXC-IP>:8080`
+- Administration: `http://<LXC-IP>/admin` beziehungsweise `http://<LXC-IP>:8080/admin`
 
 Ports, Parameter, Updates und Fehlerdiagnose sind in der [LXC-Dokumentation](docs/lxc.md) beschrieben.
 

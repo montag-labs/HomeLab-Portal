@@ -12,6 +12,7 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 - LXC-Installation zeigt Fortschritt und Fehler wieder direkt im Terminal und schreibt sie weiterhin ins Installationslog.
 - Fehlgeschlagene LXC-Service-Starts und Healthchecks geben automatisch systemd-Status und Journal-Auszug aus.
+- LXC-Neuinstallationen verwenden ohne Rückfrage Port 80; ein abweichender Port kann mit `--port PORT` festgelegt werden.
 
 ## [1.3.11] - 2026-08-28
 

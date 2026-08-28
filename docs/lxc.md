@@ -21,7 +21,13 @@ Als `root` im LXC:
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Bei einer Neuinstallation fragt das Script nach dem Port. Mit Enter wird `80` übernommen. Nach erfolgreichem Healthcheck zeigt es die erkannte IP und vollständige Portal-Adresse an.
+Bei einer Neuinstallation wird ohne Rückfrage Port `80` verwendet. Ein anderer Installationsport wird mit `--port` angegeben:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)" -- --port 8080
+```
+
+Nach erfolgreichem Healthcheck zeigt das Script die erkannte IP und vollständige Portal-Adresse an.
 
 Der Installationsfortschritt erscheint im Terminal und wird gleichzeitig nach `/var/log/homelab-portal/homelab-portal-install.log` geschrieben. Bei einem fehlgeschlagenen Service-Start zeigt das Script automatisch den systemd-Status und die letzten Journal-Einträge an.
 
@@ -70,6 +76,8 @@ sudo systemctl restart homelab-portal
 ```
 
 ## Port ändern
+
+`--port` ist ausschließlich für eine Neuinstallation vorgesehen. Den Port einer bestehenden Installation ändert `--switch`:
 
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)" -- --switch 8080
