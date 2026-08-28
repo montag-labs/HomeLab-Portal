@@ -1,27 +1,28 @@
 import type { Category } from "../types";
 import { useState } from "react";
-import { api } from "../api";
-import { useConfig } from "../hooks/useConfig";
 import { AppCard } from "./AppCard";
 
 export function CategoryGroup({ category }: { category: Category }) {
-  const { refresh } = useConfig();
-  const [collapsed, setCollapsed] = useState(category.collapsed);
-  const [saving, setSaving] = useState(false);
-
-  const toggleCollapsed = async () => {
-    if (saving) return;
-    const nextCollapsed = !collapsed;
-    setCollapsed(nextCollapsed);
-    setSaving(true);
+  const storageKey = `homelab-category-collapsed:${category.id}`;
+  const [collapsed, setCollapsed] = useState(() => {
     try {
-      await api.updateCategory(category.id, { collapsed: nextCollapsed });
-      await refresh();
+      const stored = window.localStorage.getItem(storageKey);
+      return stored === null ? category.collapsed : stored === "true";
     } catch {
-      setCollapsed(collapsed);
-    } finally {
-      setSaving(false);
+      return category.collapsed;
     }
+  });
+
+  const toggleCollapsed = () => {
+    setCollapsed((current) => {
+      const next = !current;
+      try {
+        window.localStorage.setItem(storageKey, String(next));
+      } catch {
+        // The category remains interactive when browser storage is unavailable.
+      }
+      return next;
+    });
   };
 
   return (
@@ -30,9 +31,7 @@ export function CategoryGroup({ category }: { category: Category }) {
         type="button"
         className="category-header"
         onClick={toggleCollapsed}
-        disabled={saving}
         aria-expanded={!collapsed}
-        aria-busy={saving}
       >
         <span className={`chevron ${collapsed ? "collapsed" : ""}`}>▾</span>
         <span>{category.name}</span>
