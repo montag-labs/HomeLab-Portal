@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.3] - 2026-08-28
+
+### Geändert
+
+- Logo im öffentlichen Portal-Header als Kachel im Stil der Kategorien- und Dienste-Zähler gestaltet.
+- Abstände zwischen Kacheln, Bereichen und Navigation im Adminbereich auf 5px verdichtet.
+
 ## [1.3.2] - 2026-08-28
 
 ### Geändert

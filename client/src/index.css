@@ -1549,7 +1549,7 @@ img.admin-icon-option-preview {
   height: 100vh;
   min-width: 0;
   flex-direction: column;
-  padding: 1.35rem 1rem;
+  padding: 5px;
   overflow-y: auto;
   color: #f8fafc;
   background:
@@ -1560,8 +1560,8 @@ img.admin-icon-option-preview {
 .admin-sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.2rem 0.55rem;
+  gap: 5px;
+  padding: 5px;
   color: #fff;
   font-size: 1rem;
   font-weight: 750;
@@ -1586,7 +1586,7 @@ img.admin-icon-option-preview {
 }
 
 .admin-sidebar-label {
-  margin: 2.25rem 0.7rem 0.7rem;
+  margin: 5px;
   color: rgb(255 255 255 / 38%);
   font-size: 0.65rem;
   font-weight: 750;
@@ -1596,15 +1596,15 @@ img.admin-icon-option-preview {
 
 .admin-tabs {
   display: grid;
-  gap: 0.35rem;
+  gap: 5px;
 }
 
 .admin-tabs button {
   display: flex;
   width: 100%;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.72rem 0.8rem;
+  gap: 5px;
+  padding: 0.55rem;
   border: 1px solid transparent;
   border-radius: 10px;
   color: rgb(255 255 255 / 62%);
@@ -1630,18 +1630,18 @@ img.admin-icon-option-preview {
 
 .admin-sidebar-footer {
   display: grid;
-  gap: 0.35rem;
+  gap: 5px;
   margin-top: auto;
-  padding-top: 1rem;
+  padding-top: 5px;
   border-top: 1px solid rgb(255 255 255 / 9%);
 }
 
 .admin-session-status {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  margin-bottom: 0.75rem;
-  padding: 0 0.7rem;
+  gap: 5px;
+  margin-bottom: 5px;
+  padding: 0 5px;
   color: var(--logo-highlight);
 }
 
@@ -1665,8 +1665,8 @@ img.admin-icon-option-preview {
   display: flex;
   width: 100%;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.62rem 0.7rem;
+  gap: 5px;
+  padding: 0.55rem;
   border: 0;
   border-radius: 9px;
   color: rgb(255 255 255 / 55%);
@@ -1689,8 +1689,8 @@ img.admin-icon-option-preview {
   min-height: 6.3rem;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  padding: 1.4rem clamp(1.25rem, 4vw, 3rem);
+  gap: 5px;
+  padding: 5px;
   border-bottom: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg) 92%, transparent);
 }
@@ -1734,8 +1734,8 @@ img.admin-icon-option-preview {
 .admin-content {
   width: min(100%, 82rem);
   max-width: none;
-  margin: 0 auto;
-  padding: clamp(1.25rem, 4vw, 3rem);
+  margin: 0;
+  padding: 5px;
 }
 
 .admin-content > .admin-section > h2:first-child {
@@ -1743,7 +1743,7 @@ img.admin-icon-option-preview {
 }
 
 .admin-section {
-  gap: 1.35rem;
+  gap: 5px;
 }
 
 .admin-tools-card,
@@ -1758,13 +1758,13 @@ img.admin-icon-option-preview {
 .admin-tools-card {
   width: min(100%, 48rem);
   max-width: none;
-  padding: clamp(1.1rem, 2vw, 1.5rem);
+  padding: 5px;
 }
 
 .general-settings-card {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 5px;
 }
 
 .general-settings-card .admin-field {
@@ -1845,11 +1845,11 @@ img.admin-icon-option-preview {
 
 .admin-category-manager-layout {
   grid-template-columns: 17rem minmax(0, 1fr);
-  gap: 1.25rem;
+  gap: 5px;
 }
 
 .admin-category-list {
-  padding: 0.85rem;
+  padding: 5px;
 }
 
 .admin-category-list button,
@@ -1871,7 +1871,7 @@ img.admin-icon-option-preview {
 }
 
 .admin-category-detail {
-  padding: clamp(1.1rem, 2vw, 1.5rem);
+  padding: 5px;
 }
 
 .admin-app-row {
@@ -1896,7 +1896,7 @@ img.admin-icon-option-preview {
 }
 
 .update-details {
-  padding: 1rem;
+  padding: 5px;
   border-radius: 12px;
   background: var(--bg-elevated);
 }
@@ -1996,8 +1996,8 @@ img.admin-icon-option-preview {
 .admin-card-heading {
   display: flex;
   align-items: flex-start;
-  gap: 0.85rem;
-  margin-bottom: 1.25rem;
+  gap: 5px;
+  margin-bottom: 5px;
 }
 
 .admin-card-heading .admin-card-icon {
@@ -2020,13 +2020,13 @@ img.admin-icon-option-preview {
 }
 
 .admin-password-card {
-  margin-top: 0.25rem;
+  margin-top: 0;
 }
 
 .admin-password-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 5px;
 }
 
 .admin-password-fields .admin-field {
@@ -2040,8 +2040,8 @@ img.admin-icon-option-preview {
 .admin-password-visibility {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  margin: 0.9rem 0 0;
+  gap: 5px;
+  margin: 5px 0 0;
   color: var(--text-muted);
   font-size: 0.75rem;
   cursor: pointer;
@@ -2054,9 +2054,9 @@ img.admin-icon-option-preview {
 .admin-password-message {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin: 1rem 0 0;
-  padding: 0.7rem 0.8rem;
+  gap: 5px;
+  margin: 5px 0 0;
+  padding: 5px;
   border-radius: 9px;
   font-size: 0.78rem;
 }
@@ -2335,15 +2335,6 @@ img.admin-icon-option-preview {
   background: color-mix(in srgb, var(--bg) 94%, transparent);
 }
 
-.portal-header-brand {
-  height: 3.25rem;
-}
-
-.portal-header-brand .brand-logo {
-  width: auto;
-  height: 100%;
-}
-
 .portal-summary {
   position: absolute;
   top: 5px;
@@ -2353,15 +2344,23 @@ img.admin-icon-option-preview {
   gap: 0.35rem;
 }
 
+.portal-brand-card,
 .portal-summary-item {
   display: flex;
   align-items: center;
   gap: 0.65rem;
-  min-width: 7.75rem;
   padding: 0.45rem 0.65rem;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg-elevated);
+}
+
+.portal-brand-card {
+  min-width: 12.5rem;
+}
+
+.portal-summary-item {
+  min-width: 7.75rem;
 }
 
 .portal-summary-icon {
@@ -2375,6 +2374,7 @@ img.admin-icon-option-preview {
   background: var(--accent-color);
 }
 
+.portal-brand-card > span:last-child,
 .portal-summary-item > span:last-child {
   display: grid;
   gap: 0.05rem;
@@ -2382,9 +2382,36 @@ img.admin-icon-option-preview {
   font-size: 0.68rem;
 }
 
+.portal-brand-card strong,
 .portal-summary-item strong {
   color: var(--text);
   font-size: 1rem;
+}
+
+.portal-brand-status {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.portal-brand-status::before {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: #9aa0a6;
+  content: "";
+}
+
+.portal-brand-status-current::before {
+  background: #22c55e;
+}
+
+.portal-brand-status-available::before {
+  background: #f59e0b;
+}
+
+.portal-brand-status-failed::before {
+  background: #ef4444;
 }
 
 .portal-main {

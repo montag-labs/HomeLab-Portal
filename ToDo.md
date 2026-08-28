@@ -19,6 +19,8 @@
 
 ## Bereits umgesetzt
 
+- [x] Portal-Logo als Kachel im Stil der Kategorien- und Dienste-Zähler gestalten. (v1.3.3)
+- [x] Abstände im Adminbereich auf 5px verdichten. (v1.3.3)
 - [x] Grafana-Dashboard im öffentlichen Portal auf die gesamte Fläche unterhalb des Headers erweitern. (v1.3.2)
 - [x] Öffentlichen Portal-Header verdichten, Logo in den Header verschieben und die Navigation weiter nach oben rücken. (v1.3.1)
 - [x] GitHub-README, Beitragsrichtlinien, Security-Hinweise, Issue-Templates und CI ergänzt.
