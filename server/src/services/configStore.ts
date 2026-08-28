@@ -12,6 +12,19 @@ const DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../../data/config.default.j
 const EMBEDDED_DEFAULT_CONFIG_PATH = path.resolve(__dirname, "../../config.default.json");
 const DEFAULT_LOG_POLICY: LogPolicy = { rotation: "day", archiveCount: 7 };
 
+export function normalizeConfig(config: PortalConfig): PortalConfig {
+  config.settings.logPolicy ??= DEFAULT_LOG_POLICY;
+  if (!config.settings.dashboard && config.settings.grafana) {
+    config.settings.dashboard = {
+      ...config.settings.grafana,
+      provider: "grafana",
+      title: "Grafana",
+    };
+  }
+  delete config.settings.grafana;
+  return config;
+}
+
 // Serializes complete read-modify-write transactions.
 let configQueue: Promise<unknown> = Promise.resolve();
 
@@ -34,9 +47,7 @@ export async function readConfig(): Promise<PortalConfig> {
   const raw = await fs.readFile(CONFIG_PATH, "utf-8");
   const parsed = portalConfigSchema.safeParse(JSON.parse(raw));
   if (!parsed.success) throw new Error("Stored configuration is invalid");
-  const config = parsed.data;
-  config.settings.logPolicy ??= DEFAULT_LOG_POLICY;
-  return config;
+  return normalizeConfig(parsed.data);
 }
 
 async function atomicWrite(config: PortalConfig): Promise<void> {

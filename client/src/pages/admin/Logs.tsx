@@ -135,10 +135,7 @@ export function Logs() {
       <section className="admin-log-control-card">
         <div className="admin-log-control-copy">
           <span className="admin-log-control-icon"><Archive size={21} /></span>
-          <div>
-            <h3>{t("admin.logPolicy")}</h3>
-            <p>{t("admin.logPolicyDescription")}</p>
-          </div>
+          <h3>{t("admin.logPolicy")}</h3>
         </div>
         <div className="admin-log-policy">
           <label className="admin-field">

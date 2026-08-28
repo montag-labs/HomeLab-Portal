@@ -35,11 +35,20 @@ export interface GrafanaSettings {
   refreshInterval: string;
 }
 
+export type DashboardProvider = "grafana" | "netdata" | "uptime-kuma" | "custom";
+
+export interface DashboardSettings extends GrafanaSettings {
+  provider: DashboardProvider;
+  title: string;
+}
+
 export interface Settings {
   language: Language;
   theme: ThemeMode;
   accentColor: string;
   logPolicy?: LogPolicy;
+  dashboard?: DashboardSettings;
+  /** Legacy configuration, migrated to dashboard when it is read. */
   grafana?: GrafanaSettings;
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Sidebar } from "../components/Sidebar";
-import { GrafanaPanelStub } from "../components/GrafanaPanelStub";
+import { DashboardPanel } from "../components/DashboardPanel";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { BrandIdentity } from "../components/BrandIdentity";
 import { Boxes, Server } from "lucide-react";
@@ -51,7 +51,7 @@ export function PortalPage() {
           </div>
         </header>
         <main className="portal-main">
-          <GrafanaPanelStub />
+          <DashboardPanel />
         </main>
       </div>
     </div>

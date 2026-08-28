@@ -9,7 +9,7 @@ HomeLab-Portal ist eine leichtgewichtige, selbst gehostete Startseite für Diens
 - Lokaler Icon-Katalog sowie eigene Icon-URLs
 - Helles und dunkles Theme direkt im Portal
 - Deutsch und Englisch
-- Optional eingebettetes Grafana-Dashboard
+- Optional eingebettete Dashboards mit Grafana-, Netdata-, Uptime-Kuma- und freier URL-Unterstützung
 - Konfigurationsimport und -export
 - Updateprüfung, Logverwaltung und automatische Logrotation
 - Betrieb mit Docker Compose oder als Proxmox-LXC
@@ -92,7 +92,7 @@ Ports, Parameter, Updates und Fehlerdiagnose sind in der [LXC-Dokumentation](doc
 
 - [Docker-Betrieb](docs/docker.md)
 - [LXC-Betrieb](docs/lxc.md)
-- [Konfiguration und Grafana](docs/configuration.md)
+- [Konfiguration und Dashboards](docs/configuration.md)
 - [Updates, Logs, Backups und Betrieb](docs/operations.md)
 - [Entwicklung und Releases](docs/development.md)
 - [Sicherheitsrichtlinie](SECURITY.md)
