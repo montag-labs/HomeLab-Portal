@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-08-28
+
+### Geändert
+
+- Grafana-Dashboard nutzt im öffentlichen Portal die gesamte Fläche direkt unterhalb des Headers.
+
 ## [1.3.1] - 2026-08-28
 
 ### Geändert
