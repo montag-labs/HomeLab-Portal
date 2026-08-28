@@ -14,12 +14,15 @@ readonly APP_GROUP="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOG_DIR="/var/log/homelab-portal"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
-if [[ -z "${HOMELAB_CONFIG:-}" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
-  cp -p /etc/homelab-portal/install.conf "${CONFIG_FILE}"
-fi
 APP_ENV="production"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
 SWITCH_PORT=false
+PORT_OPTION=""
+CLI_PORT=""
+
+usage() {
+  echo "Verwendung: $0 [--config DATEI] [--port PORT] [--switch PORT]" >&2
+}
 
 load_parameters() {
   [[ -f "${CONFIG_FILE}" ]] || return 0
@@ -46,29 +49,42 @@ load_parameters() {
   done < "${CONFIG_FILE}"
 }
 
-load_parameters
+while (( $# > 0 )); do
+  case "$1" in
+    --config)
+      [[ -n "${2:-}" ]] || { usage; exit 1; }
+      CONFIG_FILE="$2"
+      shift 2
+      ;;
+    --port|--switch)
+      [[ -n "${2:-}" ]] || { usage; exit 1; }
+      if [[ -n "${PORT_OPTION}" ]]; then
+        echo "--port und --switch dürfen nicht kombiniert oder mehrfach angegeben werden." >&2
+        usage
+        exit 1
+      fi
+      PORT_OPTION="$1"
+      CLI_PORT="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unbekannte Option: $1" >&2
+      usage
+      exit 1
+      ;;
+  esac
+done
 
-if [[ "${1:-}" == "--config" ]]; then
-  if [[ -z "${2:-}" ]]; then
-    echo "Verwendung: $0 [--config DATEI] [--switch PORT]" >&2
-    exit 1
-  fi
-  CONFIG_FILE="$2"
-  load_parameters
-  shift 2
+if [[ -z "${HOMELAB_CONFIG:-}" && "${CONFIG_FILE}" == "/etc/homelab-portal/lxc.config" +  && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
+  cp -p /etc/homelab-portal/install.conf "${CONFIG_FILE}"
 fi
 
-if [[ "${1:-}" == "--switch" ]]; then
-  if [[ -z "${2:-}" || -n "${3:-}" ]]; then
-    echo "Verwendung: $0 [--config DATEI] [--switch PORT]" >&2
-    exit 1
-  fi
-  HOMELAB_PORT="$2"
+load_parameters
+if [[ -n "${CLI_PORT}" ]]; then
+  HOMELAB_PORT="${CLI_PORT}"
+fi
+if [[ "${PORT_OPTION}" == "--switch" ]]; then
   SWITCH_PORT=true
-elif [[ -n "${1:-}" ]]; then
-  echo "Unbekannte Option: $1" >&2
-  echo "Verwendung: $0 [--config DATEI] [--switch PORT]" >&2
-  exit 1
 fi
 
 install_dependencies() {
@@ -217,6 +233,10 @@ if [[ -e "${APP_DIR}" ]]; then
     echo "${APP_DIR} existiert, ist aber kein Git-Repository." >&2
     exit 1
   fi
+  if [[ "${PORT_OPTION}" == "--port" ]]; then
+    echo "--port ist nur für Neuinstallationen vorgesehen. Für eine bestehende Installation bitte --switch verwenden." >&2
+    exit 1
+  fi
   if [[ "${SWITCH_PORT}" == false && -z "${HOMELAB_PORT}" && -f "${SERVICE_FILE}" ]]; then
     HOMELAB_PORT="$(sed -n 's/^Environment=PORT=//p' "${SERVICE_FILE}" | tail -n 1 | tr -d '[:space:]')"
   fi
@@ -298,11 +318,7 @@ else
     echo "Bitte zuerst die Installation ohne --switch ausführen." >&2
     exit 1
   fi
-  if [[ -z "${HOMELAB_PORT}" ]]; then
-    HOMELAB_PORT="80"
-    read -r -p "Welchen Port soll das Portal verwenden [${HOMELAB_PORT}]: " entered_port
-    HOMELAB_PORT="${entered_port:-${HOMELAB_PORT}}"
-  fi
+  HOMELAB_PORT="${HOMELAB_PORT:-80}"
   validate_port
   validate_app_environment
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
