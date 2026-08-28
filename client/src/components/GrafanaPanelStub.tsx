@@ -9,6 +9,7 @@ export function GrafanaPanelStub() {
   const { config } = useConfig();
   const [loaded, setLoaded] = useState(false);
   const settings = config?.settings.grafana;
+  const theme = config?.settings.theme ?? 'dark';
 
   if (!settings?.enabled || !settings.url) {
     return (
@@ -19,7 +20,7 @@ export function GrafanaPanelStub() {
     );
   }
 
-  const dashboardUrl = buildGrafanaUrl(settings);
+  const dashboardUrl = buildGrafanaUrl(settings, theme);
 
   return (
     <section className="grafana-panel">
@@ -48,7 +49,7 @@ export function GrafanaPanelStub() {
   );
 }
 
-function buildGrafanaUrl(settings: GrafanaSettings): string {
+function buildGrafanaUrl(settings: GrafanaSettings, theme: string): string {
   const url = new URL(settings.url);
   const hasDashboardPath = /\/d(?:-solo)?\//.test(url.pathname);
 
@@ -65,5 +66,6 @@ function buildGrafanaUrl(settings: GrafanaSettings): string {
     url.searchParams.delete("refresh");
   }
   url.searchParams.set("kiosk", "1");
+  url.searchParams.set('theme', theme);
   return url.toString();
 }

@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.9] - 2026-08-28
+
+### Geändert
+
+- Grafana-Dashboards erhalten automatisch das aktive helle oder dunkle Portal-Theme.
+
 ## [1.3.8] - 2026-08-28
 
 ### Behoben
