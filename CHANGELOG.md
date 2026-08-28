@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.12] - 2026-08-28
+
+### Behoben
+
+- LXC-Installation zeigt Fortschritt und Fehler wieder direkt im Terminal und schreibt sie weiterhin ins Installationslog.
+- Fehlgeschlagene LXC-Service-Starts und Healthchecks geben automatisch systemd-Status und Journal-Auszug aus.
+
 ## [1.3.11] - 2026-08-28
 
 ### Geändert

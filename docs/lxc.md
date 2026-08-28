@@ -23,6 +23,8 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Port
 
 Bei einer Neuinstallation fragt das Script nach dem Port. Mit Enter wird `80` übernommen. Nach erfolgreichem Healthcheck zeigt es die erkannte IP und vollständige Portal-Adresse an.
 
+Der Installationsfortschritt erscheint im Terminal und wird gleichzeitig nach `/var/log/homelab-portal/homelab-portal-install.log` geschrieben. Bei einem fehlgeschlagenen Service-Start zeigt das Script automatisch den systemd-Status und die letzten Journal-Einträge an.
+
 ## Admin-Passwort
 
 Die Installation erzeugt ein zufälliges Passwort:
