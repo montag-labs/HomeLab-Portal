@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-08-28
+
+### Geändert
+
+- Öffentlichen Portal-Header verdichtet: Logo und Versionsstatus befinden sich links, die Zähler für Kategorien und Dienste oben rechts.
+- Einleitungstext aus der Portalübersicht entfernt und die Sidebar-Navigation weiter nach oben verschoben.
+
 ## [1.3.0] - 2026-08-28
 
 ### Hinzugefügt
