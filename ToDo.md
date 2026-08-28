@@ -2,13 +2,13 @@
 
 ## LXC und Updates
 
-- [ ] Authentifizierung für den Administrationsbereich einführen.
+- [x] Authentifizierung für den Administrationsbereich mit Session- und CSRF-Schutz einführen.
 
 - [x] Admin-Logmodul für whitelisted LXC-/Docker-Logs mit Anzeige und Download ergänzen. (v1.1.6 geplant)
 - [x] Logs manuell als `.gz` archivieren und neue leere Logs anlegen. (v1.1.6 geplant)
 - [x] Log-Rotation nach Tag, Woche, Monat und Jahr konfigurierbar machen. (v1.1.6 geplant)
 - [x] Feste Archivanzahl je Logtyp konfigurieren und alte Logs/`.gz`-Archive automatisch löschen. (v1.1.6 geplant)
-- [ ] Admin-Authentifizierung vor produktiver Nutzung des Logmoduls einführen.
+- [x] Admin-Authentifizierung vor produktiver Nutzung des Logmoduls einführen.
 
 ## App-Icon-System 1.1.0
 

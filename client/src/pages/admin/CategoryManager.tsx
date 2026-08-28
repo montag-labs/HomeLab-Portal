@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
-import { useConfig } from "../../context/ConfigContext";
+import { useConfig } from "../../hooks/useConfig";
 import { APP_ICONS, detectAppIconKey } from "../../iconCatalog";
 import type { AppEntry, Category } from "../../types";
 

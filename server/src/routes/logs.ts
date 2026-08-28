@@ -13,8 +13,10 @@ import {
   updateLogPolicy,
 } from "../services/logService.js";
 import { logPolicySchema } from "../schemas.js";
+import { requireAdmin } from "../middleware/auth.js";
 
 export const logsRouter = Router();
+logsRouter.use(["/logs", "/log-policy"], requireAdmin);
 
 function handleError(res: Response, error: unknown) {
   const message = error instanceof Error ? error.message : "Log operation failed";

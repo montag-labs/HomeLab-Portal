@@ -25,7 +25,7 @@ load_parameters() {
     case "${key}" in
       APP_DIR|SERVICE_NAME|BACKUP_DIR|LOCK_FILE|LOG_DIR|HOMELAB_PORT)
         printf -v "${key}" '%s' "${value}" ;;
-      REPOSITORY_BRANCH|APP_ENV|SERVICE_FILE)
+      REPOSITORY_BRANCH|APP_ENV|SERVICE_FILE|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS)
         printf -v "${key}" '%s' "${value}" ;;
       *) echo "Unbekannter Parameter in ${CONFIG_FILE}: ${key}" >&2; exit 1 ;;
     esac
@@ -125,12 +125,16 @@ if [[ -f server/node_modules/esbuild/install.js ]]; then
   node server/node_modules/esbuild/install.js
 fi
 npm run build
+chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
 install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer
+install -m 644 scripts/homelab-portal-update.service /etc/systemd/system/homelab-portal-update.service
+install -m 644 scripts/homelab-portal-update.path /etc/systemd/system/homelab-portal-update.path
 systemctl daemon-reload
 systemctl enable --now homelab-portal-log-rotation.timer
+systemctl enable --now homelab-portal-update.path
 systemctl start "${SERVICE_NAME}"
 
 for attempt in {1..30}; do

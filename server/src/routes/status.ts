@@ -2,11 +2,16 @@ import { Router } from "express";
 import { z } from "zod";
 import http from "node:http";
 import https from "node:https";
+import { readConfig } from "../services/configStore.js";
+import { limitStatusRequests } from "../middleware/security.js";
 
 export const statusRouter = Router();
 
 const querySchema = z.object({
-  url: z.string().url(),
+  url: z.string().url().refine((value) => {
+    const protocol = new URL(value).protocol;
+    return protocol === "http:" || protocol === "https:";
+  }, "Only HTTP and HTTPS URLs are allowed"),
 });
 
 export interface ReachabilityDetails {
@@ -25,6 +30,10 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
       resolve({ online: false, error: "Ungültige URL" });
       return;
     }
+    if (target.protocol !== "http:" && target.protocol !== "https:") {
+      resolve({ online: false, error: "Nicht unterstütztes Protokoll" });
+      return;
+    }
     const client = target.protocol === "https:" ? https : http;
     let settled = false;
 
@@ -40,8 +49,7 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
         {
           method,
           timeout: 8000,
-          // Homelab services often use self-signed certificates.
-          rejectUnauthorized: false,
+          rejectUnauthorized: process.env.ALLOW_INSECURE_TLS !== "true",
         },
         (res) => {
           const shouldFallback = method === "HEAD" && (res.statusCode === 405 || res.statusCode === 501);
@@ -65,11 +73,26 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
   });
 }
 
-statusRouter.get("/status", async (req, res) => {
+statusRouter.get("/status", limitStatusRequests, async (req, res) => {
   const parsed = querySchema.safeParse(req.query);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const result = await checkReachability(parsed.data.url);
+  const config = await readConfig();
+  const allowedUrls = new Set(
+    config.categories.flatMap((category) =>
+      category.apps.flatMap((app) => [app.domain, app.localIp])
+        .filter((url): url is string => Boolean(url))
+        .map((url) => {
+          try { return new URL(url).href; }
+          catch { return ""; }
+        }),
+    ),
+  );
+  const normalizedUrl = new URL(parsed.data.url).href;
+  if (!allowedUrls.has(normalizedUrl)) {
+    return res.status(403).json({ error: "Only configured service URLs can be checked" });
+  }
+  const result = await checkReachability(normalizedUrl);
   res.json(result);
 });

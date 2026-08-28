@@ -1,19 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ConfigProvider, useConfig } from "./context/ConfigContext";
+import { ConfigProvider } from "./context/ConfigContext";
+import { useConfig } from "./hooks/useConfig";
 import { PortalPage } from "./pages/PortalPage";
 import { AdminPage } from "./pages/AdminPage";
-import { UpdateTokenNotice } from "./components/UpdateTokenNotice";
+import { AuthProvider } from "./context/AuthProvider";
 
 function App() {
   return (
     <ConfigProvider>
       <ConfigErrorNotice />
-      <UpdateTokenNotice />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<PortalPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<PortalPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </ConfigProvider>
   );

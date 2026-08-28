@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { api } from "../api";
-import { useConfig } from "../context/ConfigContext";
+import { useConfig } from "../hooks/useConfig";
 import type { UpdateStatus } from "../types";
 import { CategoryGroup } from "./CategoryGroup";
 import { BrandLogo } from "./BrandLogo";

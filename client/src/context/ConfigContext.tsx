@@ -1,17 +1,9 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import i18n from "../i18n";
 import { api } from "../api";
 import type { PortalConfig } from "../types";
-
-interface ConfigContextValue {
-  config: PortalConfig | null;
-  loading: boolean;
-  error: string | null;
-  refresh: () => Promise<void>;
-}
-
-const ConfigContext = createContext<ConfigContextValue | undefined>(undefined);
+import { ConfigContext } from "./config-context";
 
 export function ConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<PortalConfig | null>(null);
@@ -30,7 +22,9 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refresh().finally(() => setLoading(false));
+    // Async initial data loading is the external synchronization performed by this effect.
+    // oxlint-disable-next-line react/set-state-in-effect
+    refresh().catch(() => undefined).finally(() => setLoading(false));
   }, [refresh]);
 
   useEffect(() => {
@@ -48,10 +42,4 @@ export function ConfigProvider({ children }: { children: ReactNode }) {
       {children}
     </ConfigContext.Provider>
   );
-}
-
-export function useConfig() {
-  const ctx = useContext(ConfigContext);
-  if (!ctx) throw new Error("useConfig must be used within ConfigProvider");
-  return ctx;
 }

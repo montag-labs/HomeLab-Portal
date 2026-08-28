@@ -98,3 +98,9 @@ export interface PendingUpdateToken {
   available: boolean;
   token?: string;
 }
+
+export interface AuthSession {
+  configured: boolean;
+  authenticated: boolean;
+  csrfToken?: string;
+}

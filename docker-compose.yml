@@ -8,12 +8,26 @@ services:
       UPDATE_MODE: docker
       PORT: 4000
       LOG_DIR: /var/log/homelab-portal
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the environment or a .env file}
+      ADMIN_PASSWORD_STORE_FILE: /app/server/data/admin-password
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      FORCE_SECURE_COOKIES: ${FORCE_SECURE_COOKIES:-false}
+      ALLOW_INSECURE_TLS: ${ALLOW_INSECURE_TLS:-false}
     ports:
       - "4000:4000"
     volumes:
       - ./server/data:/app/server/data
       - ./server/data/logs:/var/log/homelab-portal
     restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 15s
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/config').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
       interval: 30s
