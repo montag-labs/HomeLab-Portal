@@ -1761,6 +1761,21 @@ img.admin-icon-option-preview {
   padding: clamp(1.1rem, 2vw, 1.5rem);
 }
 
+.general-settings-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.general-settings-card .admin-field {
+  width: auto;
+}
+
+.general-settings-card input[type="color"] {
+  width: 100%;
+  padding: 0.3rem;
+}
+
 .admin-tools-card h3 {
   font-size: 1rem;
   letter-spacing: -0.015em;
@@ -1800,6 +1815,12 @@ img.admin-icon-option-preview {
   outline: 0;
   background: var(--bg);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color) 13%, transparent);
+}
+
+@media (max-width: 42rem) {
+  .general-settings-card {
+    grid-template-columns: 1fr;
+  }
 }
 
 .btn {

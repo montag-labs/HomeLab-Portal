@@ -46,37 +46,39 @@ export function GeneralSettings() {
   return (
     <div className="admin-section">
       <h2>{t("admin.general")}</h2>
-      <label className="admin-field">
-        {t("admin.language")}
-        <select
-          value={settings.language}
-          disabled={saving}
-          onChange={(e) => update({ language: e.target.value as Language })}
-        >
-          <option value="de">Deutsch</option>
-          <option value="en">English</option>
-        </select>
-      </label>
-      <label className="admin-field">
-        {t("admin.theme")}
-        <select
-          value={settings.theme}
-          disabled={saving}
-          onChange={(e) => update({ theme: e.target.value as ThemeMode })}
-        >
-          <option value="light">{t("admin.themeLight")}</option>
-          <option value="dark">{t("admin.themeDark")}</option>
-        </select>
-      </label>
-      <label className="admin-field">
-        {t("admin.accentColor")}
-        <input
-          type="color"
-          value={settings.accentColor}
-          disabled={saving}
-          onChange={(e) => update({ accentColor: e.target.value })}
-        />
-      </label>
+      <div className="admin-tools-card general-settings-card">
+        <label className="admin-field">
+          {t("admin.language")}
+          <select
+            value={settings.language}
+            disabled={saving}
+            onChange={(e) => update({ language: e.target.value as Language })}
+          >
+            <option value="de">Deutsch</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <label className="admin-field">
+          {t("admin.theme")}
+          <select
+            value={settings.theme}
+            disabled={saving}
+            onChange={(e) => update({ theme: e.target.value as ThemeMode })}
+          >
+            <option value="light">{t("admin.themeLight")}</option>
+            <option value="dark">{t("admin.themeDark")}</option>
+          </select>
+        </label>
+        <label className="admin-field">
+          {t("admin.accentColor")}
+          <input
+            type="color"
+            value={settings.accentColor}
+            disabled={saving}
+            onChange={(e) => update({ accentColor: e.target.value })}
+          />
+        </label>
+      </div>
       <div className="admin-tools-card">
         <h3>{t("admin.configTransferTitle")}</h3>
         <p>{t("admin.configTransferDescription")}</p>
