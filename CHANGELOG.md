@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-29
+
+### Geändert
+
+- Das Portal-Logo wurde für eine deutlich kleinere Dateigröße optimiert und als Browser-Favicon eingebunden.
+
 ## [1.3.18] - 2026-08-29
 
 ### Hinzugefügt
@@ -608,7 +614,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.18...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.18...v1.4.0
 [1.3.18]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.17...v1.3.18
 [1.3.17]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...v1.3.17
 [1.3.16]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...v1.3.16
