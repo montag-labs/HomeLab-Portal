@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.16] - 2026-08-29
+
+### Behoben
+
+- Der Sicherheitsindikator für die geschützte Administration wird vertrauenswürdig grün statt orange dargestellt.
+
 ## [1.3.15] - 2026-08-29
 
 ### Behoben
@@ -577,7 +583,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...HEAD
+[1.3.16]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...v1.3.16
 [1.3.15]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.14...v1.3.15
 [0.1.35]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.35
 [0.1.34]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.34

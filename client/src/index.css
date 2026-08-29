@@ -1958,7 +1958,7 @@ img.admin-icon-option-preview {
   gap: 0.6rem;
   margin-bottom: 0.75rem;
   padding: 0 0.7rem;
-  color: var(--logo-highlight);
+  color: #22c55e;
 }
 
 .admin-session-status svg {
