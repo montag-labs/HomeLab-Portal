@@ -45,6 +45,9 @@
     "securityDescription": "Your session and changes are secured server-side.",
     "loading": "Checking sign-in …",
     "loginFailed": "Sign-in failed.",
+    "ssoFailed": "SSO sign-in failed or is not authorized.",
+    "loginWithSso": "Sign in with {{provider}}",
+    "orPassword": "or use the admin password",
     "notConfigured": "Admin authentication has not been configured on the server."
   },
   "admin": {

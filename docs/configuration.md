@@ -8,6 +8,20 @@ Unter „Allgemein“ können Sprache, Akzentfarbe und Admin-Passwort geändert 
 
 Das helle oder dunkle Theme wird direkt im Portal umgeschaltet und im jeweiligen Browser gespeichert. Der Wert `settings.theme` in vorhandenen Konfigurationsdateien dient nur als Standard, solange im Browser noch keine Auswahl gespeichert wurde.
 
+## Single Sign-on mit OpenID Connect
+
+Der Admin-Bereich unterstützt generisches OpenID Connect (OIDC), beispielsweise mit Authentik, Keycloak, Authelia oder Microsoft Entra ID. Beim Identity Provider muss folgende Redirect-URI registriert werden:
+
+```text
+https://portal.example.com/api/auth/oidc/callback
+```
+
+SSO wird absichtlich nur aktiviert, wenn `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI` und mindestens eine `OIDC_ALLOWED_GROUPS`-Gruppe gesetzt sind. Der Gruppen-Claim muss im ID-Token enthalten sein. Mehrere erlaubte Gruppen werden kommasepariert angegeben; der Claim-Pfad unterstützt Punkte, beispielsweise `realm_access.roles`.
+
+Der Flow verwendet Authorization Code, PKCE, `state` und `nonce`. Nach erfolgreicher Gruppenprüfung wird eine normale serverseitige Admin-Sitzung mit dem bestehenden CSRF-Schutz erstellt. OIDC-Tokens werden weder an den Browser weitergegeben noch in der Portal-Konfiguration gespeichert.
+
+Das lokale Admin-Passwort bleibt standardmäßig als Notfallzugang aktiv. Erst nach einem erfolgreichen SSO-Test sollte `OIDC_DISABLE_PASSWORD_LOGIN=true` gesetzt werden. Für produktives SSO werden HTTPS, `FORCE_SECURE_COOKIES=true` und bei einem vertrauenswürdigen Reverse Proxy `TRUST_PROXY=true` empfohlen.
+
 ## Kategorien und Apps
 
 Unter „Kategorien & Apps“ lassen sich:
@@ -100,6 +114,16 @@ Vor einem Import:
 | `ADMIN_PASSWORD` | Initiales Passwort aus der Umgebung |
 | `ADMIN_PASSWORD_FILE` | Datei mit initialem Passwort |
 | `ADMIN_PASSWORD_STORE_FILE` | Persistente Passwortdatei nach Änderungen |
+| `OIDC_ISSUER_URL` | Exakte Issuer-URL des OpenID Providers |
+| `OIDC_CLIENT_ID` | Registrierte Client-ID |
+| `OIDC_CLIENT_SECRET` | Client-Secret; bei öffentlichen Clients optional |
+| `OIDC_REDIRECT_URI` | Registrierte Callback-URL des Portals |
+| `OIDC_ALLOWED_GROUPS` | Erforderliche, kommaseparierte Admin-Gruppen |
+| `OIDC_GROUPS_CLAIM` | Claim-Pfad für Gruppen, Standard `groups` |
+| `OIDC_SCOPES` | Angeforderte Scopes, Standard `openid profile email groups` |
+| `OIDC_DISPLAY_NAME` | Anzeigename des SSO-Anbieters |
+| `OIDC_CLIENT_AUTH_METHOD` | `client_secret_post`, `client_secret_basic` oder `none` |
+| `OIDC_DISABLE_PASSWORD_LOGIN` | Deaktiviert den Passwort-Login nur bei vollständig konfiguriertem OIDC |
 | `LOG_DIR` | Verzeichnis der administrativen Logs |
 | `TRUST_PROXY` | Vertraut bei `true` einem vorgeschalteten Proxy |
 | `FORCE_SECURE_COOKIES` | Erzwingt Secure-Cookies |

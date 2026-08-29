@@ -105,6 +105,11 @@ export interface UpdateStartResult {
 
 export interface AuthSession {
   configured: boolean;
+  passwordEnabled?: boolean;
+  ssoEnabled?: boolean;
+  ssoLabel?: string;
   authenticated: boolean;
+  authMethod?: "password" | "oidc";
+  displayName?: string;
   csrfToken?: string;
 }

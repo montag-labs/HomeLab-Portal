@@ -6,6 +6,21 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.17] - 2026-08-29
+
+### Hinzugefügt
+
+- Optionales OpenID-Connect-SSO für den Admin-Bereich mit PKCE, State-/Nonce-Prüfung, konfigurierbarer Anbieterbeschriftung und lokalem Passwort-Fallback.
+
+### Sicherheit
+
+- SSO wird nur mit einer expliziten Admin-Gruppenfreigabe aktiviert; Gruppen-Claims werden serverseitig geprüft und OIDC-Tokens nicht an den Browser ausgegeben.
+- Offene OIDC-Anmeldevorgänge sind zeitlich und mengenmäßig begrenzt.
+
+### Behoben
+
+- Einen Syntaxfehler im LXC-Installationsscript entfernt, damit Parameterdateien einschließlich der neuen OIDC-Werte wieder verarbeitet werden.
+
 ## [1.3.16] - 2026-08-29
 
 ### Behoben
@@ -583,7 +598,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.17...HEAD
+[1.3.17]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...v1.3.17
 [1.3.16]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...v1.3.16
 [1.3.15]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.14...v1.3.15
 [0.1.35]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.35

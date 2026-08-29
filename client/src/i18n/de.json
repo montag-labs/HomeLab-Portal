@@ -45,6 +45,9 @@
     "securityDescription": "Sitzung und Änderungen sind serverseitig abgesichert.",
     "loading": "Anmeldung wird geprüft …",
     "loginFailed": "Anmeldung fehlgeschlagen.",
+    "ssoFailed": "SSO-Anmeldung fehlgeschlagen oder nicht autorisiert.",
+    "loginWithSso": "Mit {{provider}} anmelden",
+    "orPassword": "oder mit Admin-Passwort",
     "notConfigured": "Die Admin-Authentifizierung ist auf dem Server noch nicht konfiguriert."
   },
   "admin": {

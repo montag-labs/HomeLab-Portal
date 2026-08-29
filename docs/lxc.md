@@ -68,6 +68,13 @@ Wichtige Parameter:
 | `TRUST_PROXY` | `false` | Vertraut einem vorgeschalteten Proxy |
 | `FORCE_SECURE_COOKIES` | `false` | Erzwingt Secure-Cookies |
 | `ALLOW_INSECURE_TLS` | `false` | Erlaubt selbstsignierte Zertifikate bei Statusprüfungen |
+| `OIDC_ISSUER_URL` | leer | Issuer-URL des OpenID Providers |
+| `OIDC_CLIENT_ID` | leer | OIDC-Client-ID |
+| `OIDC_CLIENT_SECRET` | leer | Optionales Client-Secret |
+| `OIDC_REDIRECT_URI` | leer | Registrierte Portal-Callback-URL |
+| `OIDC_ALLOWED_GROUPS` | leer | Erforderliche, kommaseparierte Admin-Gruppen |
+| `OIDC_GROUPS_CLAIM` | `groups` | Claim-Pfad für Gruppen |
+| `OIDC_DISABLE_PASSWORD_LOGIN` | `false` | Deaktiviert den Passwort-Fallback nach erfolgreichem SSO-Test |
 
 Nach Änderungen:
 
