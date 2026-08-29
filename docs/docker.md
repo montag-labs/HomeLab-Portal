@@ -28,7 +28,7 @@ Eine nicht versionierte `.env`-Datei anlegen:
 ADMIN_PASSWORD=ein-langes-zufaelliges-passwort
 ```
 
-Optional kann in derselben Datei OIDC-SSO ergänzt werden:
+OIDC kann nach der ersten Passwortanmeldung direkt im Admin-Modul „OpenID Connect“ eingerichtet werden. Optional kann die Konfiguration stattdessen in derselben Datei verwaltet werden; diese Werte haben Vorrang und werden im Admin-Modul schreibgeschützt angezeigt:
 
 ```dotenv
 OIDC_ISSUER_URL=https://auth.example.com/application/o/homelab-portal/

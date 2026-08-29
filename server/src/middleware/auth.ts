@@ -7,7 +7,9 @@ import { Router } from "express";
 import {
   completeOidcAuthorization,
   createOidcAuthorizationUrl,
+  getAdminOidcConfig,
   getOidcStatus,
+  updateAdminOidcConfig,
 } from "../services/oidcService.js";
 
 const COOKIE_NAME = "homelab_admin_session";
@@ -125,7 +127,7 @@ export const authRouter = Router();
 
 authRouter.get("/auth/session", async (request, response) => {
   const passwordConfigured = Boolean(await readAdminPassword());
-  const oidcStatus = getOidcStatus();
+  const oidcStatus = await getOidcStatus();
   const passwordEnabled = passwordConfigured && !oidcStatus.passwordLoginDisabled;
   const authenticated = getSession(request);
   response.json({
@@ -141,7 +143,7 @@ authRouter.get("/auth/session", async (request, response) => {
 });
 
 authRouter.post("/auth/login", async (request, response) => {
-  if (getOidcStatus().passwordLoginDisabled) {
+  if ((await getOidcStatus()).passwordLoginDisabled) {
     return response.status(403).json({ error: "Password login is disabled" });
   }
   const address = request.ip ?? request.socket.remoteAddress ?? "unknown";
@@ -162,7 +164,7 @@ authRouter.post("/auth/login", async (request, response) => {
   }
   loginAttempts.delete(address);
   const session = createAdminSession(request, response, "password");
-  const oidcStatus = getOidcStatus();
+  const oidcStatus = await getOidcStatus();
   response.json({
     configured: true,
     passwordEnabled: true,
@@ -187,11 +189,25 @@ authRouter.get("/auth/oidc/callback", async (request, response) => {
   try {
     const callbackUrl = new URL(request.originalUrl, "http://localhost");
     const identity = await completeOidcAuthorization(callbackUrl);
+    const previousSession = getSession(request);
+    if (previousSession) sessions.delete(previousSession.id);
     createAdminSession(request, response, "oidc", identity);
-    response.redirect("/admin");
+    response.redirect("/admin?sso_verified=1");
   } catch (error) {
     console.error("OIDC authorization failed:", error instanceof Error ? error.message : error);
     response.redirect("/admin?sso_error=failed");
+  }
+});
+
+authRouter.get("/auth/oidc/config", requireAdmin, async (_request, response) => {
+  response.json(await getAdminOidcConfig());
+});
+
+authRouter.put("/auth/oidc/config", requireAdmin, async (request, response) => {
+  try {
+    response.json(await updateAdminOidcConfig(request.body));
+  } catch (error) {
+    response.status(400).json({ error: error instanceof Error ? error.message : "Invalid OIDC configuration" });
   }
 });
 

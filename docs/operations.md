@@ -16,7 +16,7 @@ Mindestens folgende Dateien sichern:
 | Betrieb | Daten |
 | --- | --- |
 | Docker | `server/data` |
-| LXC | `/opt/homelab-portal/server/data/config.json` und `/var/lib/homelab-portal/admin-password` |
+| LXC | `/opt/homelab-portal/server/data/config.json`, optional `oidc.json` und `/var/lib/homelab-portal/admin-password` |
 
 Beispiel für LXC:
 
@@ -24,11 +24,13 @@ Beispiel für LXC:
 sudo install -d -m 700 /var/backups/homelab-portal
 sudo cp -a /opt/homelab-portal/server/data/config.json \
   /var/backups/homelab-portal/config-$(date +%Y%m%d-%H%M%S).json
+sudo cp -a /opt/homelab-portal/server/data/oidc.json \
+  /var/backups/homelab-portal/oidc-$(date +%Y%m%d-%H%M%S).json
 sudo cp -a /var/lib/homelab-portal/admin-password \
   /var/backups/homelab-portal/admin-password-$(date +%Y%m%d-%H%M%S)
 ```
 
-Konfigurationsexporte aus dem Admin-Bereich enthalten kein Admin-Passwort.
+Konfigurationsexporte aus dem Admin-Bereich enthalten weder Admin-Passwort noch OIDC-Konfiguration oder Client-Secret.
 
 ## Logs
 
@@ -73,7 +75,7 @@ Empfehlungen:
 ## Wiederherstellung
 
 1. Dienst oder Container stoppen.
-2. `config.json` und gegebenenfalls `admin-password` aus dem Backup wiederherstellen.
+2. `config.json`, gegebenenfalls `oidc.json` und `admin-password` aus dem Backup wiederherstellen.
 3. Dateieigentümer und Rechte kontrollieren.
 4. Dienst starten.
 5. `/api/config` und Admin-Anmeldung prüfen.

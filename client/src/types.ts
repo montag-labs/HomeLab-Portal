@@ -113,3 +113,29 @@ export interface AuthSession {
   displayName?: string;
   csrfToken?: string;
 }
+
+export type OidcClientAuthMethod = "client_secret_post" | "client_secret_basic" | "none";
+
+export interface OidcAdminConfig {
+  enabled: boolean;
+  issuerUrl: string;
+  clientId: string;
+  redirectUri: string;
+  allowedGroups: string[];
+  groupsClaim: string;
+  scopes: string;
+  displayName: string;
+  clientAuthMethod: OidcClientAuthMethod;
+  disablePasswordLogin: boolean;
+  clientSecretConfigured: boolean;
+  lastVerifiedAt?: string;
+  managedByEnvironment: boolean;
+}
+
+export interface OidcAdminConfigInput extends Omit<
+  OidcAdminConfig,
+  "clientSecretConfigured" | "lastVerifiedAt" | "managedByEnvironment"
+> {
+  clientSecret?: string;
+  clearClientSecret?: boolean;
+}

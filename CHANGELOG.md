@@ -6,6 +6,16 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.18] - 2026-08-29
+
+### Hinzugefügt
+
+- Eigenes Admin-Modul zum Konfigurieren, Speichern und Testen von OpenID Connect ergänzt.
+
+### Sicherheit
+
+- Client-Secrets werden separat mit restriktiven Rechten gespeichert, nie zurückgegeben oder exportiert; das Abschalten des Passwort-Fallbacks erfordert zuvor eine erfolgreiche SSO-Testanmeldung.
+
 ## [1.3.17] - 2026-08-29
 
 ### Hinzugefügt
@@ -598,7 +608,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.17...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.18...HEAD
+[1.3.18]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.17...v1.3.18
 [1.3.17]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...v1.3.17
 [1.3.16]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...v1.3.16
 [1.3.15]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.14...v1.3.15

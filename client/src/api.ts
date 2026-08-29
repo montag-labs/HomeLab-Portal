@@ -1,4 +1,4 @@
-import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, OidcAdminConfig, OidcAdminConfigInput, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 let csrfToken = "";
 
@@ -50,6 +50,12 @@ export const api = {
     request<void>("/api/auth/password", {
       method: "PUT",
       body: JSON.stringify({ currentPassword, newPassword }),
+    }),
+  getOidcConfig: () => request<OidcAdminConfig>("/api/auth/oidc/config"),
+  updateOidcConfig: (config: OidcAdminConfigInput) =>
+    request<OidcAdminConfig>("/api/auth/oidc/config", {
+      method: "PUT",
+      body: JSON.stringify(config),
     }),
   getConfig: () => request<PortalConfig>("/api/config"),
   updateConfig: (config: PortalConfig) =>
