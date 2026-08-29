@@ -29,12 +29,12 @@ configRouter.put("/config", async (req, res) => {
 });
 
 configRouter.put("/settings", async (req, res) => {
-  const parsed = settingsSchema.safeParse(req.body);
+  const parsed = settingsSchema.partial().safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
   const settings = await mutateConfig((config) => {
-    config.settings = parsed.data;
+    config.settings = { ...config.settings, ...parsed.data };
     return config.settings;
   });
   res.json(settings);

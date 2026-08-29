@@ -218,8 +218,9 @@
     "cancel": "Cancel",
     "confirmDeleteCategory": "Category \"{{name}}\" still contains apps. Really delete it?",
     "configTransferTitle": "Backup / Restore configuration",
-    "configTransferDescription": "Export or import the complete portal configuration (settings, categories, and apps).",
+    "configTransferDescription": "Export or import the complete portal configuration (settings, dashboard, categories, and apps). The admin password and local browser preferences are excluded for security reasons.",
     "exportConfig": "Export configuration",
+    "exportError": "Export failed. Please try again.",
     "importConfig": "Import configuration",
     "importSuccess": "Configuration imported successfully.",
     "importError": "Import failed. Please verify the JSON file."
