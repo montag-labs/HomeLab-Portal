@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-08-29
+
+### Geändert
+
+- Das OpenID-Connect-Modul ist im Admin-Menü nun direkt hinter „Allgemein“ einsortiert.
+
 ## [1.4.0] - 2026-08-29
 
 ### Geändert
@@ -614,7 +620,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.18...v1.4.0
 [1.3.18]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.17...v1.3.18
 [1.3.17]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.16...v1.3.17

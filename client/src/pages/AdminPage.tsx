@@ -52,19 +52,19 @@ export function AdminPage() {
         <nav className="admin-tabs" aria-label={t("nav.admin")}>
           <button
             type="button"
-            className={tab === "sso" ? "active" : ""}
-            onClick={() => setTab("sso")}
-          >
-            <KeyRound size={18} />
-            {t("admin.sso")}
-          </button>
-          <button
-            type="button"
             className={tab === "general" ? "active" : ""}
             onClick={() => setTab("general")}
           >
             <Settings2 size={18} />
             {t("admin.general")}
+          </button>
+          <button
+            type="button"
+            className={tab === "sso" ? "active" : ""}
+            onClick={() => setTab("sso")}
+          >
+            <KeyRound size={18} />
+            {t("admin.sso")}
           </button>
           <button
             type="button"
