@@ -63,9 +63,7 @@ Details zu Umgebungsvariablen, Updates, Backups und Reverse Proxy stehen in der 
 
 Voraussetzungen: ein Debian- oder Ubuntu-LXC mit Root-Zugriff, mindestens 1 vCPU, 512 MB RAM und 4 GB Speicher.
 
-Meine Empfehlung:
-
-Debian 13 LXC über das Script der [Community-driven scripts for Proxmox VE](https://community-scripts.org/scripts/debian) erstellen.
+Meine Empfehlung: Debian 13 LXC über das Script der [Community-driven scripts for Proxmox VE](https://community-scripts.org/scripts/debian) erstellen.
 
 Ausführung in PVE Shell:
 ```bash
