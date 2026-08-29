@@ -71,6 +71,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/Proxmo
 ```
 
 Ausführung in LXC Container Shell:
+
 Das Installationsscript kann vorab unter [scripts/install-lxc.sh](scripts/install-lxc.sh) geprüft und anschließend im LXC ausgeführt werden:
 
 ```bash
