@@ -9,38 +9,51 @@ export function GeneralSettings() {
   const { config, refresh } = useConfig();
   const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
+  const [accentColorOverride, setAccentColorOverride] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   if (!config) return null;
   const { settings } = config;
+  const accentColor = accentColorOverride ?? settings.accentColor;
 
   const update = async (patch: Partial<typeof settings>) => {
     setSaving(true);
     try {
-      await api.updateSettings({ ...settings, ...patch });
+      await api.updateSettings(patch);
       await refresh();
     } finally {
       setSaving(false);
     }
   };
 
-  const exportConfig = () => {
-    const blob = new Blob([JSON.stringify(config, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "homelab-portal-config.json";
-    anchor.click();
-    URL.revokeObjectURL(url);
+  const exportConfig = async () => {
+    setSaving(true);
+    try {
+      const currentConfig = await api.getConfig();
+      const blob = new Blob([JSON.stringify(currentConfig, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "homelab-portal-config.json";
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const importConfig = async (file: File) => {
-    const text = await file.text();
-    const parsed = JSON.parse(text);
-    await api.updateConfig(parsed);
-    await refresh();
+    setSaving(true);
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      await api.updateConfig(parsed);
+      await refresh();
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -62,9 +75,20 @@ export function GeneralSettings() {
           {t("admin.accentColor")}
           <input
             type="color"
-            value={settings.accentColor}
+            value={accentColor}
             disabled={saving}
-            onChange={(e) => update({ accentColor: e.target.value })}
+            onChange={async (e) => {
+              const nextAccentColor = e.target.value;
+              setAccentColorOverride(nextAccentColor);
+              document.documentElement.style.setProperty("--accent-color", nextAccentColor);
+              try {
+                await update({ accentColor: nextAccentColor });
+              } catch {
+                document.documentElement.style.setProperty("--accent-color", settings.accentColor);
+              } finally {
+                setAccentColorOverride(null);
+              }
+            }}
           />
         </label>
       </div>
@@ -72,12 +96,24 @@ export function GeneralSettings() {
         <h3>{t("admin.configTransferTitle")}</h3>
         <p>{t("admin.configTransferDescription")}</p>
         <div className="admin-tools-actions">
-          <button type="button" className="btn" onClick={exportConfig}>
+          <button
+            type="button"
+            className="btn"
+            disabled={saving}
+            onClick={async () => {
+              try {
+                await exportConfig();
+              } catch {
+                window.alert(t("admin.exportError"));
+              }
+            }}
+          >
             {t("admin.exportConfig")}
           </button>
           <button
             type="button"
             className="btn"
+            disabled={saving}
             onClick={() => fileInputRef.current?.click()}
           >
             {t("admin.importConfig")}

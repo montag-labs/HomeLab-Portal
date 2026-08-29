@@ -63,7 +63,7 @@ export const api = {
     ),
   getDevAvailability: () => request<{ enabled: boolean }>("/api/dev/enabled"),
   getDevDebug: () => request<Record<string, unknown>>("/api/dev/debug"),
-  updateSettings: (settings: Settings) =>
+  updateSettings: (settings: Partial<Settings>) =>
     request<Settings>("/api/settings", {
       method: "PUT",
       body: JSON.stringify(settings),

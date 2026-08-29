@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.3.15] - 2026-08-29
+
+### Behoben
+
+- Akzentfarben werden bei der Auswahl sofort übernommen und als gezielte Einstellungsänderung zuverlässig gespeichert.
+- Konfigurationsexporte lesen vor dem Download den aktuellen Serverstand; Import und Export sind während laufender Übertragungen gegen parallele Änderungen geschützt.
+
 ## [1.3.14] - 2026-08-28
 
 ### Geändert
@@ -570,7 +577,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Betrieb mit Node.js oder Docker Compose.
 - Dokumentation für Installation, LXC-Betrieb und Sicherheit.
 
-[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v0.1.35...HEAD
+[unreleased]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.15...HEAD
+[1.3.15]: https://github.com/montag-labs/HomeLab-Portal/compare/v1.3.14...v1.3.15
 [0.1.35]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.35
 [0.1.34]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.34
 [0.1.33]: https://github.com/montag-labs/HomeLab-Portal/releases/tag/v0.1.33

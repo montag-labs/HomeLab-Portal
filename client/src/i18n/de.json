@@ -218,8 +218,9 @@
     "cancel": "Abbrechen",
     "confirmDeleteCategory": "Die Kategorie \"{{name}}\" enthält Apps. Wirklich löschen?",
     "configTransferTitle": "Konfiguration sichern / wiederherstellen",
-    "configTransferDescription": "Exportiert oder importiert die komplette Portal-Konfiguration (Einstellungen, Kategorien und Apps).",
+    "configTransferDescription": "Exportiert oder importiert die komplette Portal-Konfiguration (Einstellungen, Dashboard, Kategorien und Apps). Das Admin-Passwort und lokale Browser-Einstellungen sind aus Sicherheitsgründen nicht enthalten.",
     "exportConfig": "Konfiguration exportieren",
+    "exportError": "Export fehlgeschlagen. Bitte erneut versuchen.",
     "importConfig": "Konfiguration importieren",
     "importSuccess": "Konfiguration wurde erfolgreich importiert.",
     "importError": "Import fehlgeschlagen. Bitte JSON-Datei prüfen."
