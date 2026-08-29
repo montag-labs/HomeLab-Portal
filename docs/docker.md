@@ -28,6 +28,19 @@ Eine nicht versionierte `.env`-Datei anlegen:
 ADMIN_PASSWORD=ein-langes-zufaelliges-passwort
 ```
 
+Optional kann in derselben Datei OIDC-SSO ergänzt werden:
+
+```dotenv
+OIDC_ISSUER_URL=https://auth.example.com/application/o/homelab-portal/
+OIDC_CLIENT_ID=homelab-portal
+OIDC_CLIENT_SECRET=client-secret
+OIDC_REDIRECT_URI=https://portal.example.com/api/auth/oidc/callback
+OIDC_ALLOWED_GROUPS=homelab-admins
+OIDC_DISPLAY_NAME=Authentik
+```
+
+Die Redirect-URI muss beim Identity Provider exakt registriert sein. Der Gruppen-Claim muss im ID-Token enthalten sein. Das Passwort sollte erst nach einem erfolgreichen SSO-Test mit `OIDC_DISABLE_PASSWORD_LOGIN=true` deaktiviert werden.
+
 Anschließend starten:
 
 ```bash
@@ -52,7 +65,17 @@ Die Konfigurationsvorlage liegt zusätzlich im Image. Ein leerer Datenordner wir
 
 | Variable | Standard | Zweck |
 | --- | --- | --- |
-| `ADMIN_PASSWORD` | erforderlich | Initiales Admin-Passwort, solange noch kein gespeichertes Passwort existiert |
+| `ADMIN_PASSWORD` | erforderlich | Initiales Admin-Passwort und standardmäßiger SSO-Notfallzugang |
+| `OIDC_ISSUER_URL` | leer | Issuer-URL des OpenID Providers |
+| `OIDC_CLIENT_ID` | leer | OIDC-Client-ID |
+| `OIDC_CLIENT_SECRET` | leer | Client-Secret, bei öffentlichen Clients optional |
+| `OIDC_REDIRECT_URI` | leer | Exakte registrierte Callback-URL |
+| `OIDC_ALLOWED_GROUPS` | leer | Erforderliche, kommaseparierte Admin-Gruppen |
+| `OIDC_GROUPS_CLAIM` | `groups` | Claim-Pfad für die Gruppenprüfung |
+| `OIDC_SCOPES` | `openid profile email groups` | Angeforderte OIDC-Scopes |
+| `OIDC_DISPLAY_NAME` | `Single Sign-on` | Beschriftung der SSO-Schaltfläche |
+| `OIDC_CLIENT_AUTH_METHOD` | automatisch | Mit Secret `client_secret_post`, sonst `none`; alternativ `client_secret_basic` |
+| `OIDC_DISABLE_PASSWORD_LOGIN` | `false` | Deaktiviert den Passwort-Login nach erfolgreichem SSO-Test |
 | `TRUST_PROXY` | `false` | Vertraut genau einem vorgeschalteten Proxy bei `true` |
 | `FORCE_SECURE_COOKIES` | `false` | Erzwingt das `Secure`-Attribut für Session-Cookies |
 | `ALLOW_INSECURE_TLS` | `false` | Deaktiviert nur für Statusprüfungen die TLS-Zertifikatsprüfung |

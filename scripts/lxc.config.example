@@ -60,3 +60,16 @@
 # TLS-Zertifikatsprüfung für Erreichbarkeitstests deaktivieren.
 # Nur für Homelab-Dienste mit selbstsignierten Zertifikaten aktivieren.
 # ALLOW_INSECURE_TLS=false
+
+# Optionales OpenID-Connect-SSO. SSO wird nur aktiviert, wenn Issuer,
+# Client-ID, Redirect-URI und mindestens eine erlaubte Admin-Gruppe gesetzt sind.
+# OIDC_ISSUER_URL=https://auth.example.com/application/o/homelab-portal/
+# OIDC_CLIENT_ID=homelab-portal
+# OIDC_CLIENT_SECRET=client-secret
+# OIDC_REDIRECT_URI=https://portal.example.com/api/auth/oidc/callback
+# OIDC_ALLOWED_GROUPS=homelab-admins
+# OIDC_GROUPS_CLAIM=groups
+# OIDC_SCOPES=openid profile email groups
+# OIDC_DISPLAY_NAME=Authentik
+# OIDC_CLIENT_AUTH_METHOD=client_secret_post
+# OIDC_DISABLE_PASSWORD_LOGIN=false

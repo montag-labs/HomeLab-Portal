@@ -38,7 +38,7 @@ load_parameters() {
     value="${value#\"}"
     value="${value%\"}"
     case "${key}" in
-      REPOSITORY_BRANCH|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS)
+      REPOSITORY_BRANCH|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS|OIDC_ISSUER_URL|OIDC_CLIENT_ID|OIDC_CLIENT_SECRET|OIDC_REDIRECT_URI|OIDC_ALLOWED_GROUPS|OIDC_GROUPS_CLAIM|OIDC_SCOPES|OIDC_DISPLAY_NAME|OIDC_CLIENT_AUTH_METHOD|OIDC_DISABLE_PASSWORD_LOGIN)
         printf -v "${key}" '%s' "${value}"
         ;;
       *)
@@ -75,7 +75,7 @@ while (( $# > 0 )); do
   esac
 done
 
-if [[ -z "${HOMELAB_CONFIG:-}" && "${CONFIG_FILE}" == "/etc/homelab-portal/lxc.config" +  && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
+if [[ -z "${HOMELAB_CONFIG:-}" && "${CONFIG_FILE}" == "/etc/homelab-portal/lxc.config" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
   cp -p /etc/homelab-portal/install.conf "${CONFIG_FILE}"
 fi
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Eye, EyeOff, House, LockKeyhole, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, House, KeyRound, LockKeyhole, ShieldCheck } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { BrandIdentity } from "./BrandIdentity";
 
@@ -10,7 +10,9 @@ export function AdminLogin() {
   const { t } = useTranslation();
   const { session, login } = useAuth();
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() =>
+    new URLSearchParams(window.location.search).has("sso_error") ? t("auth.ssoFailed") : ""
+  );
   const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const submit = async (event: FormEvent) => {
@@ -25,6 +27,8 @@ export function AdminLogin() {
       setSubmitting(false);
     }
   };
+  const passwordEnabled = session?.passwordEnabled ?? session?.configured ?? false;
+  const ssoEnabled = session?.ssoEnabled ?? false;
   return (
     <main className="admin-login">
       <div className="admin-login-glow admin-login-glow-one" />
@@ -63,7 +67,23 @@ export function AdminLogin() {
             </div>
           )}
 
-          <label className="admin-login-field">
+          {ssoEnabled && (
+            <button
+              type="button"
+              className="admin-login-sso"
+              onClick={() => window.location.assign("/api/auth/oidc/login")}
+            >
+              <KeyRound size={18} aria-hidden="true" />
+              <span>{t("auth.loginWithSso", { provider: session?.ssoLabel ?? "SSO" })}</span>
+              <ArrowRight size={18} aria-hidden="true" />
+            </button>
+          )}
+
+          {ssoEnabled && passwordEnabled && (
+            <div className="admin-login-divider"><span>{t("auth.orPassword")}</span></div>
+          )}
+
+          {passwordEnabled && <label className="admin-login-field">
             <span>{t("auth.password")}</span>
             <div className="admin-login-input">
               <LockKeyhole size={18} aria-hidden="true" />
@@ -71,7 +91,7 @@ export function AdminLogin() {
                 type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 value={password}
-                disabled={submitting || !session?.configured}
+                disabled={submitting}
                 placeholder={t("auth.passwordPlaceholder")}
                 onChange={(event) => {
                   setPassword(event.target.value);
@@ -88,14 +108,14 @@ export function AdminLogin() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-          </label>
+          </label>}
 
           {error && <p className="admin-login-error" role="alert">{error}</p>}
 
-          <button className="admin-login-submit" disabled={submitting || !password || !session?.configured}>
+          {passwordEnabled && <button className="admin-login-submit" disabled={submitting || !password}>
             <span>{submitting ? t("auth.loggingIn") : t("auth.login")}</span>
             {submitting ? <span className="admin-login-spinner" aria-hidden="true" /> : <ArrowRight size={18} />}
-          </button>
+          </button>}
           <Link className="admin-login-back" to="/">
             <House size={16} />
             {t("auth.backToPortal")}

@@ -6,6 +6,7 @@ HomeLab-Portal ist eine leichtgewichtige, selbst gehostete Startseite für Diens
 
 - Öffentliche Portalansicht mit Kategorien und Dienststatus
 - Geschützter Admin-Bereich für Kategorien, Apps und Einstellungen
+- Optionales OpenID-Connect-SSO mit expliziter Admin-Gruppenfreigabe
 - Lokaler Icon-Katalog sowie eigene Icon-URLs
 - Helles und dunkles Theme direkt im Portal
 - Deutsch und Englisch

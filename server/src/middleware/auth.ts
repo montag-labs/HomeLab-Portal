@@ -4,6 +4,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
+import {
+  completeOidcAuthorization,
+  createOidcAuthorizationUrl,
+  getOidcStatus,
+} from "../services/oidcService.js";
 
 const COOKIE_NAME = "homelab_admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
@@ -12,7 +17,13 @@ const LOGIN_ATTEMPTS = 5;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PASSWORD_STORE_FILE = process.env.ADMIN_PASSWORD_STORE_FILE
   ?? path.resolve(__dirname, "../../data/admin-password");
-interface Session { csrfToken: string; expiresAt: number }
+interface Session {
+  csrfToken: string;
+  expiresAt: number;
+  authMethod: "password" | "oidc";
+  subject?: string;
+  displayName?: string;
+}
 const sessions = new Map<string, Session>();
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 
@@ -79,6 +90,24 @@ function cookieOptions(request: Request): string {
   return `Path=/; HttpOnly; SameSite=Strict; Max-Age=${Math.floor(SESSION_TTL_MS / 1000)}${secure ? "; Secure" : ""}`;
 }
 
+function createAdminSession(
+  request: Request,
+  response: Response,
+  authMethod: Session["authMethod"],
+  identity?: { subject: string; displayName?: string },
+): Session {
+  const id = randomBytes(32).toString("base64url");
+  const session: Session = {
+    csrfToken: randomBytes(32).toString("base64url"),
+    expiresAt: Date.now() + SESSION_TTL_MS,
+    authMethod,
+    ...identity,
+  };
+  sessions.set(id, session);
+  response.setHeader("Set-Cookie", `${COOKIE_NAME}=${encodeURIComponent(id)}; ${cookieOptions(request)}`);
+  return session;
+}
+
 export function requireAdmin(request: Request, response: Response, next: NextFunction) {
   const authenticated = getSession(request);
   if (!authenticated) return response.status(401).json({ error: "Authentication required" });
@@ -95,12 +124,26 @@ export function requireAdmin(request: Request, response: Response, next: NextFun
 export const authRouter = Router();
 
 authRouter.get("/auth/session", async (request, response) => {
-  const configured = Boolean(await readAdminPassword());
+  const passwordConfigured = Boolean(await readAdminPassword());
+  const oidcStatus = getOidcStatus();
+  const passwordEnabled = passwordConfigured && !oidcStatus.passwordLoginDisabled;
   const authenticated = getSession(request);
-  response.json({ configured, authenticated: Boolean(authenticated), csrfToken: authenticated?.session.csrfToken });
+  response.json({
+    configured: passwordEnabled || oidcStatus.enabled,
+    passwordEnabled,
+    ssoEnabled: oidcStatus.enabled,
+    ssoLabel: oidcStatus.label,
+    authenticated: Boolean(authenticated),
+    authMethod: authenticated?.session.authMethod,
+    displayName: authenticated?.session.displayName,
+    csrfToken: authenticated?.session.csrfToken,
+  });
 });
 
 authRouter.post("/auth/login", async (request, response) => {
+  if (getOidcStatus().passwordLoginDisabled) {
+    return response.status(403).json({ error: "Password login is disabled" });
+  }
   const address = request.ip ?? request.socket.remoteAddress ?? "unknown";
   const now = Date.now();
   const attempt = loginAttempts.get(address);
@@ -118,11 +161,38 @@ authRouter.post("/auth/login", async (request, response) => {
     });
   }
   loginAttempts.delete(address);
-  const id = randomBytes(32).toString("base64url");
-  const session = { csrfToken: randomBytes(32).toString("base64url"), expiresAt: now + SESSION_TTL_MS };
-  sessions.set(id, session);
-  response.setHeader("Set-Cookie", `${COOKIE_NAME}=${encodeURIComponent(id)}; ${cookieOptions(request)}`);
-  response.json({ configured: true, authenticated: true, csrfToken: session.csrfToken });
+  const session = createAdminSession(request, response, "password");
+  const oidcStatus = getOidcStatus();
+  response.json({
+    configured: true,
+    passwordEnabled: true,
+    ssoEnabled: oidcStatus.enabled,
+    ssoLabel: oidcStatus.label,
+    authenticated: true,
+    authMethod: session.authMethod,
+    csrfToken: session.csrfToken,
+  });
+});
+
+authRouter.get("/auth/oidc/login", async (_request, response) => {
+  try {
+    response.redirect((await createOidcAuthorizationUrl()).href);
+  } catch (error) {
+    console.error("OIDC authorization could not be started:", error instanceof Error ? error.message : error);
+    response.redirect("/admin?sso_error=unavailable");
+  }
+});
+
+authRouter.get("/auth/oidc/callback", async (request, response) => {
+  try {
+    const callbackUrl = new URL(request.originalUrl, "http://localhost");
+    const identity = await completeOidcAuthorization(callbackUrl);
+    createAdminSession(request, response, "oidc", identity);
+    response.redirect("/admin");
+  } catch (error) {
+    console.error("OIDC authorization failed:", error instanceof Error ? error.message : error);
+    response.redirect("/admin?sso_error=failed");
+  }
 });
 
 authRouter.post("/auth/logout", requireAdmin, (_request, response) => {
