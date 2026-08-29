@@ -1316,6 +1316,152 @@ img.admin-icon-option-preview {
   max-width: 560px;
 }
 
+.sso-settings-page {
+  max-width: 1100px;
+}
+
+.sso-settings-heading,
+.sso-enable-control,
+.sso-section-title,
+.sso-info-message,
+.sso-check-field,
+.sso-save-bar,
+.sso-save-bar > div {
+  display: flex;
+  align-items: center;
+}
+
+.sso-settings-heading {
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.sso-settings-heading h2,
+.sso-section-title h3,
+.sso-section-title p {
+  margin: 0;
+}
+
+.sso-settings-heading p,
+.sso-section-title p,
+.sso-check-field small {
+  color: var(--text-muted);
+}
+
+.sso-enable-control {
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.sso-enable-control > span:first-child,
+.sso-check-field > span {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.sso-enable-control small,
+.sso-check-field small {
+  font-size: 0.72rem;
+}
+
+.sso-enable-control input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sso-info-message {
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent-color) 28%, var(--border));
+  border-radius: 8px;
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent-color) 7%, var(--bg-elevated));
+}
+
+.sso-config-card,
+.sso-security-card {
+  max-width: none;
+}
+
+.sso-section-title {
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.sso-section-title p {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.sso-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.sso-form-grid .admin-field {
+  max-width: none;
+}
+
+.sso-wide-field {
+  grid-column: 1 / -1;
+}
+
+.sso-check-field {
+  align-items: flex-start;
+  gap: 0.65rem;
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
+.sso-check-field input {
+  margin-top: 0.2rem;
+}
+
+.sso-save-message {
+  margin: 0;
+}
+
+.sso-save-bar {
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-elevated);
+}
+
+.sso-save-bar > span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.sso-save-bar > div {
+  gap: 0.6rem;
+}
+
+@media (max-width: 760px) {
+  .sso-settings-heading,
+  .sso-save-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sso-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sso-wide-field {
+    grid-column: auto;
+  }
+
+  .sso-save-bar > div {
+    flex-wrap: wrap;
+  }
+}
+
 .admin-tools-card h3 {
   margin: 0 0 0.4rem;
   font-size: 1rem;

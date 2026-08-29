@@ -10,17 +10,19 @@ Das helle oder dunkle Theme wird direkt im Portal umgeschaltet und im jeweiligen
 
 ## Single Sign-on mit OpenID Connect
 
-Der Admin-Bereich unterstützt generisches OpenID Connect (OIDC), beispielsweise mit Authentik, Keycloak, Authelia oder Microsoft Entra ID. Beim Identity Provider muss folgende Redirect-URI registriert werden:
+Der Admin-Bereich unterstützt generisches OpenID Connect (OIDC), beispielsweise mit Authentik, Keycloak, Authelia oder Microsoft Entra ID. Die Konfiguration erfolgt im eigenen Admin-Modul „OpenID Connect“. Beim Identity Provider muss folgende Redirect-URI registriert werden:
 
 ```text
 https://portal.example.com/api/auth/oidc/callback
 ```
 
-SSO wird absichtlich nur aktiviert, wenn `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, `OIDC_REDIRECT_URI` und mindestens eine `OIDC_ALLOWED_GROUPS`-Gruppe gesetzt sind. Der Gruppen-Claim muss im ID-Token enthalten sein. Mehrere erlaubte Gruppen werden kommasepariert angegeben; der Claim-Pfad unterstützt Punkte, beispielsweise `realm_access.roles`.
+SSO wird absichtlich nur aktiviert, wenn Issuer-URL, Client-ID, Redirect-URI und mindestens eine erlaubte Admin-Gruppe gespeichert sind. Der Gruppen-Claim muss im ID-Token enthalten sein. Mehrere erlaubte Gruppen werden kommasepariert angegeben; der Claim-Pfad unterstützt Punkte, beispielsweise `realm_access.roles`.
+
+Das Client-Secret wird separat in `server/data/oidc.json` mit restriktiven Dateirechten gespeichert und nie an den Browser zurückgegeben. Sind OIDC-Laufzeitvariablen gesetzt, haben sie Vorrang und das Admin-Modul zeigt die Konfiguration schreibgeschützt an.
 
 Der Flow verwendet Authorization Code, PKCE, `state` und `nonce`. Nach erfolgreicher Gruppenprüfung wird eine normale serverseitige Admin-Sitzung mit dem bestehenden CSRF-Schutz erstellt. OIDC-Tokens werden weder an den Browser weitergegeben noch in der Portal-Konfiguration gespeichert.
 
-Das lokale Admin-Passwort bleibt standardmäßig als Notfallzugang aktiv. Erst nach einem erfolgreichen SSO-Test sollte `OIDC_DISABLE_PASSWORD_LOGIN=true` gesetzt werden. Für produktives SSO werden HTTPS, `FORCE_SECURE_COOKIES=true` und bei einem vertrauenswürdigen Reverse Proxy `TRUST_PROXY=true` empfohlen.
+Das lokale Admin-Passwort bleibt standardmäßig als Notfallzugang aktiv. Die Oberfläche erlaubt das Deaktivieren erst nach einer erfolgreichen SSO-Testanmeldung mit gültiger Gruppenfreigabe. Für produktives SSO werden HTTPS, `FORCE_SECURE_COOKIES=true` und bei einem vertrauenswürdigen Reverse Proxy `TRUST_PROXY=true` empfohlen.
 
 ## Kategorien und Apps
 
@@ -96,7 +98,7 @@ Manuelle Änderungen sollten nur bei gestopptem Dienst und nach einem Backup erf
 
 ## Import und Export
 
-Der Export enthält Einstellungen, Kategorien und Apps, aber kein Admin-Passwort und keine Sitzungsdaten. Importierte Daten werden serverseitig validiert und ersetzen die aktuelle Portal-Konfiguration vollständig.
+Der Export enthält Einstellungen, Kategorien und Apps, aber keine Authentifizierungsgeheimnisse, OIDC-Konfiguration oder Sitzungsdaten. `oidc.json` und das Admin-Passwort müssen separat gesichert werden. Importierte Daten werden serverseitig validiert und ersetzen die aktuelle Portal-Konfiguration vollständig.
 
 Vor einem Import:
 

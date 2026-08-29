@@ -81,6 +81,9 @@ install -d -m 700 "${BACKUP_DIR}"
 if [[ -f server/data/config.json ]]; then
   cp -a server/data/config.json "${BACKUP_DIR}/config-$(date +%Y%m%d-%H%M%S).json"
 fi
+if [[ -f server/data/oidc.json ]]; then
+  cp -a server/data/oidc.json "${BACKUP_DIR}/oidc-$(date +%Y%m%d-%H%M%S).json"
+fi
 
 rollback() {
   set +e

@@ -58,6 +58,8 @@ Der Dienst läuft als unprivilegierter Benutzer `homelab-portal`. systemd beschr
 
 Die Vorlage [lxc.config.example](../scripts/lxc.config.example) wird bei der Installation nach `/etc/homelab-portal/lxc.config` kopiert. Auskommentierte Zeilen verwenden den Standardwert.
 
+OIDC kann nach der ersten Passwortanmeldung direkt im Admin-Modul „OpenID Connect“ eingerichtet werden. Werte in `lxc.config` haben Vorrang und werden im Modul schreibgeschützt angezeigt.
+
 Wichtige Parameter:
 
 | Parameter | Standard | Zweck |

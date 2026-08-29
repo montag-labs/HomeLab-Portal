@@ -8,6 +8,7 @@ import { Dashboard } from "./admin/Dashboard";
 import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
 import { Logs } from "./admin/Logs";
+import { SsoSettings } from "./admin/SsoSettings";
 import { AdminLogin } from "../components/AdminLogin";
 import { BrandIdentity } from "../components/BrandIdentity";
 import { useAuth } from "../hooks/useAuth";
@@ -16,6 +17,7 @@ import {
   Bug,
   ChartNoAxesCombined,
   LayoutGrid,
+  KeyRound,
   LogOut,
   RefreshCw,
   ScrollText,
@@ -25,7 +27,10 @@ import {
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "categories" | "dashboard" | "updates" | "logs" | "dev">("general");
+  const [tab, setTab] = useState<"general" | "sso" | "categories" | "dashboard" | "updates" | "logs" | "dev">(() => {
+    const query = new URLSearchParams(window.location.search);
+    return query.has("sso_verified") || query.has("sso_error") ? "sso" : "general";
+  });
   const [devEnabled, setDevEnabled] = useState(false);
   const { session, loading, logout } = useAuth();
 
@@ -45,6 +50,14 @@ export function AdminPage() {
         </Link>
         <div className="admin-sidebar-label">{t("nav.admin")}</div>
         <nav className="admin-tabs" aria-label={t("nav.admin")}>
+          <button
+            type="button"
+            className={tab === "sso" ? "active" : ""}
+            onClick={() => setTab("sso")}
+          >
+            <KeyRound size={18} />
+            {t("admin.sso")}
+          </button>
           <button
             type="button"
             className={tab === "general" ? "active" : ""}
@@ -110,6 +123,7 @@ export function AdminPage() {
       <div className="admin-workspace">
         <main className="admin-content">
           {tab === "general" && <GeneralSettings />}
+          {tab === "sso" && <SsoSettings />}
           {tab === "categories" && <CategoryManager />}
           {tab === "dashboard" && <Dashboard />}
           {tab === "updates" && <Updates />}
