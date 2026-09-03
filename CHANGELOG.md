@@ -6,7 +6,7 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
-## [1.4.4] - 2026-09-03
+## [1.5.0] - 2026-09-03
 
 ### Hinzugefügt
 
