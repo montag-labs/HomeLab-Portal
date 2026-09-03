@@ -35,11 +35,7 @@ cd HomeLab-Portal
 mkdir -p server/data/logs
 ```
 
-Auf Linux benötigt das eingebundene Datenverzeichnis Schreibrechte für UID/GID `1000:1000`:
-
-```bash
-sudo chown -R 1000:1000 server/data
-```
+Docker Compose setzt die benötigten Rechte für das persistente Datenverzeichnis beim Start automatisch. Der eigentliche Portal-Container läuft weiterhin unprivilegiert mit UID/GID `1000:1000`.
 
 Eine nicht versionierte Datei `.env` anlegen:
 

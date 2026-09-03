@@ -1,13 +1,34 @@
 services:
+  homelab-portal-init:
+    image: montaglabs/homelab-portal:latest
+    pull_policy: always
+    user: "0:0"
+    entrypoint: ["chown"]
+    command: ["-R", "1000:1000", "/app/server/data"]
+    volumes:
+      - ./server/data:/app/server/data
+    restart: "no"
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+    security_opt:
+      - no-new-privileges:true
+
   homelab-portal:
     image: montaglabs/homelab-portal:latest
     pull_policy: always
     container_name: homelab-portal
+    depends_on:
+      homelab-portal-init:
+        condition: service_completed_successfully
     environment:
       APP_ENV: production
       UPDATE_MODE: docker
       PORT: 4000
-      LOG_DIR: /var/log/homelab-portal
+      LOG_DIR: /app/server/data/logs
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the environment or a .env file}
       ADMIN_PASSWORD_STORE_FILE: /app/server/data/admin-password
       OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
@@ -27,7 +48,6 @@ services:
       - "4000:4000"
     volumes:
       - ./server/data:/app/server/data
-      - ./server/data/logs:/var/log/homelab-portal
     restart: unless-stopped
     init: true
     read_only: true

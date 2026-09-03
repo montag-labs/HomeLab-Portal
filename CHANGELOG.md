@@ -6,6 +6,17 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-09-03
+
+### Geändert
+
+- Datums- und Zeitangaben im Admin-Bereich verwenden einheitlich zweistellige Tage und Monate.
+
+### Behoben
+
+- Docker Compose initialisiert die Rechte des persistenten Datenverzeichnisses automatisch, sodass die Portal-Konfiguration beim ersten Start zuverlässig geladen und gespeichert werden kann.
+- Docker-Logs verwenden denselben persistenten Daten-Mount ohne überlappenden zweiten Bind-Mount.
+
 ## [1.4.1] - 2026-08-29
 
 ### Geändert

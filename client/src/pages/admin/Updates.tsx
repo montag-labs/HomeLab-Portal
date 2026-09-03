@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import type { UpdateStatus } from "../../types";
+import { formatDateTime } from "../../utils/date";
 
 export function Updates() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [status, setStatus] = useState<UpdateStatus | null>(null);
   const [checking, setChecking] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -103,7 +104,7 @@ export function Updates() {
           </div>
           <div>
             <dt>{t("admin.lastChecked")}</dt>
-            <dd>{status ? new Date(status.checkedAt).toLocaleString() : "-"}</dd>
+            <dd>{status ? formatDateTime(status.checkedAt, i18n.language) : "-"}</dd>
           </div>
         </dl>
         {status?.error && <p className="update-error">{status.error}</p>}

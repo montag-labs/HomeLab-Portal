@@ -13,6 +13,7 @@ import {
 import { api } from "../../api";
 import { useConfig } from "../../hooks/useConfig";
 import type { LogPolicy, LogRotation, LogSource } from "../../types";
+import { formatDateTime } from "../../utils/date";
 
 const DEFAULT_POLICY: LogPolicy = { rotation: "day", archiveCount: 7 };
 
@@ -218,7 +219,7 @@ export function Logs() {
                   <span>
                     {selectedLog?.available ? t("admin.logAvailable") : t("admin.logUnavailable")}
                     {selectedLog?.modifiedAt && (
-                      <> · {t("admin.logModified")} {new Date(selectedLog.modifiedAt).toLocaleString(i18n.language)}</>
+                      <> · {t("admin.logModified")} {formatDateTime(selectedLog.modifiedAt, i18n.language)}</>
                     )}
                   </span>
                 </div>
@@ -283,7 +284,7 @@ export function Logs() {
                           {formatBytes(archiveItem.size)}
                           <span>·</span>
                           <Clock3 size={12} />
-                          {new Date(archiveItem.modifiedAt).toLocaleString(i18n.language)}
+                          {formatDateTime(archiveItem.modifiedAt, i18n.language)}
                         </small>
                       </span>
                       <Download size={16} />

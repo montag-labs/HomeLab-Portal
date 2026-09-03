@@ -16,11 +16,7 @@ cd HomeLab-Portal
 mkdir -p server/data/logs
 ```
 
-Der Container läuft als Benutzer `node` mit UID/GID `1000:1000`. Auf Linux müssen die persistenten Verzeichnisse schreibbar sein:
-
-```bash
-sudo chown -R 1000:1000 server/data
-```
+Ein kurzlebiger Initialisierungscontainer setzt beim Start ausschließlich für `server/data` den Eigentümer auf UID/GID `1000:1000`. Anschließend startet der eigentliche Portal-Container als unprivilegierter Benutzer `node`; seine übrigen Härtungseinstellungen bleiben aktiv.
 
 Eine nicht versionierte `.env`-Datei anlegen:
 
@@ -56,8 +52,7 @@ Docker Compose bindet folgende Hostpfade ein:
 
 | Hostpfad | Containerpfad | Inhalt |
 | --- | --- | --- |
-| `./server/data` | `/app/server/data` | Konfiguration und gespeichertes Admin-Passwort |
-| `./server/data/logs` | `/var/log/homelab-portal` | Anwendungs- und Update-Logs |
+| `./server/data` | `/app/server/data` | Konfiguration, gespeichertes Admin-Passwort und Logs |
 
 Die Konfigurationsvorlage liegt zusätzlich im Image. Ein leerer Datenordner wird beim ersten Start automatisch initialisiert.
 
