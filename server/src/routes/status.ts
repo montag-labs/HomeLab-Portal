@@ -21,6 +21,11 @@ export interface ReachabilityDetails {
   error?: string;
 }
 
+const RESULT_CACHE_MS = 25_000;
+const MAX_CONCURRENT_CHECKS = 8;
+const resultCache = new Map<string, { expiresAt: number; result: ReachabilityDetails }>();
+const pendingChecks = new Map<string, Promise<ReachabilityDetails>>();
+
 export function checkReachability(urlString: string): Promise<ReachabilityDetails> {
   return new Promise((resolve) => {
     let target: URL;
@@ -73,26 +78,75 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
   });
 }
 
-statusRouter.get("/status", limitStatusRequests, async (req, res) => {
-  const parsed = querySchema.safeParse(req.query);
-  if (!parsed.success) {
-    return res.status(400).json({ error: parsed.error.flatten() });
-  }
+async function checkReachabilityCached(url: string): Promise<ReachabilityDetails> {
+  const cached = resultCache.get(url);
+  if (cached && cached.expiresAt > Date.now()) return cached.result;
+  if (cached) resultCache.delete(url);
+
+  const pending = pendingChecks.get(url);
+  if (pending) return pending;
+
+  const check = checkReachability(url)
+    .then((result) => {
+      resultCache.set(url, { expiresAt: Date.now() + RESULT_CACHE_MS, result });
+      return result;
+    })
+    .finally(() => pendingChecks.delete(url));
+  pendingChecks.set(url, check);
+  return check;
+}
+
+export async function checkReachabilities(
+  urls: string[],
+): Promise<Record<string, ReachabilityDetails>> {
+  const uniqueUrls = [...new Set(urls)];
+  const results: Record<string, ReachabilityDetails> = {};
+  let nextIndex = 0;
+
+  const worker = async () => {
+    while (nextIndex < uniqueUrls.length) {
+      const url = uniqueUrls[nextIndex];
+      nextIndex += 1;
+      results[url] = await checkReachabilityCached(url);
+    }
+  };
+
+  const workerCount = Math.min(MAX_CONCURRENT_CHECKS, uniqueUrls.length);
+  await Promise.all(Array.from({ length: workerCount }, () => worker()));
+  return results;
+}
+
+async function getConfiguredUrls(): Promise<Set<string>> {
   const config = await readConfig();
-  const allowedUrls = new Set(
+  return new Set(
     config.categories.flatMap((category) =>
       category.apps.flatMap((app) => [app.domain, app.localIp])
         .filter((url): url is string => Boolean(url))
         .map((url) => {
           try { return new URL(url).href; }
           catch { return ""; }
-        }),
+        })
+        .filter(Boolean),
     ),
   );
+}
+
+statusRouter.get("/statuses", limitStatusRequests, async (_req, res) => {
+  const configuredUrls = await getConfiguredUrls();
+  const results = await checkReachabilities([...configuredUrls]);
+  res.json({ checkedAt: new Date().toISOString(), results });
+});
+
+statusRouter.get("/status", limitStatusRequests, async (req, res) => {
+  const parsed = querySchema.safeParse(req.query);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
+  const allowedUrls = await getConfiguredUrls();
   const normalizedUrl = new URL(parsed.data.url).href;
   if (!allowedUrls.has(normalizedUrl)) {
     return res.status(403).json({ error: "Only configured service URLs can be checked" });
   }
-  const result = await checkReachability(normalizedUrl);
+  const result = await checkReachabilityCached(normalizedUrl);
   res.json(result);
 });

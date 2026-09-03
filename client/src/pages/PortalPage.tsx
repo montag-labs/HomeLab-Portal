@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../api";
 import { useConfig } from "../hooks/useConfig";
 import type { UpdateStatus } from "../types";
+import { ReachabilityProvider } from "../context/ReachabilityProvider";
 
 export function PortalPage() {
   const { t } = useTranslation();
@@ -25,35 +26,37 @@ export function PortalPage() {
   }, []);
 
   return (
-    <div className="portal-layout">
-      <Sidebar />
-      <div className="portal-workspace">
-        <header className="portal-header">
-          <div className="portal-brand-card">
-            <BrandIdentity
-              details={(
-                <span className={`portal-brand-status portal-brand-status-${versionState}`}>
-                v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
-                </span>
-              )}
-            />
-          </div>
-          <div className="portal-summary" aria-label={t("portal.summary")}>
-            <div className="portal-summary-item">
-              <span className="portal-summary-icon"><Boxes size={18} aria-hidden="true" /></span>
-              <span><strong>{categoryCount}</strong>{t("portal.categories")}</span>
+    <ReachabilityProvider>
+      <div className="portal-layout">
+        <Sidebar />
+        <div className="portal-workspace">
+          <header className="portal-header">
+            <div className="portal-brand-card">
+              <BrandIdentity
+                details={(
+                  <span className={`portal-brand-status portal-brand-status-${versionState}`}>
+                  v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
+                  </span>
+                )}
+              />
             </div>
-            <div className="portal-summary-item">
-              <span className="portal-summary-icon"><Server size={18} aria-hidden="true" /></span>
-              <span><strong>{serviceCount}</strong>{t("portal.services")}</span>
+            <div className="portal-summary" aria-label={t("portal.summary")}>
+              <div className="portal-summary-item">
+                <span className="portal-summary-icon"><Boxes size={18} aria-hidden="true" /></span>
+                <span><strong>{categoryCount}</strong>{t("portal.categories")}</span>
+              </div>
+              <div className="portal-summary-item">
+                <span className="portal-summary-icon"><Server size={18} aria-hidden="true" /></span>
+                <span><strong>{serviceCount}</strong>{t("portal.services")}</span>
+              </div>
+              <ThemeToggle />
             </div>
-            <ThemeToggle />
-          </div>
-        </header>
-        <main className="portal-main">
-          <DashboardPanel />
-        </main>
+          </header>
+          <main className="portal-main">
+            <DashboardPanel />
+          </main>
+        </div>
       </div>
-    </div>
+    </ReachabilityProvider>
   );
 }

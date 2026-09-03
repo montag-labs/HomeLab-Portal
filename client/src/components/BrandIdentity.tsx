@@ -11,7 +11,7 @@ export function BrandIdentity({ details }: BrandIdentityProps) {
   return (
     <>
       <span className="brand-identity-image">
-        <img src="/icons/homelab-portal.png" alt="" />
+        <img src="/Logo.png" alt="" />
       </span>
       <span className="brand-identity-copy">
         <strong>{t("app.title")}</strong>

@@ -1,4 +1,4 @@
-import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, OidcAdminConfig, OidcAdminConfigInput, PortalConfig, Settings, UpdateStartResult, UpdateStatus } from "./types";
+import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, OidcAdminConfig, OidcAdminConfigInput, PortalConfig, ReachabilitySnapshot, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
 let csrfToken = "";
 
@@ -63,10 +63,7 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(config),
     }),
-  getStatus: (url: string) =>
-    request<{ online: boolean; method?: "HEAD" | "GET"; statusCode?: number; error?: string }>(
-      `/api/status?url=${encodeURIComponent(url)}`,
-    ),
+  getStatuses: () => request<ReachabilitySnapshot>("/api/statuses"),
   getDevAvailability: () => request<{ enabled: boolean }>("/api/dev/enabled"),
   getDevDebug: () => request<Record<string, unknown>>("/api/dev/debug"),
   updateSettings: (settings: Partial<Settings>) =>

@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { configRouter } from "./routes/config.js";
@@ -16,6 +17,7 @@ const PORT = process.env.HOMELAB_PORT ?? process.env.PORT ?? 80;
 app.disable("x-powered-by");
 app.set("trust proxy", process.env.TRUST_PROXY === "true" ? 1 : false);
 app.use(securityHeaders);
+app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 app.use("/api", authRouter);
 app.use("/api", configRouter);
@@ -36,8 +38,18 @@ app.use((error: unknown, _req: express.Request, res: express.Response, _next: ex
 });
 
 const clientDist = path.resolve(__dirname, "../../client/dist");
-app.use(express.static(clientDist));
+const clientAssets = path.join(clientDist, "assets");
+app.use("/assets", express.static(clientAssets, { immutable: true, maxAge: "1y" }));
+app.use(express.static(clientDist, {
+  maxAge: "1h",
+  setHeaders: (response, filePath) => {
+    if (path.basename(filePath) === "index.html") {
+      response.setHeader("Cache-Control", "no-cache");
+    }
+  },
+}));
 app.get(/.*/, (_req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
   res.sendFile(path.join(clientDist, "index.html"));
 });
 

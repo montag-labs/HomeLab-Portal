@@ -6,6 +6,16 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-09-03
+
+### Geändert
+
+- Erreichbarkeitsprüfungen werden im Portal gebündelt, serverseitig kurzzeitig zwischengespeichert und mit begrenzter Parallelität ausgeführt.
+- Statische Assets werden komprimiert ausgeliefert; versionierte Bundles erhalten langfristige Cache-Header.
+- Der Admin-Bereich einschließlich Sitzungsprüfung wird erst beim Öffnen der Adminroute geladen.
+- Das übergroße Brandingbild wurde durch die bereits optimierte Logo-Datei ersetzt.
+- Client- und Server-Abhängigkeiten wurden auf aktuelle Patch- und Minor-Versionen aktualisiert.
+
 ## [1.4.2] - 2026-09-03
 
 ### Geändert

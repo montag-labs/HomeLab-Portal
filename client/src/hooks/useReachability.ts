@@ -1,39 +1,27 @@
-import { useEffect, useState } from "react";
-import { api } from "../api";
+import { useContext } from "react";
+import { ReachabilityContext } from "../context/reachability-context";
 
 export type ReachabilityStatus = "checking" | "online" | "offline";
 
-const POLL_INTERVAL_MS = 30_000;
+function normalizeUrl(url: string): string {
+  try {
+    return new URL(url).href;
+  } catch {
+    return url;
+  }
+}
 
 export function useReachability(
   primaryUrl: string | undefined,
   fallbackUrl?: string,
 ): ReachabilityStatus {
-  const [status, setStatus] = useState<ReachabilityStatus>("checking");
+  const context = useContext(ReachabilityContext);
+  if (!context) throw new Error("useReachability must be used within ReachabilityProvider");
 
-  useEffect(() => {
-    const urls = [primaryUrl, fallbackUrl].filter(
-      (url): url is string => Boolean(url),
-    );
-    if (urls.length === 0) return;
-    let cancelled = false;
-
-    const check = async () => {
-      try {
-        const results = await Promise.all(urls.map((url) => api.getStatus(url)));
-        if (!cancelled) setStatus(results.some((result) => result.online) ? "online" : "offline");
-      } catch {
-        if (!cancelled) setStatus("offline");
-      }
-    };
-
-    check();
-    const interval = setInterval(check, POLL_INTERVAL_MS);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
-  }, [primaryUrl, fallbackUrl]);
-
-  return status;
+  const urls = [primaryUrl, fallbackUrl]
+    .filter((url): url is string => Boolean(url))
+    .map(normalizeUrl);
+  if (urls.length === 0 || !context.loaded) return "checking";
+  if (context.failed) return "offline";
+  return urls.some((url) => context.results[url]?.online) ? "online" : "offline";
 }
