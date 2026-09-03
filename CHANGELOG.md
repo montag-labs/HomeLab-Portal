@@ -6,6 +6,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-09-03
+
+### Hinzugefügt
+
+- Automatisierte Server- und Clienttests für Konfigurationsvalidierung, Migrationen sowie öffentliche und administrative Zugriffsgrenzen.
+
+### Geändert
+
+- Sitzungs- sowie Login- und Status-Limits bereinigen abgelaufene Einträge periodisch und begrenzen ihre Speichergröße.
+- Kategorien und Apps speichern Reihenfolgeänderungen jeweils in einer atomaren Batch-Mutation.
+- Die CI nutzt alle Lockfiles für den npm-Cache und installiert keine Root-Abhängigkeiten mehr.
+- LXC-Updates werden vor dem kurzen Dienstneustart in einem Staging-Verzeichnis gebaut und anschließend atomar umgeschaltet.
+
 ## [1.4.3] - 2026-09-03
 
 ### Geändert

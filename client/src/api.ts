@@ -71,6 +71,11 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(settings),
     }),
+  updateOrders: (orders: { categoryIds?: string[]; appOrders?: Array<{ categoryId: string; appIds: string[] }> }) =>
+    request<PortalConfig>("/api/orders", {
+      method: "PUT",
+      body: JSON.stringify(orders),
+    }),
   getLogs: () => request<LogSource[]>("/api/logs"),
   getLog: (id: string) => request<LogContent>(`/api/logs/${encodeURIComponent(id)}`),
   getLogPolicy: () => request<LogPolicy>("/api/log-policy"),

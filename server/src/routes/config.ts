@@ -7,6 +7,7 @@ import {
   appInputSchema,
   moveAppSchema,
   portalConfigSchema,
+  batchOrderSchema,
 } from "../schemas.js";
 import { requireAdmin } from "../middleware/auth.js";
 
@@ -17,7 +18,7 @@ configRouter.get("/config", async (_req, res) => {
   res.json(config);
 });
 
-configRouter.use(["/config", "/settings", "/categories"], requireAdmin);
+configRouter.use(["/config", "/settings", "/categories", "/orders"], requireAdmin);
 
 configRouter.put("/config", async (req, res) => {
   const parsed = portalConfigSchema.safeParse(req.body);
@@ -38,6 +39,41 @@ configRouter.put("/settings", async (req, res) => {
     return config.settings;
   });
   res.json(settings);
+});
+
+configRouter.put("/orders", async (req, res) => {
+  const parsed = batchOrderSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: parsed.error.flatten() });
+  }
+  const result = await mutateConfig((config) => {
+    if (parsed.data.categoryIds) {
+      const categoryIds = new Set(parsed.data.categoryIds);
+      if (categoryIds.size !== config.categories.length || config.categories.some((category) => !categoryIds.has(category.id))) {
+        return { error: "category" as const };
+      }
+      const positions = new Map(parsed.data.categoryIds.map((id, index) => [id, index]));
+      config.categories.sort((first, second) => positions.get(first.id)! - positions.get(second.id)!);
+      config.categories.forEach((category, index) => { category.order = index; });
+    }
+
+    for (const appOrder of parsed.data.appOrders ?? []) {
+      const category = config.categories.find((candidate) => candidate.id === appOrder.categoryId);
+      const appIds = new Set(appOrder.appIds);
+      if (!category || appIds.size !== category.apps.length || category.apps.some((app) => !appIds.has(app.id))) {
+        return { error: "app" as const };
+      }
+      const positions = new Map(appOrder.appIds.map((id, index) => [id, index]));
+      category.apps.sort((first, second) => positions.get(first.id)! - positions.get(second.id)!);
+      category.apps.forEach((app, index) => { app.order = index; });
+    }
+
+    return { config };
+  });
+  if ("error" in result) {
+    return res.status(409).json({ error: "Order no longer matches the current configuration" });
+  }
+  res.json(result.config);
 });
 
 configRouter.post("/categories", async (req, res) => {

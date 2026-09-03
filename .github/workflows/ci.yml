@@ -21,6 +21,10 @@ jobs:
         with:
           node-version: 26
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+            server/package-lock.json
 
       - name: Validate changelog
         shell: bash
@@ -28,9 +32,6 @@ jobs:
           test -f CHANGELOG.md
           grep -q '^## \[Unreleased\]' CHANGELOG.md
           grep -q '^## \[[0-9]\+\.[0-9]\+\.[0-9]\+\]' CHANGELOG.md
-
-      - name: Install root dependencies
-        run: npm ci
 
       - name: Install client dependencies
         run: npm ci --prefix client
@@ -40,6 +41,12 @@ jobs:
 
       - name: Lint client
         run: npm run lint --prefix client
+
+      - name: Test client
+        run: npm test --prefix client
+
+      - name: Test server
+        run: npm test --prefix server
 
       - name: Build client and server
         run: npm run build

@@ -319,12 +319,7 @@ function CategoryDetail({
   const orderedApps = [...category.apps].sort((a, b) => a.order - b.order);
 
   const persistAppOrder = async (ordered: AppEntry[]) => {
-    for (let i = 0; i < ordered.length; i += 1) {
-      const app = ordered[i];
-      if (app.order !== i) {
-        await api.updateApp(category.id, app.id, { order: i });
-      }
-    }
+    await api.updateOrders({ appOrders: [{ categoryId: category.id, appIds: ordered.map((app) => app.id) }] });
   };
 
   const moveApp = async (index: number, direction: -1 | 1) => {
@@ -387,12 +382,7 @@ export function CategoryManager() {
   };
 
   const persistCategoryOrder = async (ordered: Category[]) => {
-    for (let i = 0; i < ordered.length; i += 1) {
-      const category = ordered[i];
-      if (category.order !== i) {
-        await api.updateCategory(category.id, { order: i });
-      }
-    }
+    await api.updateOrders({ categoryIds: ordered.map((category) => category.id) });
   };
 
   const moveCategory = async (index: number, direction: -1 | 1) => {

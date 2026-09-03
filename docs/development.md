@@ -52,10 +52,12 @@ Im Produktivbetrieb liefert der Express-Server das gebaute Frontend aus `client/
 
 ```bash
 npm run lint --prefix client
+npm test --prefix client
+npm test --prefix server
 npm run build
 ```
 
-Der vollständige Build kompiliert Client und Server. Änderungen an Konfigurationsfeldern müssen gemeinsam in Client-Typen, Server-Typen, Zod-Schema, Default-Konfiguration und Dokumentation berücksichtigt werden.
+Der vollständige Build kompiliert Client und Server. Die Test-Suiten prüfen Konfigurationsvalidierung und Migrationen sowie öffentliche und administrative Zugriffsgrenzen. Änderungen an Konfigurationsfeldern müssen gemeinsam in Client-Typen, Server-Typen, Zod-Schema, Default-Konfiguration und Dokumentation berücksichtigt werden.
 
 ## Entwicklungsdiagnose
 
