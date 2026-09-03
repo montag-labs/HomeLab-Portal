@@ -52,6 +52,7 @@ export function Updates() {
       try {
         const response = await fetch("/api/update", { cache: "no-store" });
         const updateStatus = (await response.json()) as UpdateStatus;
+        setStatus(updateStatus);
         if (
           response.ok &&
           updateStatus.state === "current" &&
@@ -107,6 +108,24 @@ export function Updates() {
             <dd>{status ? formatDateTime(status.checkedAt, i18n.language) : "-"}</dd>
           </div>
         </dl>
+        {status?.progress && status.state === "updating" && (
+          <div className="update-progress" aria-live="polite">
+            <div className="update-progress-label">
+              <span>{status.progress.step}</span>
+              <strong>{status.progress.percent}%</strong>
+            </div>
+            <div
+              className="update-progress-track"
+              role="progressbar"
+              aria-label={t("admin.updateProgress")}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={status.progress.percent}
+            >
+              <div className="update-progress-bar" style={{ width: `${status.progress.percent}%` }} />
+            </div>
+          </div>
+        )}
         {status?.error && <p className="update-error">{status.error}</p>}
         {status?.capabilities.reason && (
           <p className="update-hint">{status.capabilities.reason}</p>
@@ -123,7 +142,7 @@ export function Updates() {
           <button
             type="button"
             className="btn"
-            disabled={status?.capabilities.mode !== "lxc" || !status.updateAvailable || updating}
+            disabled={status?.capabilities.mode !== "lxc" || !status.updateAvailable || updating || status.state === "updating"}
             onClick={installUpdate}
             title={
               status?.capabilities.mode !== "lxc"

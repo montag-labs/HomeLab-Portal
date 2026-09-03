@@ -107,6 +107,12 @@ export interface UpdateStatus {
     canUpdate: boolean;
     reason: string;
   };
+  progress?: {
+    percent: number;
+    step: string;
+    targetVersion?: string;
+    updatedAt: string;
+  };
   error?: string;
 }
 

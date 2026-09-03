@@ -8,6 +8,7 @@ BACKUP_DIR="/var/backups/homelab-portal"
 LOCK_FILE="/run/homelab-portal-update.lock"
 LOG_DIR="/var/log/homelab-portal"
 LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
+PROGRESS_FILE="/run/homelab-portal/update-progress.json"
 HOMELAB_PORT="${PORT:-80}"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
 if [[ -z "${HOMELAB_CONFIG:-}" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
@@ -36,11 +37,20 @@ load_parameters() {
 load_parameters
 HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 
+write_progress() {
+  local state="$1" percent="$2" step="$3" target_version="${4:-}"
+  printf '{"state":"%s","percent":%s,"step":"%s","targetVersion":"%s","updatedAt":"%s"}\n' \
+    "${state}" "${percent}" "${step}" "${target_version}" "$(date --iso-8601=seconds)" > "${PROGRESS_FILE}.tmp"
+  chmod 644 "${PROGRESS_FILE}.tmp"
+  mv -f "${PROGRESS_FILE}.tmp" "${PROGRESS_FILE}"
+}
+
 install -d -m 750 "${LOG_DIR}"
 touch "${LOG_FILE}"
 chmod 640 "${LOG_FILE}"
 exec >>"${LOG_FILE}" 2>&1
 echo "--- Update gestartet: $(date --iso-8601=seconds) ---"
+write_progress updating 2 "Update wird vorbereitet"
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "Dieses Script muss als root ausgeführt werden." >&2
@@ -51,12 +61,14 @@ export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
 
 echo "Aktualisiere Node.js auf Version 26 ..."
+write_progress updating 10 "Node.js wird aktualisiert"
 apt-get update
 apt-get install -y ca-certificates curl
 curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x | bash -
 apt-get install -y nodejs
 node --version
 npm --version
+write_progress updating 18 "Repository wird geprüft"
 
 exec 9>"${LOCK_FILE}"
 flock -n 9 || { echo "Ein Update läuft bereits." >&2; exit 1; }
@@ -71,6 +83,7 @@ readonly TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'l
 
 echo "Aktueller Stand: ${CURRENT_VERSION} (${CURRENT_COMMIT:0:12})"
 echo "Remote-Stand:    ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
+write_progress updating 30 "Zielversion ${TARGET_VERSION} wird vorbereitet" "${TARGET_VERSION}"
 
 if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]] || [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]]; then
   echo "HomeLab-Portal ist bereits aktuell (${CURRENT_VERSION})."
@@ -92,6 +105,7 @@ SWITCHED=false
 rollback() {
   set +e
   trap - ERR
+  write_progress failed 100 "Update fehlgeschlagen" "${TARGET_VERSION:-}"
   if [[ "${SWITCHED}" == true && -n "${PREVIOUS_DIR}" && -d "${PREVIOUS_DIR}" ]]; then
     echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
     systemctl stop "${SERVICE_NAME}"
@@ -117,13 +131,18 @@ echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
 STAGING_DIR="$(mktemp -d "${APP_DIR}.staging.XXXXXX")"
 PREVIOUS_DIR="${APP_DIR}.previous-$(date +%Y%m%d-%H%M%S)"
 echo "Baue Update in ${STAGING_DIR} ..."
+write_progress updating 40 "Update wird gebaut" "${TARGET_VERSION}"
 git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
+if [[ -d "${APP_DIR}/.git" ]]; then
+  cp -a "${APP_DIR}/.git" "${STAGING_DIR}/.git"
+fi
 cd "${STAGING_DIR}"
 if [[ -d "${APP_DIR}/server/data" ]]; then
   install -d -m 700 server/data
   cp -a "${APP_DIR}/server/data/." server/data/
 fi
 npm ci --ignore-scripts --prefix client
+write_progress updating 58 "Client-Abhängigkeiten installiert" "${TARGET_VERSION}"
 npm ci --ignore-scripts --prefix server
 if [[ -f client/node_modules/esbuild/install.js ]]; then
   node client/node_modules/esbuild/install.js
@@ -132,8 +151,10 @@ if [[ -f server/node_modules/esbuild/install.js ]]; then
   node server/node_modules/esbuild/install.js
 fi
 npm run build
+write_progress updating 78 "Anwendung erfolgreich gebaut" "${TARGET_VERSION}"
 chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
 echo "Wechsle auf die erfolgreich gebaute Version ..."
+write_progress updating 88 "Neue Version wird aktiviert" "${TARGET_VERSION}"
 systemctl stop "${SERVICE_NAME}"
 SWITCHED=true
 mv "${APP_DIR}" "${PREVIOUS_DIR}"
@@ -151,8 +172,10 @@ systemctl enable --now homelab-portal-update.path
 systemctl start "${SERVICE_NAME}"
 
 for attempt in {1..30}; do
+  write_progress updating 90 "Dienst wird gestartet" "${TARGET_VERSION}"
   if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
     trap - ERR
+    rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."
     exit 0
   fi

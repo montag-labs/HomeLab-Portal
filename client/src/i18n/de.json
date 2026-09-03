@@ -199,6 +199,7 @@
     "viewRelease": "Release ansehen",
     "installUpdate": "Update installieren",
     "installingUpdate": "Update wird gestartet …",
+    "updateProgress": "Update-Fortschritt",
     "noUpdateAvailable": "Es ist kein neues Update verfügbar.",
     "updateStartError": "Update konnte nicht gestartet werden.",
     "updateCheckError": "Die GitHub-Version konnte nicht geprüft werden.",

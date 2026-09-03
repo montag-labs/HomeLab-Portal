@@ -9,6 +9,7 @@ const REQUEST_TIMEOUT_MS = 5000;
 const CACHE_TIME_MS = 5 * 60 * 1000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPackagePath = path.resolve(__dirname, "../../package.json");
+const updateProgressPath = process.env.UPDATE_PROGRESS_FILE ?? "/run/homelab-portal/update-progress.json";
 
 interface GithubRelease {
   tag_name?: unknown;
@@ -19,6 +20,21 @@ interface GithubRelease {
 
 let cachedStatus: UpdateStatus | undefined;
 let cachedAt = 0;
+
+async function readUpdateProgress(): Promise<UpdateStatus["progress"] | undefined> {
+  try {
+    const value = JSON.parse(await readFile(updateProgressPath, "utf8")) as Partial<NonNullable<UpdateStatus["progress"]>>;
+    if (value.percent === undefined || typeof value.step !== "string" || typeof value.updatedAt !== "string") return undefined;
+    return {
+      percent: Math.min(100, Math.max(0, value.percent)),
+      step: value.step,
+      targetVersion: typeof value.targetVersion === "string" ? value.targetVersion : undefined,
+      updatedAt: value.updatedAt,
+    };
+  } catch {
+    return undefined;
+  }
+}
 
 async function getInstalledVersion(): Promise<string> {
   const packageJson = JSON.parse(await readFile(serverPackagePath, "utf8")) as {
@@ -60,6 +76,20 @@ async function getCapabilities(): Promise<UpdateStatus["capabilities"]> {
 }
 
 export async function getUpdateStatus(force = false): Promise<UpdateStatus> {
+  const progress = await readUpdateProgress();
+  if (progress) {
+    const capabilities = await getCapabilities();
+    const installedVersion = await getInstalledVersion();
+    return {
+      state: "updating",
+      installedVersion,
+      latestVersion: progress.targetVersion,
+      updateAvailable: true,
+      checkedAt: progress.updatedAt,
+      capabilities,
+      progress,
+    };
+  }
   if (!force && cachedStatus && Date.now() - cachedAt < CACHE_TIME_MS) {
     return cachedStatus;
   }
