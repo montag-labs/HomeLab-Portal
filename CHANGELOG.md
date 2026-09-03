@@ -6,6 +6,16 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.3] - 2026-09-03
+
+### Hinzugefügt
+
+- Echter Update-Fortschritt aus dem LXC-Update-Skript wird im Adminbereich angezeigt.
+
+### Behoben
+
+- LXC-Updates lösen die systemd-Dateiüberwachung zuverlässig aus und behalten die Git-Metadaten für Folgeupdates.
+
 ## [1.5.2] - 2026-09-03
 
 ### Geändert

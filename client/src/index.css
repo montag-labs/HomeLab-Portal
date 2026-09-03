@@ -2017,6 +2017,37 @@ img.admin-icon-option-preview {
   overflow-wrap: anywhere;
 }
 
+.update-progress {
+  margin: 1rem 0 1.5rem;
+}
+
+.update-progress-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.update-progress-label strong {
+  color: var(--text);
+}
+
+.update-progress-track {
+  height: 0.6rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+}
+
+.update-progress-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.35s ease;
+}
+
 .update-hint,
 .update-error {
   color: var(--text-muted);

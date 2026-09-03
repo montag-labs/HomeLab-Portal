@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { access, writeFile } from "node:fs/promises";
+import { access, unlink, writeFile } from "node:fs/promises";
 import { getUpdateStatus } from "../services/updateService.js";
 import { requireAdmin } from "../middleware/auth.js";
 
@@ -29,6 +29,7 @@ updateRouter.post("/update/install", async (_req, res) => {
     res.status(503).json({ state: "rejected", message: "Update-Script ist nicht eingerichtet." });
     return;
   }
+  await unlink(trigger).catch(() => undefined);
   await writeFile(trigger, `${new Date().toISOString()}\n`, { encoding: "utf8", mode: 0o600 });
   res.status(202).json({ state: "updating", message: "Update wurde gestartet." });
 });
