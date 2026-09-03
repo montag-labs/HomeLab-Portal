@@ -9,12 +9,24 @@ export function Updates() {
   const [status, setStatus] = useState<UpdateStatus | null>(null);
   const [checking, setChecking] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [notification, setNotification] = useState<{ type: "error" | "success"; message: string } | null>(() => {
+    if (window.sessionStorage.getItem("update-success") !== "1") return null;
+    window.sessionStorage.removeItem("update-success");
+    return { type: "success", message: t("admin.updateSuccess") };
+  });
+
+  useEffect(() => {
+    if (!notification) return undefined;
+    const timeout = window.setTimeout(() => setNotification(null), 15000);
+    return () => window.clearTimeout(timeout);
+  }, [notification]);
 
   const checkForUpdates = async () => {
     setChecking(true);
     try {
       setStatus(await api.checkForUpdates());
     } catch {
+      setNotification({ type: "error", message: `${t("admin.updateCheckError")} (${t("admin.updateCheckErrorCode")})` });
       setStatus(null);
     } finally {
       setChecking(false);
@@ -31,15 +43,17 @@ export function Updates() {
       setStatus((current) => (current ? { ...current, state: "updating", error: result.message } : current));
       waitForServerRestart(status.latestVersion);
     } catch (error) {
+      const message = error instanceof Error ? error.message : t("admin.updateStartError");
       setStatus((current) =>
         current
           ? {
               ...current,
               state: "failed",
-              error: error instanceof Error ? error.message : t("admin.updateStartError"),
+              error: message,
             }
           : current,
       );
+      setNotification({ type: "error", message: `${message} (${t("admin.updateTriggerErrorCode")})` });
     } finally {
       setUpdating(false);
     }
@@ -53,11 +67,18 @@ export function Updates() {
         const response = await fetch("/api/update", { cache: "no-store" });
         const updateStatus = (await response.json()) as UpdateStatus;
         setStatus(updateStatus);
+        if (updateStatus.state === "failed") {
+          setNotification({
+            type: "error",
+            message: `${updateStatus.error ?? t("admin.updateFailed")} (${updateStatus.errorCode ?? "UPDATE_SCRIPT_FAILED"})`,
+          });
+        }
         if (
           response.ok &&
           updateStatus.state === "current" &&
           (!expectedVersion || updateStatus.installedVersion === expectedVersion)
         ) {
+          window.sessionStorage.setItem("update-success", "1");
           window.location.reload();
           return;
         }
@@ -79,6 +100,12 @@ export function Updates() {
 
   return (
     <div className="admin-section">
+      {notification && (
+        <div className={`update-notification update-notification-${notification.type}`} role="alert">
+          {notification.message}
+          <button type="button" onClick={() => setNotification(null)} aria-label={t("admin.dismissNotification")}>×</button>
+        </div>
+      )}
       <h2>{t("admin.updates")}</h2>
       <div className="admin-tools-card update-card">
         <div className="update-card-header">

@@ -168,12 +168,16 @@ fi
 npm ci --ignore-scripts --prefix client
 write_progress updating 58 "Client-Abhängigkeiten installiert" "${TARGET_VERSION}"
 npm ci --ignore-scripts --prefix server
+write_progress updating 66 "Server-Abhängigkeiten installiert" "${TARGET_VERSION}"
 if [[ -f client/node_modules/esbuild/install.js ]]; then
   node client/node_modules/esbuild/install.js
 fi
+write_progress updating 70 "Client-Build vorbereitet" "${TARGET_VERSION}"
 if [[ -f server/node_modules/esbuild/install.js ]]; then
   node server/node_modules/esbuild/install.js
 fi
+write_progress updating 72 "Server-Build vorbereitet" "${TARGET_VERSION}"
+write_progress updating 74 "Anwendung wird kompiliert" "${TARGET_VERSION}"
 npm run build
 write_progress updating 78 "Anwendung erfolgreich gebaut" "${TARGET_VERSION}"
 chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
@@ -196,9 +200,12 @@ systemctl enable --now homelab-portal-update.path
 systemctl start "${SERVICE_NAME}"
 
 for attempt in {1..30}; do
-  write_progress updating 90 "Dienst wird gestartet" "${TARGET_VERSION}"
+  progress=$((90 + attempt / 3))
+  (( progress > 99 )) && progress=99
+  write_progress updating "${progress}" "Dienst wird gestartet (Prüfung ${attempt}/30)" "${TARGET_VERSION}"
   if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
     trap - ERR
+    write_progress updating 100 "Update erfolgreich abgeschlossen" "${TARGET_VERSION}"
     rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
     rm -f "${SOURCE_ARCHIVE}"
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."

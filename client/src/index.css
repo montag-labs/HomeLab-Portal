@@ -1966,6 +1966,42 @@ img.admin-icon-option-preview {
   gap: 1rem;
 }
 
+.update-notification {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  width: min(30rem, calc(100vw - 2rem));
+  padding: 0.9rem 1rem;
+  border: 1px solid;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 20%);
+}
+
+.update-notification button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.update-notification-error {
+  border-color: #fca5a5;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.update-notification-success {
+  border-color: #86efac;
+  background: #dcfce7;
+  color: #166534;
+}
+
 .update-card-header h3 {
   margin-top: 0;
 }
@@ -2044,7 +2080,7 @@ img.admin-icon-option-preview {
 .update-progress-bar {
   height: 100%;
   border-radius: inherit;
-  background: var(--accent);
+  background: var(--accent-color);
   transition: width 0.35s ease;
 }
 

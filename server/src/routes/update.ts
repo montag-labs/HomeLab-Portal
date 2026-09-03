@@ -29,7 +29,12 @@ updateRouter.post("/update/install", async (_req, res) => {
     res.status(503).json({ state: "rejected", message: "Update-Script ist nicht eingerichtet." });
     return;
   }
-  await unlink(trigger).catch(() => undefined);
-  await writeFile(trigger, `${new Date().toISOString()}\n`, { encoding: "utf8", mode: 0o600 });
+  try {
+    await unlink(trigger).catch(() => undefined);
+    await writeFile(trigger, `${new Date().toISOString()}\n`, { encoding: "utf8", mode: 0o600 });
+  } catch {
+    res.status(503).json({ state: "rejected", code: "UPDATE_TRIGGER_FAILED", message: "Update konnte nicht ausgelöst werden." });
+    return;
+  }
   res.status(202).json({ state: "updating", message: "Update wurde gestartet." });
 });

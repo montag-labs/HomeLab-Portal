@@ -202,6 +202,11 @@
     "updateProgress": "Update progress",
     "noUpdateAvailable": "No newer update is available.",
     "updateStartError": "The update could not be started.",
+    "updateSuccess": "Update completed successfully.",
+    "updateFailed": "The update script failed.",
+    "updateCheckErrorCode": "UPDATE_CHECK_FAILED",
+    "updateTriggerErrorCode": "UPDATE_TRIGGER_FAILED",
+    "dismissNotification": "Dismiss notification",
     "updateCheckError": "The GitHub version could not be checked.",
     "updateStates": {
       "current": "Up to date",

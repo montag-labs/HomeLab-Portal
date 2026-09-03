@@ -69,11 +69,13 @@ export interface UpdateStatus {
     reason: string;
   };
   progress?: {
+    state: UpdateState;
     percent: number;
     step: string;
     targetVersion?: string;
     updatedAt: string;
   };
+  errorCode?: string;
   error?: string;
 }
 
