@@ -2,7 +2,7 @@ import { Router } from "express";
 import os from "node:os";
 import { readConfig } from "../services/configStore.js";
 import { getUpdateStatus } from "../services/updateService.js";
-import { checkReachability } from "./status.js";
+import { checkReachabilities } from "./status.js";
 import { requireAdmin } from "../middleware/auth.js";
 
 export const devRouter = Router();
@@ -25,9 +25,7 @@ devRouter.get("/dev/debug", async (_req, res) => {
   const urls = config.categories.flatMap((category) =>
     category.apps.flatMap((app) => [app.domain, app.localIp].filter((url): url is string => Boolean(url))),
   );
-  const reachability = await Promise.all(
-    urls.map(async (url) => ({ url, result: await checkReachability(url) })),
-  );
+  const reachability = await checkReachabilities(urls);
 
   res.json({
     mode: "development",

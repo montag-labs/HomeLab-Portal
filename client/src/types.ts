@@ -79,6 +79,18 @@ export interface PortalConfig {
   categories: Category[];
 }
 
+export interface ReachabilityDetails {
+  online: boolean;
+  method?: "HEAD" | "GET";
+  statusCode?: number;
+  error?: string;
+}
+
+export interface ReachabilitySnapshot {
+  checkedAt: string;
+  results: Record<string, ReachabilityDetails>;
+}
+
 export type UpdateState = "current" | "available" | "updating" | "failed";
 export type UpdateMode = "lxc" | "docker" | "unsupported";
 
