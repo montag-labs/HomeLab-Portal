@@ -14,7 +14,7 @@ if [[ "${EUID}" -ne 0 ]]; then
   exit 1
 fi
 
-install -d -m 750 /run/homelab-portal
+install -d -m 755 /run/homelab-portal-update
 curl --fail --silent --show-error --location "${UPDATE_SCRIPT_URL}" -o "${TEMP_SCRIPT}"
 chmod 750 "${TEMP_SCRIPT}"
 bash "${TEMP_SCRIPT}"

@@ -9,7 +9,7 @@ BACKUP_DIR="/var/backups/homelab-portal"
 LOCK_FILE="/run/homelab-portal-update.lock"
 LOG_DIR="/var/log/homelab-portal"
 LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
-PROGRESS_FILE="/run/homelab-portal/update-progress.json"
+PROGRESS_FILE="/run/homelab-portal-update/update-progress.json"
 SOURCE_ARCHIVE=""
 HOMELAB_PORT="${PORT:-80}"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
@@ -41,6 +41,7 @@ HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 
 write_progress() {
   local state="$1" percent="$2" step="$3" target_version="${4:-}"
+  install -d -m 755 "$(dirname "${PROGRESS_FILE}")"
   printf '{"state":"%s","percent":%s,"step":"%s","targetVersion":"%s","updatedAt":"%s"}\n' \
     "${state}" "${percent}" "${step}" "${target_version}" "$(date --iso-8601=seconds)" > "${PROGRESS_FILE}.tmp"
   chmod 644 "${PROGRESS_FILE}.tmp"
