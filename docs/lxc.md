@@ -110,9 +110,9 @@ Der Updateablauf:
 2. Sichert `config.json`.
 3. Aktualisiert Node.js auf Version 26.
 4. Holt `origin/main` beziehungsweise den konfigurierten Branch.
-5. Installiert Abhängigkeiten und baut Client und Server.
-6. Startet den Dienst und prüft bis zu 30 Sekunden den Healthcheck.
-7. Führt bei Build- oder Healthcheck-Fehlern ein Rollback aus.
+5. Baut Abhängigkeiten, Client und Server in einem Staging-Verzeichnis, während der Dienst weiterläuft.
+6. Wechselt nach erfolgreichem Build mit einem kurzen Dienstneustart auf die neue Version und prüft bis zu 30 Sekunden den Healthcheck.
+7. Führt bei einem Fehler nach dem Wechsel ein Rollback auf das vorherige Verzeichnis aus.
 
 ## Service und Logs
 

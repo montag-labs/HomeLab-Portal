@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-09-03
+
+### Geändert
+
+- Unreferenzierte Branding-Komponente und die redundante LXC-Weiterleitungsdatei im Projektstamm entfernt.
+- LXC-Dokumentation beschreibt den Staging-Build und atomaren Updatewechsel vollständig.
+
 ## [1.5.1] - 2026-09-03
 
 ### Behoben
