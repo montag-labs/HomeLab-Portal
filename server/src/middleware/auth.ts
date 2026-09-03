@@ -16,6 +16,9 @@ const COOKIE_NAME = "homelab_admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
 const LOGIN_ATTEMPTS = 5;
+const MAX_SESSIONS = 1_000;
+const MAX_LOGIN_ATTEMPTS = 10_000;
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PASSWORD_STORE_FILE = process.env.ADMIN_PASSWORD_STORE_FILE
   ?? path.resolve(__dirname, "../../data/admin-password");
@@ -28,6 +31,28 @@ interface Session {
 }
 const sessions = new Map<string, Session>();
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+
+function setBounded<T>(map: Map<string, T>, key: string, value: T, limit: number): void {
+  map.delete(key);
+  while (map.size >= limit) {
+    const oldestKey = map.keys().next().value;
+    if (oldestKey === undefined) break;
+    map.delete(oldestKey);
+  }
+  map.set(key, value);
+}
+
+function removeExpiredEntries(now = Date.now()): void {
+  for (const [id, session] of sessions) {
+    if (session.expiresAt <= now) sessions.delete(id);
+  }
+  for (const [address, attempt] of loginAttempts) {
+    if (attempt.resetAt <= now) loginAttempts.delete(address);
+  }
+}
+
+const cleanupTimer = setInterval(removeExpiredEntries, CLEANUP_INTERVAL_MS);
+cleanupTimer.unref();
 
 function constantTimeEqual(actual: string, expected: string): boolean {
   const actualBuffer = Buffer.from(actual);
@@ -84,6 +109,8 @@ function getSession(request: Request): { id: string; session: Session } | undefi
     return undefined;
   }
   session.expiresAt = Date.now() + SESSION_TTL_MS;
+  sessions.delete(id);
+  sessions.set(id, session);
   return { id, session };
 }
 
@@ -105,7 +132,7 @@ function createAdminSession(
     authMethod,
     ...identity,
   };
-  sessions.set(id, session);
+  setBounded(sessions, id, session, MAX_SESSIONS);
   response.setHeader("Set-Cookie", `${COOKIE_NAME}=${encodeURIComponent(id)}; ${cookieOptions(request)}`);
   return session;
 }
@@ -157,7 +184,7 @@ authRouter.post("/auth/login", async (request, response) => {
   if (!expected || !constantTimeEqual(supplied, expected)) {
     const current = attempt && attempt.resetAt > now ? attempt : { count: 0, resetAt: now + LOGIN_WINDOW_MS };
     current.count += 1;
-    loginAttempts.set(address, current);
+    setBounded(loginAttempts, address, current, MAX_LOGIN_ATTEMPTS);
     return response.status(expected ? 401 : 503).json({
       error: expected ? "Invalid credentials" : "Admin authentication is not configured",
     });

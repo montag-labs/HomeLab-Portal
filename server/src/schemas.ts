@@ -88,3 +88,19 @@ export const categoryInputSchema = categorySchema
     order: z.number().int().nonnegative().optional(),
     collapsed: z.boolean().optional(),
   });
+
+const orderedIdsSchema = z.array(z.string().min(1)).min(1).superRefine((ids, context) => {
+  if (new Set(ids).size !== ids.length) {
+    context.addIssue({ code: "custom", message: "IDs must be unique" });
+  }
+});
+
+export const batchOrderSchema = z.object({
+  categoryIds: orderedIdsSchema.optional(),
+  appOrders: z.array(z.object({
+    categoryId: z.string().min(1),
+    appIds: orderedIdsSchema,
+  })).optional(),
+}).refine((value) => value.categoryIds || value.appOrders?.length, {
+  message: "At least one order must be provided",
+});

@@ -85,24 +85,22 @@ if [[ -f server/data/oidc.json ]]; then
   cp -a server/data/oidc.json "${BACKUP_DIR}/oidc-$(date +%Y%m%d-%H%M%S).json"
 fi
 
+STAGING_DIR=""
+PREVIOUS_DIR=""
+SWITCHED=false
+
 rollback() {
   set +e
   trap - ERR
-  echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
-  systemctl stop "${SERVICE_NAME}"
-  git reset --hard "${CURRENT_COMMIT}"
-  npm ci --ignore-scripts --prefix client
-  npm ci --ignore-scripts --prefix server
-  if [[ -f client/node_modules/esbuild/install.js ]]; then
-    node client/node_modules/esbuild/install.js
+  if [[ "${SWITCHED}" == true && -n "${PREVIOUS_DIR}" && -d "${PREVIOUS_DIR}" ]]; then
+    echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
+    systemctl stop "${SERVICE_NAME}"
+    mv "${APP_DIR}" "${STAGING_DIR}.failed"
+    mv "${PREVIOUS_DIR}" "${APP_DIR}"
+    systemctl daemon-reload
+    systemctl start "${SERVICE_NAME}"
   fi
-  if [[ -f server/node_modules/esbuild/install.js ]]; then
-    node server/node_modules/esbuild/install.js
-  fi
-  npm run build
-  systemctl daemon-reload
-  systemctl start "${SERVICE_NAME}"
-  echo "Rollback abgeschlossen." >&2
+  [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
 }
 
 ensure_service_running() {
@@ -116,9 +114,15 @@ trap ensure_service_running EXIT
 
 trap rollback ERR
 echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
-echo "Stoppe Portal-Service für den Build ..."
-systemctl stop "${SERVICE_NAME}"
-git reset --hard "${TARGET_COMMIT}"
+STAGING_DIR="$(mktemp -d "${APP_DIR}.staging.XXXXXX")"
+PREVIOUS_DIR="${APP_DIR}.previous-$(date +%Y%m%d-%H%M%S)"
+echo "Baue Update in ${STAGING_DIR} ..."
+git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
+cd "${STAGING_DIR}"
+if [[ -d "${APP_DIR}/server/data" ]]; then
+  install -d -m 700 server/data
+  cp -a "${APP_DIR}/server/data/." server/data/
+fi
 npm ci --ignore-scripts --prefix client
 npm ci --ignore-scripts --prefix server
 if [[ -f client/node_modules/esbuild/install.js ]]; then
@@ -129,6 +133,12 @@ if [[ -f server/node_modules/esbuild/install.js ]]; then
 fi
 npm run build
 chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
+echo "Wechsle auf die erfolgreich gebaute Version ..."
+systemctl stop "${SERVICE_NAME}"
+SWITCHED=true
+mv "${APP_DIR}" "${PREVIOUS_DIR}"
+mv "${STAGING_DIR}" "${APP_DIR}"
+cd "${APP_DIR}"
 install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
