@@ -3,6 +3,7 @@ import { Check, ExternalLink, KeyRound, Save, ShieldAlert } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import type { OidcAdminConfig, OidcAdminConfigInput, OidcClientAuthMethod } from "../../types";
+import { formatDateTime } from "../../utils/date";
 
 interface OidcForm {
   enabled: boolean;
@@ -37,7 +38,7 @@ function toForm(config: OidcAdminConfig): OidcForm {
 }
 
 export function SsoSettings() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [config, setConfig] = useState<OidcAdminConfig | null>(null);
   const [form, setForm] = useState<OidcForm | null>(null);
   const [saving, setSaving] = useState(false);
@@ -141,7 +142,7 @@ export function SsoSettings() {
             disabled={disabled || (!config.lastVerifiedAt && !form.disablePasswordLogin)}
             onChange={(event) => update("disablePasswordLogin", event.target.checked)}
           />
-          <span><strong>{t("admin.ssoDisablePassword")}</strong><small>{config.lastVerifiedAt ? t("admin.ssoVerifiedAt", { date: new Date(config.lastVerifiedAt).toLocaleString() }) : t("admin.ssoTestRequired")}</small></span>
+          <span><strong>{t("admin.ssoDisablePassword")}</strong><small>{config.lastVerifiedAt ? t("admin.ssoVerifiedAt", { date: formatDateTime(config.lastVerifiedAt, i18n.language) }) : t("admin.ssoTestRequired")}</small></span>
         </label>
       </section>
 
