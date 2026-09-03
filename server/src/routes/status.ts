@@ -78,6 +78,11 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
   });
 }
 
+async function checkReachabilityReliably(url: string): Promise<ReachabilityDetails> {
+  const firstResult = await checkReachability(url);
+  return firstResult.online ? firstResult : checkReachability(url);
+}
+
 async function checkReachabilityCached(url: string): Promise<ReachabilityDetails> {
   const cached = resultCache.get(url);
   if (cached && cached.expiresAt > Date.now()) return cached.result;
@@ -86,7 +91,7 @@ async function checkReachabilityCached(url: string): Promise<ReachabilityDetails
   const pending = pendingChecks.get(url);
   if (pending) return pending;
 
-  const check = checkReachability(url)
+  const check = checkReachabilityReliably(url)
     .then((result) => {
       resultCache.set(url, { expiresAt: Date.now() + RESULT_CACHE_MS, result });
       return result;

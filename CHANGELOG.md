@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-09-03
+
+### Behoben
+
+- Der zuletzt erfolgreiche Erreichbarkeitsstatus bleibt beim erneuten Laden der Portalseite erhalten und wird unverzüglich im Hintergrund aktualisiert.
+- Vorübergehende Fehler des Statusendpunkts behalten den letzten gültigen Snapshot bei; fehlgeschlagene Dienstprüfungen werden einmal wiederholt.
+
 ## [1.5.0] - 2026-09-03
 
 ### Hinzugefügt
