@@ -25,7 +25,9 @@ async function readUpdateProgress(): Promise<UpdateStatus["progress"] | undefine
   try {
     const value = JSON.parse(await readFile(updateProgressPath, "utf8")) as Partial<NonNullable<UpdateStatus["progress"]>>;
     if (value.percent === undefined || typeof value.step !== "string" || typeof value.updatedAt !== "string") return undefined;
+    const state = value.state === "failed" ? "failed" : "updating";
     return {
+      state,
       percent: Math.min(100, Math.max(0, value.percent)),
       step: value.step,
       targetVersion: typeof value.targetVersion === "string" ? value.targetVersion : undefined,
@@ -81,13 +83,15 @@ export async function getUpdateStatus(force = false): Promise<UpdateStatus> {
     const capabilities = await getCapabilities();
     const installedVersion = await getInstalledVersion();
     return {
-      state: "updating",
+      state: progress.state,
       installedVersion,
       latestVersion: progress.targetVersion,
-      updateAvailable: true,
+      updateAvailable: progress.state === "updating",
       checkedAt: progress.updatedAt,
       capabilities,
       progress,
+      errorCode: progress.state === "failed" ? "UPDATE_SCRIPT_FAILED" : undefined,
+      error: progress.state === "failed" ? "Das Update-Skript ist fehlgeschlagen." : undefined,
     };
   }
   if (!force && cachedStatus && Date.now() - cachedAt < CACHE_TIME_MS) {

@@ -14,9 +14,10 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
   if (!res.ok) {
     let message = `Request failed: ${res.status} ${res.statusText}`;
     try {
-      const body = (await res.json()) as { message?: unknown; error?: unknown };
+      const body = (await res.json()) as { code?: unknown; message?: unknown; error?: unknown };
       if (typeof body.message === "string") message = body.message;
       else if (typeof body.error === "string") message = body.error;
+      if (typeof body.code === "string") message = `${message} (${body.code})`;
     } catch {
       // Keep the HTTP error when the response has no JSON body.
     }

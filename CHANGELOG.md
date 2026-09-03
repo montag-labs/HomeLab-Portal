@@ -6,6 +6,17 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.5] - 2026-09-03
+
+### Hinzugefügt
+
+- Rote Update-Fehler-Popups mit Fehlercode und grünes Erfolgs-Popup nach dem Reload.
+- Update-Meldungen können per `X` sofort geschlossen werden.
+
+### Behoben
+
+- Fehlgeschlagene Update-Skripte werden über die API korrekt als fehlgeschlagen erkannt.
+
 ## [1.5.4] - 2026-09-03
 
 ### Hinzugefügt
