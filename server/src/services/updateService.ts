@@ -9,7 +9,7 @@ const REQUEST_TIMEOUT_MS = 5000;
 const CACHE_TIME_MS = 5 * 60 * 1000;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPackagePath = path.resolve(__dirname, "../../package.json");
-const updateProgressPath = process.env.UPDATE_PROGRESS_FILE ?? "/run/homelab-portal/update-progress.json";
+const updateProgressPath = process.env.UPDATE_PROGRESS_FILE ?? "/run/homelab-portal-update/update-progress.json";
 
 interface GithubRelease {
   tag_name?: unknown;

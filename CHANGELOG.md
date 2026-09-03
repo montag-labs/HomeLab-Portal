@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.6] - 2026-09-03
+
+### Behoben
+
+- Der Update-Fortschritt bleibt beim Stoppen des Portal-Dienstes verfügbar und verursacht keine fehlenden RuntimeDirectory-Fehler mehr.
+
 ## [1.5.5] - 2026-09-03
 
 ### Hinzugefügt
