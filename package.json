@@ -1,6 +1,6 @@
 {
   "name": "homelab-portal",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Leichtgewichtiges Webportal für Homelab-Dienste mit Kategorien, Erreichbarkeitsstatus und Grafana-Dashboard.",
   "private": true,
   "license": "MIT",

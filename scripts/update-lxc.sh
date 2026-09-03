@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 APP_DIR="/opt/homelab-portal"
+readonly ARCHIVE_URL="https://codeload.github.com/montag-labs/HomeLab-Portal/tar.gz/refs/heads"
 REPOSITORY_BRANCH="main"
 SERVICE_NAME="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
@@ -9,6 +10,7 @@ LOCK_FILE="/run/homelab-portal-update.lock"
 LOG_DIR="/var/log/homelab-portal"
 LOG_FILE="${LOG_DIR}/homelab-portal-update.log"
 PROGRESS_FILE="/run/homelab-portal/update-progress.json"
+SOURCE_ARCHIVE=""
 HOMELAB_PORT="${PORT:-80}"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
 if [[ -z "${HOMELAB_CONFIG:-}" && ! -f "${CONFIG_FILE}" && -f "/etc/homelab-portal/install.conf" ]]; then
@@ -74,18 +76,37 @@ exec 9>"${LOCK_FILE}"
 flock -n 9 || { echo "Ein Update läuft bereits." >&2; exit 1; }
 
 cd "${APP_DIR}"
-readonly CURRENT_COMMIT="$(git rev-parse HEAD)"
+HAS_GIT=false
+if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  HAS_GIT=true
+fi
+readonly CURRENT_COMMIT="$([[ "${HAS_GIT}" == true ]] && git rev-parse HEAD || echo unknown)"
 readonly CURRENT_VERSION="$(node -p "require('./package.json').version")"
 
-git fetch --depth 1 --tags --force origin "${REPOSITORY_BRANCH}"
-readonly TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
-readonly TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
+TARGET_COMMIT="unknown"
+TARGET_VERSION=""
+if [[ "${HAS_GIT}" == true ]]; then
+  if git fetch --depth 1 --tags --force origin "${REPOSITORY_BRANCH}"; then
+    TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
+    TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
+  else
+    echo "Git-Repository konnte nicht aktualisiert werden. Verwende GitHub-Tarball-Fallback ..."
+    HAS_GIT=false
+  fi
+fi
+if [[ "${HAS_GIT}" == false ]]; then
+  SOURCE_ARCHIVE="$(mktemp "/tmp/homelab-portal-${REPOSITORY_BRANCH}.XXXXXX.tar.gz")"
+  echo "Kein Git-Repository gefunden. Verwende GitHub-Tarball-Fallback ..."
+  curl --fail --silent --show-error --location \
+    "${ARCHIVE_URL}/${REPOSITORY_BRANCH}" -o "${SOURCE_ARCHIVE}"
+  TARGET_VERSION="$(tar -xOzf "${SOURCE_ARCHIVE}" --wildcards '*/package.json' | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
+fi
 
 echo "Aktueller Stand: ${CURRENT_VERSION} (${CURRENT_COMMIT:0:12})"
 echo "Remote-Stand:    ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
 write_progress updating 30 "Zielversion ${TARGET_VERSION} wird vorbereitet" "${TARGET_VERSION}"
 
-if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]] || [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]]; then
+if [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]] || [[ "${HAS_GIT}" == true && "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
   echo "HomeLab-Portal ist bereits aktuell (${CURRENT_VERSION})."
   exit 0
 fi
@@ -115,6 +136,7 @@ rollback() {
     systemctl start "${SERVICE_NAME}"
   fi
   [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
+  [[ -n "${SOURCE_ARCHIVE}" ]] && rm -f "${SOURCE_ARCHIVE}"
 }
 
 ensure_service_running() {
@@ -132,9 +154,11 @@ STAGING_DIR="$(mktemp -d "${APP_DIR}.staging.XXXXXX")"
 PREVIOUS_DIR="${APP_DIR}.previous-$(date +%Y%m%d-%H%M%S)"
 echo "Baue Update in ${STAGING_DIR} ..."
 write_progress updating 40 "Update wird gebaut" "${TARGET_VERSION}"
-git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
-if [[ -d "${APP_DIR}/.git" ]]; then
+if [[ "${HAS_GIT}" == true ]]; then
+  git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
   cp -a "${APP_DIR}/.git" "${STAGING_DIR}/.git"
+else
+  tar -xzf "${SOURCE_ARCHIVE}" --strip-components=1 -C "${STAGING_DIR}"
 fi
 cd "${STAGING_DIR}"
 if [[ -d "${APP_DIR}/server/data" ]]; then
@@ -160,7 +184,7 @@ SWITCHED=true
 mv "${APP_DIR}" "${PREVIOUS_DIR}"
 mv "${STAGING_DIR}" "${APP_DIR}"
 cd "${APP_DIR}"
-install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
+install -m 750 scripts/homelab-portal-update-bootstrap.sh /usr/local/sbin/homelab-portal-update
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service
 install -m 644 scripts/homelab-portal-log-rotation.timer /etc/systemd/system/homelab-portal-log-rotation.timer
@@ -176,6 +200,7 @@ for attempt in {1..30}; do
   if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
     trap - ERR
     rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
+    rm -f "${SOURCE_ARCHIVE}"
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."
     exit 0
   fi

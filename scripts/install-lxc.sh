@@ -344,7 +344,7 @@ if [[ ! -f "${CONFIG_FILE}" && -f "scripts/lxc.config.example" ]]; then
   install -m 600 scripts/lxc.config.example "${CONFIG_FILE}"
   echo "Parameterdatei erstellt: ${CONFIG_FILE}"
 fi
-install -m 750 scripts/update-lxc.sh /usr/local/sbin/homelab-portal-update
+install -m 750 scripts/homelab-portal-update-bootstrap.sh /usr/local/sbin/homelab-portal-update
 rm -f /usr/local/sbin/homelab-portal-reset-token "${STATE_DIR}/update-token" "${STATE_DIR}/update-token-acknowledged"
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
 install -m 644 scripts/homelab-portal-log-rotation.service /etc/systemd/system/homelab-portal-log-rotation.service

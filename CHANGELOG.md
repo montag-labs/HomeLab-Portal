@@ -6,6 +6,16 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.4] - 2026-09-03
+
+### Hinzugefügt
+
+- Selbstaktualisierender Bootstrap-Wrapper und GitHub-Tarball-Fallback für LXC-Updates.
+
+### Behoben
+
+- Updates funktionieren auch dann weiter, wenn die lokale Installation keine nutzbare Git-Arbeitskopie mehr enthält.
+
 ## [1.5.3] - 2026-09-03
 
 ### Hinzugefügt

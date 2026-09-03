@@ -102,7 +102,7 @@ Erneutes Ausführen des Installationsscripts erkennt eine vorhandene Installatio
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Alternativ kann ein verfügbares Update im angemeldeten Admin-Bereich gestartet werden. Die Anwendung legt nach Session- und CSRF-Prüfung ausschließlich eine feste Triggerdatei an. Eine root-eigene systemd-Path-Unit startet anschließend `/usr/local/sbin/homelab-portal-update`.
+Alternativ kann ein verfügbares Update im angemeldeten Admin-Bereich gestartet werden. Die Anwendung legt nach Session- und CSRF-Prüfung ausschließlich eine feste Triggerdatei an. Eine root-eigene systemd-Path-Unit startet anschließend den Bootstrap-Wrapper `/usr/local/sbin/homelab-portal-update`. Dieser lädt vor jedem Lauf das aktuelle Update-Skript aus dem Repository. Falls die Installation kein nutzbares Git-Repository mehr enthält, verwendet das Update-Skript automatisch einen GitHub-Tarball als Fallback.
 
 Der Updateablauf:
 
