@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.8] - 2026-09-04
+
+### Behoben
+
+- LXC-Updates verlieren beim Installieren der staging-Abhängigkeiten nicht mehr ihr aktuelles Arbeitsverzeichnis.
+
 ## [1.5.7] - 2026-09-04
 
 ### Hinzugefügt

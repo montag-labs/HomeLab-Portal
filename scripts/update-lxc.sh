@@ -166,10 +166,13 @@ if [[ -d "${APP_DIR}/server/data" ]]; then
   install -d -m 700 server/data
   cp -a "${APP_DIR}/server/data/." server/data/
 fi
-npm ci --ignore-scripts --prefix client
+# npm ci may remove paths below its prefix; keep the updater's cwd outside staging.
+cd /
+npm ci --ignore-scripts --prefix "${STAGING_DIR}/client"
 write_progress updating 58 "Client-Abhängigkeiten installiert" "${TARGET_VERSION}"
-npm ci --ignore-scripts --prefix server
+npm ci --ignore-scripts --prefix "${STAGING_DIR}/server"
 write_progress updating 66 "Server-Abhängigkeiten installiert" "${TARGET_VERSION}"
+cd "${STAGING_DIR}"
 if [[ -f client/node_modules/esbuild/install.js ]]; then
   node client/node_modules/esbuild/install.js
 fi
