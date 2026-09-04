@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.7] - 2026-09-04
+
+### Hinzugefügt
+
+- Fünf weitere Icons aus der Dashboard-Icons-Datenbank ergänzt.
+- Die Icon-Auswahl im Adminbereich alphabetisch nach Label sortiert.
+
 ## [1.5.6] - 2026-09-03
 
 ### Behoben
