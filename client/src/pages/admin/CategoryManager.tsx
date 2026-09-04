@@ -33,7 +33,7 @@ function AppFormFields({
     [icon.label, icon.id, ...icon.aliases].some((value) =>
       value.toLowerCase().includes(normalizedSearch),
     ),
-  );
+  ).sort((left, right) => left.label.localeCompare(right.label, "de"));
 
   return (
     <div className="admin-form-fields">
