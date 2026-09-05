@@ -96,6 +96,16 @@ install_dependencies() {
   fi
 }
 
+install_dependencies_if_changed() {
+  local package_dir="$1"
+  local dependencies_changed="$2"
+  if [[ "${dependencies_changed}" == true || ! -d "${package_dir}/node_modules" ]]; then
+    install_dependencies "${package_dir}"
+  else
+    echo "Abhängigkeiten unverändert: ${package_dir}/node_modules wird wiederverwendet."
+  fi
+}
+
 RUNTIME_DATA_SNAPSHOT=""
 
 snapshot_runtime_data() {
@@ -320,6 +330,17 @@ if [[ -e "${APP_DIR}" ]]; then
     exit 0
   fi
 
+  CLIENT_DEPENDENCIES_CHANGED=false
+  SERVER_DEPENDENCIES_CHANGED=false
+  if ! git diff --quiet "${CURRENT_COMMIT}" "${TARGET_COMMIT}" -- client/package.json client/package-lock.json; then
+    CLIENT_DEPENDENCIES_CHANGED=true
+  fi
+  if ! git diff --quiet "${CURRENT_COMMIT}" "${TARGET_COMMIT}" -- server/package.json server/package-lock.json; then
+    SERVER_DEPENDENCIES_CHANGED=true
+  fi
+  echo "Client-Abhängigkeiten geändert: ${CLIENT_DEPENDENCIES_CHANGED}"
+  echo "Server-Abhängigkeiten geändert: ${SERVER_DEPENDENCIES_CHANGED}"
+
   BACKUP_DIR="/var/backups/homelab-portal"
   install -d -m 700 "${BACKUP_DIR}"
   if [[ -f "server/data/config.json" ]]; then
@@ -350,8 +371,8 @@ if [[ -e "${APP_DIR}" ]]; then
   snapshot_runtime_data
   git reset --hard "${TARGET_COMMIT}"
   restore_runtime_data "${APP_DIR}/server/data"
-  install_dependencies "${APP_DIR}/client"
-  install_dependencies "${APP_DIR}/server"
+  install_dependencies_if_changed "${APP_DIR}/client" "${CLIENT_DEPENDENCIES_CHANGED}"
+  install_dependencies_if_changed "${APP_DIR}/server" "${SERVER_DEPENDENCIES_CHANGED}"
   npm run build
   rm -rf "${RUNTIME_DATA_SNAPSHOT}"
 else
