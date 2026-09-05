@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.11] - 2026-09-05
+
+### Behoben
+
+- LXC-Updates wiederholen vorübergehende Netzwerk- und npm-Fehler automatisch.
+- Fehlgeschlagene Updates protokollieren jetzt das fehlerhafte Kommando und zusätzliche systemd-Diagnosen.
+
 ## [1.5.10] - 2026-09-05
 
 ### Behoben
