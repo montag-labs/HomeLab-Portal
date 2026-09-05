@@ -63,12 +63,31 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export NPM_CONFIG_UPDATE_NOTIFIER=false
 
+retry_command() {
+  local attempts="$1"
+  local delay_seconds="$2"
+  shift 2
+  local attempt
+  for ((attempt = 1; attempt <= attempts; attempt += 1)); do
+    if "$@"; then
+      return 0
+    fi
+    if (( attempt < attempts )); then
+      echo "Befehl fehlgeschlagen, neuer Versuch ${attempt}/${attempts}: $*" >&2
+      sleep "${delay_seconds}"
+    fi
+  done
+  return 1
+}
+
 echo "Aktualisiere Node.js auf Version 26 ..."
 write_progress updating 10 "Node.js wird aktualisiert"
-apt-get update
-apt-get install -y ca-certificates curl
-curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x | bash -
-apt-get install -y nodejs
+retry_command 3 5 apt-get update
+retry_command 3 5 apt-get install -y ca-certificates curl
+retry_command 3 5 curl --fail --silent --show-error --location https://deb.nodesource.com/setup_26.x -o /tmp/homelab-portal-nodesource.sh
+bash /tmp/homelab-portal-nodesource.sh
+rm -f /tmp/homelab-portal-nodesource.sh
+retry_command 3 5 apt-get install -y nodejs
 node --version
 npm --version
 write_progress updating 18 "Repository wird geprüft"
@@ -126,8 +145,12 @@ PREVIOUS_DIR=""
 SWITCHED=false
 
 rollback() {
+  local exit_code=$?
+  local failed_command=${BASH_COMMAND:-unknown}
+  local failed_line=${BASH_LINENO[0]:-unknown}
   set +e
   trap - ERR
+  echo "Update fehlgeschlagen (Exit-Code ${exit_code}, Zeile ${failed_line}): ${failed_command}" >&2
   write_progress failed 100 "Update fehlgeschlagen" "${TARGET_VERSION:-}"
   if [[ "${SWITCHED}" == true && -n "${PREVIOUS_DIR}" && -d "${PREVIOUS_DIR}" ]]; then
     echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
@@ -139,6 +162,7 @@ rollback() {
   fi
   [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
   [[ -n "${SOURCE_ARCHIVE}" ]] && rm -f "${SOURCE_ARCHIVE}"
+  return "${exit_code}"
 }
 
 ensure_service_running() {
@@ -169,9 +193,9 @@ if [[ -d "${APP_DIR}/server/data" ]]; then
 fi
 # npm ci may remove paths below its prefix; keep the updater's cwd outside staging.
 cd /
-npm ci --ignore-scripts --prefix "${STAGING_DIR}/client"
+retry_command 3 10 npm ci --ignore-scripts --no-audit --no-fund --prefix "${STAGING_DIR}/client"
 write_progress updating 58 "Client-Abhängigkeiten installiert" "${TARGET_VERSION}"
-npm ci --ignore-scripts --prefix "${STAGING_DIR}/server"
+retry_command 3 10 npm ci --ignore-scripts --no-audit --no-fund --prefix "${STAGING_DIR}/server"
 write_progress updating 66 "Server-Abhängigkeiten installiert" "${TARGET_VERSION}"
 cd "${STAGING_DIR}"
 if [[ -f client/node_modules/esbuild/install.js ]]; then
@@ -215,6 +239,11 @@ for attempt in {1..30}; do
     rm -f "${SOURCE_ARCHIVE}"
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."
     exit 0
+  fi
+  if ! systemctl is-active --quiet "${SERVICE_NAME}"; then
+    echo "Dienst ${SERVICE_NAME} ist beim Healthcheck nicht aktiv." >&2
+    systemctl --no-pager --full status "${SERVICE_NAME}" || true
+    journalctl -u "${SERVICE_NAME}" -n 40 --no-pager || true
   fi
   sleep 1
 done
