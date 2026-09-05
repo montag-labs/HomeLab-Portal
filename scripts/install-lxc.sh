@@ -14,6 +14,7 @@ readonly APP_GROUP="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOG_DIR="/var/log/homelab-portal"
 CONFIG_FILE="${HOMELAB_CONFIG:-/etc/homelab-portal/lxc.config}"
+PROGRESS_FILE="/run/homelab-portal-update/update-progress.json"
 APP_ENV="production"
 HOMELAB_PORT="${HOMELAB_PORT:-}"
 SWITCH_PORT=false
@@ -400,6 +401,8 @@ HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
 for attempt in {1..30}; do
   if curl --fail --silent "${HEALTH_URL}" >/dev/null 2>&1; then
     trap - ERR
+    rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
+    [[ -n "${RUNTIME_DATA_SNAPSHOT:-}" ]] && rm -rf "${RUNTIME_DATA_SNAPSHOT}"
     LXC_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
     LXC_IP="${LXC_IP:-$(hostname -i 2>/dev/null | awk '{print $1}')}"
     LXC_IP="${LXC_IP:-LXC-IP-nicht-ermittelbar}"

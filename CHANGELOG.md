@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.15] - 2026-09-05
+
+### Behoben
+
+- Erfolgreiche Updates aus dem LXC-Terminal entfernen jetzt den alten UI-Fehlerzustand.
+- UI-Update und Terminal-Fallback verwenden danach wieder denselben Update-Status.
+
 ## [1.5.14] - 2026-09-05
 
 ### Behoben
