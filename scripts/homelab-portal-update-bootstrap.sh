@@ -15,6 +15,6 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 install -d -m 755 /run/homelab-portal-update
-curl --fail --silent --show-error --location "${UPDATE_SCRIPT_URL}" -o "${TEMP_SCRIPT}"
+curl --fail --silent --show-error --location --connect-timeout 15 --max-time 60 "${UPDATE_SCRIPT_URL}" -o "${TEMP_SCRIPT}"
 chmod 750 "${TEMP_SCRIPT}"
 bash "${TEMP_SCRIPT}"

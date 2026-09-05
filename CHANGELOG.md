@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.14] - 2026-09-05
+
+### Behoben
+
+- Manuelle LXC-Updates zeigen ihren Fortschritt wieder im Terminal.
+- Installations- und Rollbackpfade schützen die Laufzeitkonfiguration und stellen vorherige Installationen zuverlässig wieder her.
+
 ## [1.5.13] - 2026-09-05
 
 ### Behoben
