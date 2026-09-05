@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.12] - 2026-09-05
+
+### Hinzugefügt
+
+- Bei fehlgeschlagenen LXC-Updates wird ein kopierbarer Befehl für das manuelle Update angezeigt.
+
 ## [1.5.11] - 2026-09-05
 
 ### Behoben
