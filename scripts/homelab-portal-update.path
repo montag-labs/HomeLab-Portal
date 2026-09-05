@@ -1,0 +1,9 @@
+[Unit]
+Description=Watch for HomeLab Portal update requests
+
+[Path]
+PathChanged=/run/homelab-portal/update-request
+Unit=homelab-portal-update.service
+
+[Install]
+WantedBy=multi-user.target

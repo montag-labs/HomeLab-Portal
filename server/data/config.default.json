@@ -1,0 +1,52 @@
+{
+  "settings": {
+    "language": "de",
+    "theme": "dark",
+    "accentColor": "#3b82f6",
+    "logPolicy": {
+      "rotation": "day",
+      "archiveCount": 7
+    },
+    "dashboard": {
+      "enabled": false,
+      "provider": "grafana",
+      "title": "Grafana",
+      "url": "",
+      "dashboardUid": "",
+      "dashboardSlug": "",
+      "timeRange": "now-6h",
+      "refreshInterval": ""
+    }
+  },
+  "categories": [
+    {
+      "id": "media",
+      "name": "Media",
+      "order": 0,
+      "collapsed": false,
+      "apps": [
+        {
+          "id": "jellyfin",
+          "name": "Jellyfin",
+          "domain": "https://jellyfin.example.com",
+          "localIp": "http://192.0.2.10:8096",
+          "order": 0
+        }
+      ]
+    },
+    {
+      "id": "infra",
+      "name": "Infrastruktur",
+      "order": 1,
+      "collapsed": false,
+      "apps": [
+        {
+          "id": "proxmox",
+          "name": "Proxmox",
+          "localIp": "https://192.0.2.2:8006",
+          "order": 0
+        }
+      ]
+    }
+  ]
+}

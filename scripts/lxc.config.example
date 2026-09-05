@@ -1,0 +1,75 @@
+# HomeLab-Portal LXC-Konfiguration
+#
+# Regeln:
+# - Eine Zeile mit # ist deaktiviert und verwendet den Default.
+# - Nur aktive KEY=value-Zeilen werden angewendet.
+# - Werte ohne Leerzeichen können direkt eingetragen werden.
+# - Pfade dürfen keine Anführungszeichen enthalten.
+# - Nach Änderungen: systemctl restart homelab-portal
+#
+# NICHT konfigurierbar:
+# Repository-URL, Update-Modus, Update-Script, Triggerdatei und Passwortpfade
+# sind aus Sicherheitsgründen fest im Script bzw. in der Anwendung definiert.
+
+# Git-Branch der eigenen Repository-Quelle.
+# Erlaubt: ein vorhandener Branchname, zum Beispiel main.
+# REPOSITORY_BRANCH=main
+
+# Betriebsmodus der Anwendung.
+# Erlaubt: production oder development.
+# production = DEV-API aus, Standardbetrieb.
+# development = DEV-API an und Admin-Tab „DEV-Diagnose“ sichtbar.
+# APP_ENV=production
+
+# Verzeichnis der Installation.
+# Erlaubt: absoluter Linux-Pfad.
+# APP_DIR=/opt/homelab-portal
+
+# Name des systemd-Service.
+# Erlaubt: gültiger systemd-Unitname ohne Leerzeichen.
+# SERVICE_NAME=homelab-portal
+
+# Vollständiger Pfad zur systemd-Service-Datei.
+# Erlaubt: absoluter Pfad zu einer .service-Datei.
+# SERVICE_FILE=/etc/systemd/system/homelab-portal.service
+
+# Lock-Datei gegen parallele Installationen und Updates.
+# Erlaubt: absoluter Pfad unter /run.
+# LOCK_FILE=/run/homelab-portal-install.lock
+
+# Verzeichnis für Backups der Portal-Konfiguration.
+# Erlaubt: absoluter Linux-Pfad.
+# BACKUP_DIR=/var/backups/homelab-portal
+
+# Verzeichnis für das Update-Log.
+# Erlaubt: absoluter Linux-Pfad.
+# LOG_DIR=/var/log/homelab-portal
+
+# HTTP-Port des Portals.
+# Erlaubt: ganze Zahl von 1 bis 65535.
+# Standard: 80.
+# HOMELAB_PORT=80
+
+# Reverse-Proxy-Header nur vertrauen, wenn das Portal ausschließlich über
+# einen vertrauenswürdigen lokalen Reverse Proxy erreicht wird.
+# TRUST_PROXY=false
+
+# Secure-Cookies auch ohne erkannten HTTPS-Reverse-Proxy erzwingen.
+# FORCE_SECURE_COOKIES=false
+
+# TLS-Zertifikatsprüfung für Erreichbarkeitstests deaktivieren.
+# Nur für Homelab-Dienste mit selbstsignierten Zertifikaten aktivieren.
+# ALLOW_INSECURE_TLS=false
+
+# Optionales OpenID-Connect-SSO. SSO wird nur aktiviert, wenn Issuer,
+# Client-ID, Redirect-URI und mindestens eine erlaubte Admin-Gruppe gesetzt sind.
+# OIDC_ISSUER_URL=https://auth.example.com/application/o/homelab-portal/
+# OIDC_CLIENT_ID=homelab-portal
+# OIDC_CLIENT_SECRET=client-secret
+# OIDC_REDIRECT_URI=https://portal.example.com/api/auth/oidc/callback
+# OIDC_ALLOWED_GROUPS=homelab-admins
+# OIDC_GROUPS_CLAIM=groups
+# OIDC_SCOPES=openid profile email groups
+# OIDC_DISPLAY_NAME=Authentik
+# OIDC_CLIENT_AUTH_METHOD=client_secret_post
+# OIDC_DISABLE_PASSWORD_LOGIN=false
