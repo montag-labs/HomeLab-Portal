@@ -109,6 +109,7 @@ write_progress updating 30 "Zielversion ${TARGET_VERSION} wird vorbereitet" "${T
 
 if [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]] || [[ "${HAS_GIT}" == true && "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
   echo "HomeLab-Portal ist bereits aktuell (${CURRENT_VERSION})."
+  rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
   exit 0
 fi
 

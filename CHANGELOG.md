@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.9] - 2026-09-05
+
+### Behoben
+
+- Fehlgeschlagene Updateprüfungen blockieren nach einem alten Fortschrittsstatus keine erneute manuelle Prüfung mehr.
+- Veraltete Fortschrittsdateien werden entfernt, wenn die Installation bereits aktuell ist.
+
 ## [1.5.8] - 2026-09-04
 
 ### Behoben
