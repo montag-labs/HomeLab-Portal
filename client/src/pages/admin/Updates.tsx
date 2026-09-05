@@ -4,11 +4,14 @@ import { api } from "../../api";
 import type { UpdateStatus } from "../../types";
 import { formatDateTime } from "../../utils/date";
 
+const MANUAL_UPDATE_COMMAND = "sudo /usr/local/sbin/homelab-portal-update";
+
 export function Updates() {
   const { t, i18n } = useTranslation();
   const [status, setStatus] = useState<UpdateStatus | null>(null);
   const [checking, setChecking] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [manualCommandCopied, setManualCommandCopied] = useState(false);
   const [notification, setNotification] = useState<{ type: "error" | "success"; message: string } | null>(() => {
     if (window.sessionStorage.getItem("update-success") !== "1") return null;
     window.sessionStorage.removeItem("update-success");
@@ -56,6 +59,16 @@ export function Updates() {
       setNotification({ type: "error", message: `${message} (${t("admin.updateTriggerErrorCode")})` });
     } finally {
       setUpdating(false);
+    }
+  };
+
+  const copyManualUpdateCommand = async () => {
+    try {
+      await navigator.clipboard.writeText(MANUAL_UPDATE_COMMAND);
+      setManualCommandCopied(true);
+      window.setTimeout(() => setManualCommandCopied(false), 2500);
+    } catch {
+      setNotification({ type: "error", message: t("admin.manualUpdateCopyError") });
     }
   };
 
@@ -154,6 +167,18 @@ export function Updates() {
           </div>
         )}
         {status?.error && <p className="update-error">{status.error}</p>}
+        {status?.errorCode === "UPDATE_SCRIPT_FAILED" && status.capabilities.mode === "lxc" && (
+          <div className="update-manual-fallback" role="alert">
+            <strong>{t("admin.manualUpdateTitle")}</strong>
+            <p>{t("admin.manualUpdateDescription")}</p>
+            <div className="update-manual-command">
+              <code>{MANUAL_UPDATE_COMMAND}</code>
+              <button type="button" className="btn" onClick={copyManualUpdateCommand}>
+                {manualCommandCopied ? t("admin.manualUpdateCopied") : t("admin.manualUpdateCopy")}
+              </button>
+            </div>
+          </div>
+        )}
         {status?.capabilities.reason && (
           <p className="update-hint">{status.capabilities.reason}</p>
         )}
