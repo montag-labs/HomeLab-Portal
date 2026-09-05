@@ -5,3 +5,4 @@ dist/
 server/data/config.json
 server/data/admin-password
 server/data/oidc.json
+debug.md
