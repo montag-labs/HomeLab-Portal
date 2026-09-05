@@ -4,7 +4,7 @@ import { api } from "../../api";
 import type { UpdateStatus } from "../../types";
 import { formatDateTime } from "../../utils/date";
 
-const MANUAL_UPDATE_COMMAND = "sudo /usr/local/sbin/homelab-portal-update";
+const MANUAL_UPDATE_COMMAND = 'bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"';
 
 export function Updates() {
   const { t, i18n } = useTranslation();

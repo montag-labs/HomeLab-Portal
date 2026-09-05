@@ -95,6 +95,28 @@ install_dependencies() {
   fi
 }
 
+RUNTIME_DATA_SNAPSHOT=""
+
+snapshot_runtime_data() {
+  [[ -n "${RUNTIME_DATA_SNAPSHOT}" ]] && rm -rf "${RUNTIME_DATA_SNAPSHOT}"
+  RUNTIME_DATA_SNAPSHOT="$(mktemp -d "/tmp/homelab-portal-runtime.XXXXXX")"
+  for file in config.json oidc.json; do
+    if [[ -f "${APP_DIR}/server/data/${file}" ]]; then
+      cp -a "${APP_DIR}/server/data/${file}" "${RUNTIME_DATA_SNAPSHOT}/${file}"
+    fi
+  done
+}
+
+restore_runtime_data() {
+  local target_dir="$1"
+  install -d -m 700 "${target_dir}"
+  for file in config.json oidc.json; do
+    if [[ -f "${RUNTIME_DATA_SNAPSHOT}/${file}" ]]; then
+      cp -a "${RUNTIME_DATA_SNAPSHOT}/${file}" "${target_dir}/${file}"
+    fi
+  done
+}
+
 validate_port() {
   if [[ ! "${HOMELAB_PORT}" =~ ^[0-9]+$ ]] || (( 10#${HOMELAB_PORT} < 1 || 10#${HOMELAB_PORT} > 65535 )); then
     echo "Ungültiger Portal-Port: '${HOMELAB_PORT}'. Erlaubt sind Werte von 1 bis 65535." >&2
@@ -121,6 +143,16 @@ ensure_runtime_secrets() {
   if [[ ! -f "${ADMIN_PASSWORD_FILE}" ]]; then openssl rand -base64 24 > "${ADMIN_PASSWORD_FILE}"; fi
   chown root:"${APP_GROUP}" "${ADMIN_PASSWORD_FILE}"
   chmod 640 "${ADMIN_PASSWORD_FILE}"
+}
+
+recover_previous_installation() {
+  [[ -e "${APP_DIR}" ]] && return 0
+  local recovery_dir
+  recovery_dir="$(find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d -name "$(basename "${APP_DIR}").previous-*" -printf '%T@ %p\n' 2>/dev/null | sort -nr | awk 'NR == 1 { sub(/^[^ ]+ /, ""); print }')"
+  if [[ -n "${recovery_dir}" && -f "${recovery_dir}/package.json" ]]; then
+    echo "Wiederherstellung der vorherigen Installation aus ${recovery_dir} ..."
+    mv "${recovery_dir}" "${APP_DIR}"
+  fi
 }
 
 write_service_file() {
@@ -227,6 +259,7 @@ node --version
 npm --version
 ensure_runtime_identity
 ensure_runtime_secrets
+recover_previous_installation
 
 if [[ -e "${APP_DIR}" ]]; then
   if [[ ! -d "${APP_DIR}/.git" ]]; then
@@ -294,6 +327,7 @@ if [[ -e "${APP_DIR}" ]]; then
   if [[ -f "server/data/oidc.json" ]]; then
     cp -a server/data/oidc.json "${BACKUP_DIR}/oidc-$(date +%Y%m%d-%H%M%S).json"
   fi
+  snapshot_runtime_data
 
   rollback() {
     set +e
@@ -301,6 +335,7 @@ if [[ -e "${APP_DIR}" ]]; then
     echo "Update fehlgeschlagen. Stelle Version ${CURRENT_VERSION} wieder her ..." >&2
     systemctl stop "${SERVICE_NAME}"
     git reset --hard "${CURRENT_COMMIT}"
+    restore_runtime_data "${APP_DIR}/server/data"
     npm ci --ignore-scripts --prefix "${APP_DIR}/client"
     npm ci --ignore-scripts --prefix "${APP_DIR}/server"
     npm run build
@@ -311,10 +346,13 @@ if [[ -e "${APP_DIR}" ]]; then
 
   trap rollback ERR
   systemctl stop "${SERVICE_NAME}"
+  snapshot_runtime_data
   git reset --hard "${TARGET_COMMIT}"
+  restore_runtime_data "${APP_DIR}/server/data"
   install_dependencies "${APP_DIR}/client"
   install_dependencies "${APP_DIR}/server"
   npm run build
+  rm -rf "${RUNTIME_DATA_SNAPSHOT}"
 else
   if [[ "${SWITCH_PORT}" == true ]]; then
     echo "Keine bestehende Installation unter ${APP_DIR} gefunden. Portwechsel nicht möglich." >&2

@@ -51,7 +51,7 @@ write_progress() {
 install -d -m 750 "${LOG_DIR}"
 touch "${LOG_FILE}"
 chmod 640 "${LOG_FILE}"
-exec >>"${LOG_FILE}" 2>&1
+exec > >(tee -a "${LOG_FILE}") 2>&1
 echo "--- Update gestartet: $(date --iso-8601=seconds) ---"
 write_progress updating 2 "Update wird vorbereitet"
 
@@ -168,20 +168,31 @@ restore_runtime_data() {
 snapshot_runtime_data
 
 rollback() {
-  local exit_code=$?
+  local exit_code="${1:-$?}"
   local failed_command=${BASH_COMMAND:-unknown}
   local failed_line=${BASH_LINENO[0]:-unknown}
   set +e
   trap - ERR
   echo "Update fehlgeschlagen (Exit-Code ${exit_code}, Zeile ${failed_line}): ${failed_command}" >&2
   write_progress failed 100 "Update fehlgeschlagen" "${TARGET_VERSION:-}"
-  if [[ "${SWITCHED}" == true && -n "${PREVIOUS_DIR}" && -d "${PREVIOUS_DIR}" ]]; then
+  if [[ "${SWITCHED}" == true ]]; then
     echo "Update fehlgeschlagen. Stelle ${CURRENT_VERSION} wieder her ..." >&2
-    systemctl stop "${SERVICE_NAME}"
-    mv "${APP_DIR}" "${STAGING_DIR}.failed"
-    mv "${PREVIOUS_DIR}" "${APP_DIR}"
+    systemctl stop "${SERVICE_NAME}" || true
+    if [[ -d "${APP_DIR}" ]]; then
+      mv "${APP_DIR}" "${STAGING_DIR}.failed" || echo "Neue Version konnte nicht aus ${APP_DIR} entfernt werden." >&2
+    fi
+    if [[ -d "${PREVIOUS_DIR}" ]]; then
+      mv "${PREVIOUS_DIR}" "${APP_DIR}" || echo "Vorherige Version konnte nicht nach ${APP_DIR} zurückgestellt werden." >&2
+    else
+      echo "Vorherige Version ${PREVIOUS_DIR} ist nicht vorhanden." >&2
+    fi
+    if [[ ! -f "${APP_DIR}/package.json" ]]; then
+      echo "Kritisch: ${APP_DIR}/package.json fehlt nach dem Rollback." >&2
+    fi
     systemctl daemon-reload
-    systemctl start "${SERVICE_NAME}"
+    if [[ -f "${APP_DIR}/package.json" ]]; then
+      systemctl start "${SERVICE_NAME}" || true
+    fi
   fi
   [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
   [[ -n "${RUNTIME_SNAPSHOT_DIR}" && -d "${RUNTIME_SNAPSHOT_DIR}" ]] && rm -rf "${RUNTIME_SNAPSHOT_DIR}"
@@ -191,8 +202,12 @@ rollback() {
 
 ensure_service_running() {
   if ! systemctl is-active --quiet "${SERVICE_NAME}"; then
+    if [[ ! -f "${APP_DIR}/package.json" ]]; then
+      echo "Dienst wird nicht gestartet: ${APP_DIR}/package.json fehlt." >&2
+      return 0
+    fi
     systemctl daemon-reload
-    systemctl start "${SERVICE_NAME}"
+    systemctl start "${SERVICE_NAME}" || true
   fi
 }
 
@@ -236,12 +251,17 @@ write_progress updating 78 "Anwendung erfolgreich gebaut" "${TARGET_VERSION}"
 chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
 echo "Wechsle auf die erfolgreich gebaute Version ..."
 write_progress updating 88 "Neue Version wird aktiviert" "${TARGET_VERSION}"
+if [[ ! -f "${STAGING_DIR}/package.json" ]]; then
+  echo "Staging-Version ist unvollständig: ${STAGING_DIR}/package.json fehlt." >&2
+  rollback 1
+  exit 1
+fi
 systemctl stop "${SERVICE_NAME}"
 SWITCHED=true
 snapshot_runtime_data
 restore_runtime_data "${STAGING_DIR}/server/data"
-mv "${APP_DIR}" "${PREVIOUS_DIR}"
-mv "${STAGING_DIR}" "${APP_DIR}"
+mv "${APP_DIR}" "${PREVIOUS_DIR}" || { echo "Aktuelle Version konnte nicht nach ${PREVIOUS_DIR} verschoben werden." >&2; rollback 1; exit 1; }
+mv "${STAGING_DIR}" "${APP_DIR}" || { echo "Staging-Version konnte nicht nach ${APP_DIR} verschoben werden." >&2; rollback 1; exit 1; }
 cd "${APP_DIR}"
 install -m 750 scripts/homelab-portal-update-bootstrap.sh /usr/local/sbin/homelab-portal-update
 install -m 750 scripts/rotate-logs.sh /usr/local/sbin/homelab-portal-rotate-logs
@@ -252,6 +272,11 @@ install -m 644 scripts/homelab-portal-update.path /etc/systemd/system/homelab-po
 systemctl daemon-reload
 systemctl enable --now homelab-portal-log-rotation.timer
 systemctl enable --now homelab-portal-update.path
+if [[ ! -f "${APP_DIR}/package.json" ]]; then
+  echo "Aktivierte Version ist unvollständig: ${APP_DIR}/package.json fehlt." >&2
+  rollback 1
+  exit 1
+fi
 systemctl start "${SERVICE_NAME}"
 
 for attempt in {1..30}; do
@@ -275,5 +300,5 @@ for attempt in {1..30}; do
   sleep 1
 done
 
-rollback
+rollback 1
 exit 1
