@@ -49,21 +49,36 @@ export const APP_ICONS: AppIconDefinition[] = [
   { id: "zoraxy", label: "Zoraxy", path: "/icons/zoraxy.svg", aliases: ["zoraxy", "proxy", "reverse-proxy"] },
 ];
 
-export function detectAppIconKey(name: string, domain?: string, localIp?: string): string | undefined {
-  const haystacks = [
-    name,
-    domain ?? "",
-    localIp ?? "",
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
+function normalizeIconText(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[-_./]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-  for (const icon of APP_ICONS) {
-    const keywords = [...icon.aliases, icon.id];
-    if (keywords.some((keyword) => haystacks.includes(keyword.toLowerCase()))) {
-      return icon.id;
-    }
+export function detectAppIconKey(name: string, domain?: string, localIp?: string): string | undefined {
+  const fields = [name, domain ?? "", localIp ?? ""]
+    .map(normalizeIconText)
+    .filter(Boolean);
+
+  for (const field of fields) {
+    const keywords = (icon: AppIconDefinition) => [...icon.aliases, icon.id];
+    const exactMatch = APP_ICONS.find((icon) =>
+      keywords(icon).some((keyword) => normalizeIconText(keyword) === field),
+    );
+    if (exactMatch) return exactMatch.id;
+
+    const words = field.split(" ");
+    const wordMatch = APP_ICONS.find((icon) =>
+      keywords(icon).some((keyword) => words.includes(normalizeIconText(keyword))),
+    );
+    if (wordMatch) return wordMatch.id;
+
+    const partialMatch = APP_ICONS.find((icon) =>
+      keywords(icon).some((keyword) => field.includes(normalizeIconText(keyword))),
+    );
+    if (partialMatch) return partialMatch.id;
   }
 
   return undefined;
@@ -72,7 +87,7 @@ export function detectAppIconKey(name: string, domain?: string, localIp?: string
 export function getAppIconUrl(app: Pick<AppEntry, "iconUrl" | "iconKey" | "name" | "domain" | "localIp">): string | undefined {
   if (app.iconUrl && app.iconUrl.trim()) return app.iconUrl;
 
-  const iconKey = app.iconKey ?? detectAppIconKey(app.name, app.domain, app.localIp);
+  const iconKey = app.iconKey;
   if (!iconKey) return undefined;
 
   const match = APP_ICONS.find((icon) => icon.id === iconKey);

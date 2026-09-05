@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.10] - 2026-09-05
+
+### Behoben
+
+- Icons werden nur beim Anlegen oder Bearbeiten eines Links automatisch erkannt und danach dauerhaft gespeichert.
+- Die automatische Icon-Erkennung verwendet normalisierte Dienstnamen, bevor generische Domain-Aliase geprüft werden.
+
 ## [1.5.9] - 2026-09-05
 
 ### Behoben
