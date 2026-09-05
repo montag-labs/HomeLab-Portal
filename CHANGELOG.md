@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.13] - 2026-09-05
+
+### Behoben
+
+- Die aktuelle Laufzeitkonfiguration wird bei LXC-Updates vor und nach dem Stoppen des Dienstes gesichert.
+- Versionierte alte Konfigurationen können keine Links oder Icon-Zuordnungen mehr wiederherstellen.
+
 ## [1.5.12] - 2026-09-05
 
 ### Hinzugefügt

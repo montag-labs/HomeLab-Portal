@@ -142,7 +142,30 @@ fi
 
 STAGING_DIR=""
 PREVIOUS_DIR=""
+RUNTIME_SNAPSHOT_DIR=""
 SWITCHED=false
+
+snapshot_runtime_data() {
+  [[ -n "${RUNTIME_SNAPSHOT_DIR}" ]] && rm -rf "${RUNTIME_SNAPSHOT_DIR}"
+  RUNTIME_SNAPSHOT_DIR="$(mktemp -d "/tmp/homelab-portal-runtime.XXXXXX")"
+  for file in config.json oidc.json; do
+    if [[ -f "${APP_DIR}/server/data/${file}" ]]; then
+      cp -a "${APP_DIR}/server/data/${file}" "${RUNTIME_SNAPSHOT_DIR}/${file}"
+    fi
+  done
+}
+
+restore_runtime_data() {
+  local target_dir="$1"
+  install -d -m 700 "${target_dir}"
+  for file in config.json oidc.json; do
+    if [[ -f "${RUNTIME_SNAPSHOT_DIR}/${file}" ]]; then
+      cp -a "${RUNTIME_SNAPSHOT_DIR}/${file}" "${target_dir}/${file}"
+    fi
+  done
+}
+
+snapshot_runtime_data
 
 rollback() {
   local exit_code=$?
@@ -161,6 +184,7 @@ rollback() {
     systemctl start "${SERVICE_NAME}"
   fi
   [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
+  [[ -n "${RUNTIME_SNAPSHOT_DIR}" && -d "${RUNTIME_SNAPSHOT_DIR}" ]] && rm -rf "${RUNTIME_SNAPSHOT_DIR}"
   [[ -n "${SOURCE_ARCHIVE}" ]] && rm -f "${SOURCE_ARCHIVE}"
   return "${exit_code}"
 }
@@ -214,6 +238,8 @@ echo "Wechsle auf die erfolgreich gebaute Version ..."
 write_progress updating 88 "Neue Version wird aktiviert" "${TARGET_VERSION}"
 systemctl stop "${SERVICE_NAME}"
 SWITCHED=true
+snapshot_runtime_data
+restore_runtime_data "${STAGING_DIR}/server/data"
 mv "${APP_DIR}" "${PREVIOUS_DIR}"
 mv "${STAGING_DIR}" "${APP_DIR}"
 cd "${APP_DIR}"
@@ -237,6 +263,7 @@ for attempt in {1..30}; do
     write_progress updating 100 "Update erfolgreich abgeschlossen" "${TARGET_VERSION}"
     rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
     rm -f "${SOURCE_ARCHIVE}"
+    rm -rf "${RUNTIME_SNAPSHOT_DIR}"
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."
     exit 0
   fi
