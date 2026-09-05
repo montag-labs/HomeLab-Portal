@@ -1,0 +1,7 @@
+[Unit]
+Description=HomeLab Portal privileged update
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/homelab-portal-update

@@ -1,0 +1,66 @@
+services:
+  homelab-portal-init:
+    image: montaglabs/homelab-portal:latest
+    pull_policy: always
+    user: "0:0"
+    entrypoint: ["chown"]
+    command: ["-R", "1000:1000", "/app/server/data"]
+    volumes:
+      - ./server/data:/app/server/data
+    restart: "no"
+    read_only: true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+    security_opt:
+      - no-new-privileges:true
+
+  homelab-portal:
+    image: montaglabs/homelab-portal:latest
+    pull_policy: always
+    container_name: homelab-portal
+    depends_on:
+      homelab-portal-init:
+        condition: service_completed_successfully
+    environment:
+      APP_ENV: production
+      UPDATE_MODE: docker
+      PORT: 4000
+      LOG_DIR: /app/server/data/logs
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the environment or a .env file}
+      ADMIN_PASSWORD_STORE_FILE: /app/server/data/admin-password
+      OIDC_ISSUER_URL: ${OIDC_ISSUER_URL:-}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET:-}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-}
+      OIDC_ALLOWED_GROUPS: ${OIDC_ALLOWED_GROUPS:-}
+      OIDC_GROUPS_CLAIM: ${OIDC_GROUPS_CLAIM:-groups}
+      OIDC_SCOPES: ${OIDC_SCOPES:-openid profile email groups}
+      OIDC_DISPLAY_NAME: ${OIDC_DISPLAY_NAME:-Single Sign-on}
+      OIDC_CLIENT_AUTH_METHOD: ${OIDC_CLIENT_AUTH_METHOD:-}
+      OIDC_DISABLE_PASSWORD_LOGIN: ${OIDC_DISABLE_PASSWORD_LOGIN:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      FORCE_SECURE_COOKIES: ${FORCE_SECURE_COOKIES:-false}
+      ALLOW_INSECURE_TLS: ${ALLOW_INSECURE_TLS:-false}
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./server/data:/app/server/data
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 15s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:4000/api/config').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
