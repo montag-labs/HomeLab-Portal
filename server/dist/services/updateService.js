@@ -64,7 +64,7 @@ async function getCapabilities() {
 }
 export async function getUpdateStatus(force = false) {
     const progress = await readUpdateProgress();
-    if (progress) {
+    if (progress?.state === "updating" || (progress?.state === "failed" && !force)) {
         const capabilities = await getCapabilities();
         const installedVersion = await getInstalledVersion();
         return {
@@ -94,17 +94,17 @@ export async function getUpdateStatus(force = false) {
             updateAvailable: false,
             checkedAt: new Date().toISOString(),
             capabilities,
+            errorCode: "UPDATE_CHECK_FAILED",
             error: "Installierte Version konnte nicht ermittelt werden.",
         };
     }
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
         const response = await fetch(GITHUB_RELEASES_URL, {
             headers: { Accept: "application/vnd.github+json", "User-Agent": "HomeLab-Portal" },
             signal: controller.signal,
         });
-        clearTimeout(timeout);
         if (!response.ok)
             throw new Error(`GitHub returned ${response.status}`);
         const release = (await response.json());
@@ -123,15 +123,21 @@ export async function getUpdateStatus(force = false) {
             capabilities,
         };
     }
-    catch {
+    catch (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        console.warn(`[update-check] GitHub release check failed: ${reason}`);
         cachedStatus = {
             state: "failed",
             installedVersion,
             updateAvailable: false,
             checkedAt: new Date().toISOString(),
             capabilities,
+            errorCode: "UPDATE_CHECK_FAILED",
             error: "GitHub-Version konnte nicht geprüft werden.",
         };
+    }
+    finally {
+        clearTimeout(timeout);
     }
     cachedAt = Date.now();
     return cachedStatus;
