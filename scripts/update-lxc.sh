@@ -139,6 +139,9 @@ fi
 if [[ -f server/data/oidc.json ]]; then
   cp -a server/data/oidc.json "${BACKUP_DIR}/oidc-$(date +%Y%m%d-%H%M%S).json"
 fi
+if [[ -f server/data/devices-dashboard.json ]]; then
+  cp -a server/data/devices-dashboard.json "${BACKUP_DIR}/devices-dashboard-$(date +%Y%m%d-%H%M%S).json"
+fi
 
 STAGING_DIR=""
 PREVIOUS_DIR=""
@@ -148,7 +151,7 @@ SWITCHED=false
 snapshot_runtime_data() {
   [[ -n "${RUNTIME_SNAPSHOT_DIR}" ]] && rm -rf "${RUNTIME_SNAPSHOT_DIR}"
   RUNTIME_SNAPSHOT_DIR="$(mktemp -d "/tmp/homelab-portal-runtime.XXXXXX")"
-  for file in config.json oidc.json; do
+  for file in config.json oidc.json devices-dashboard.json; do
     if [[ -f "${APP_DIR}/server/data/${file}" ]]; then
       cp -a "${APP_DIR}/server/data/${file}" "${RUNTIME_SNAPSHOT_DIR}/${file}"
     fi
@@ -158,11 +161,29 @@ snapshot_runtime_data() {
 restore_runtime_data() {
   local target_dir="$1"
   install -d -m 700 "${target_dir}"
-  for file in config.json oidc.json; do
+  for file in config.json oidc.json devices-dashboard.json; do
     if [[ -f "${RUNTIME_SNAPSHOT_DIR}/${file}" ]]; then
       cp -a "${RUNTIME_SNAPSHOT_DIR}/${file}" "${target_dir}/${file}"
     fi
   done
+}
+
+cleanup_old_data() {
+  echo "Bereinige alte Update-Reste, Caches und Backups ..."
+  # Entferne alle alten .previous-* Verzeichnisse
+  find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d -name "$(basename "${APP_DIR}").previous-*" -exec rm -rf {} + 2>/dev/null || true
+  # Entferne eventuelle alte .staging-* oder .failed Verzeichnisse
+  find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d \( -name "$(basename "${APP_DIR}").staging.*" -o -name "$(basename "${APP_DIR}").staging.*.failed" \) -exec rm -rf {} + 2>/dev/null || true
+  # Temporäre Dateien in /tmp bereinigen
+  rm -f /tmp/homelab-portal-*.tar.gz /tmp/homelab-portal-nodesource.sh
+  rm -rf /tmp/homelab-portal-runtime.*
+  # Behalte maximal die 10 neuesten Backups in BACKUP_DIR
+  if [[ -d "${BACKUP_DIR}" ]]; then
+    find "${BACKUP_DIR}" -type f -name "*.json" -printf '%T@ %p\n' 2>/dev/null | sort -nr | tail -n +31 | awk '{print $2}' | xargs -r rm -f
+  fi
+  # Paket- und Build-Caches leeren
+  apt-get clean >/dev/null 2>&1 || true
+  npm cache clean --force >/dev/null 2>&1 || true
 }
 
 snapshot_runtime_data
@@ -214,6 +235,7 @@ ensure_service_running() {
 trap ensure_service_running EXIT
 
 trap rollback ERR
+cleanup_old_data
 echo "Aktualisiere von ${CURRENT_VERSION} auf ${TARGET_VERSION} ..."
 STAGING_DIR="$(mktemp -d "${APP_DIR}.staging.XXXXXX")"
 PREVIOUS_DIR="${APP_DIR}.previous-$(date +%Y%m%d-%H%M%S)"
@@ -290,6 +312,7 @@ for attempt in {1..30}; do
     rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
     rm -f "${SOURCE_ARCHIVE}"
     rm -rf "${RUNTIME_SNAPSHOT_DIR}"
+    cleanup_old_data
     echo "Update auf ${TARGET_VERSION} erfolgreich abgeschlossen."
     exit 0
   fi

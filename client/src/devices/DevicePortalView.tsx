@@ -114,7 +114,11 @@ export function DevicePortalView({ preview = false }: { preview?: boolean }) {
     );
   }
 
-  if (!data || (data.devices.length === 0 && data.groups.length === 0)) {
+  const devicesList = data?.devices ?? [];
+  const groupsList = data?.groups ?? [];
+  const tilesList = data?.tiles ?? [];
+
+  if (!data || (devicesList.length === 0 && groupsList.length === 0)) {
     return (
       <div className="portal-devices-empty">
         <CircuitBoard size={36} />
@@ -125,10 +129,10 @@ export function DevicePortalView({ preview = false }: { preview?: boolean }) {
   }
 
   const normalizedSearch = search.trim().toLowerCase();
-  const filteredDevices = data.devices.filter((d) => {
+  const filteredDevices = devicesList.filter((d) => {
     if (!normalizedSearch) return true;
     return (
-      d.name.toLowerCase().includes(normalizedSearch) ||
+      d.name?.toLowerCase().includes(normalizedSearch) ||
       (d.ip && d.ip.toLowerCase().includes(normalizedSearch)) ||
       (d.url && d.url.toLowerCase().includes(normalizedSearch)) ||
       (d.manufacturer && d.manufacturer.toLowerCase().includes(normalizedSearch))
@@ -141,9 +145,9 @@ export function DevicePortalView({ preview = false }: { preview?: boolean }) {
   }
 
   // Find tiles belonging to each group
-  const groupedSections = data.groups
+  const groupedSections = groupsList
     .map((group) => {
-      const groupTiles = data.tiles.filter((tile) => tile.groupId === group.id);
+      const groupTiles = tilesList.filter((tile) => tile.groupId === group.id);
       const devices = groupTiles
         .map((tile) => deviceMap.get(tile.deviceId))
         .filter((d): d is Device => Boolean(d));
@@ -152,15 +156,15 @@ export function DevicePortalView({ preview = false }: { preview?: boolean }) {
     .filter((entry) => entry.devices.length > 0 || !normalizedSearch);
 
   // Find ungrouped tiles/devices
-  const ungroupedTiles = data.tiles.filter(
-    (tile) => !tile.groupId || !data.groups.some((g) => g.id === tile.groupId),
+  const ungroupedTiles = tilesList.filter(
+    (tile) => !tile.groupId || !groupsList.some((g) => g.id === tile.groupId),
   );
   const ungroupedDevices = ungroupedTiles
     .map((tile) => deviceMap.get(tile.deviceId))
     .filter((d): d is Device => Boolean(d));
 
   // Also include devices that have no tiles at all if search matches
-  const placedDeviceIds = new Set(data.tiles.map((t) => t.deviceId));
+  const placedDeviceIds = new Set(tilesList.map((t) => t.deviceId));
   const unplacedDevices = filteredDevices.filter((d) => !placedDeviceIds.has(d.id));
 
   const allUngrouped = [...ungroupedDevices, ...unplacedDevices];

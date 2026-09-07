@@ -6,6 +6,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.23] - 2026-09-07
+
+### Behoben
+
+- Fehler behoben, bei dem die Vorschau und Konfiguration des Geräte-Dashboards im Admin-Bereich durch einen fehlenden `ReachabilityProvider` zu einer leeren weißen Seite führte.
+- Speicherbereinigung im LXC-Update-Skript hinzugefügt: Alte Versionsordner (`.previous-*`), temporäre Staging-Ordner, npm- und apt-Caches sowie alte Config-Backups werden vor und nach jedem Update automatisch gelöscht, um Festplatten- und Speicherzuwachs zu verhindern.
+- `devices-dashboard.json` wird bei LXC-Installations- und Update-Snapshots nun zuverlässig mitgesichert und wiederhergestellt.
+
 ## [1.5.22] - 2026-09-07
 
 ### Behoben
