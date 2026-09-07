@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   Bug,
   ChartNoAxesCombined,
+  CircuitBoard,
   LayoutGrid,
   KeyRound,
   LogOut,
@@ -109,6 +110,10 @@ export function AdminPage() {
             </button>
           )}
         </nav>
+        <Link className="admin-sidebar-action" to="/devices">
+          <CircuitBoard size={17} />
+          {t("admin.devices")}
+        </Link>
         <div className="admin-sidebar-footer">
           <div className="admin-session-status">
             <ShieldCheck size={18} />
