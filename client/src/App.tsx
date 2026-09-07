@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ConfigProvider } from "./context/ConfigContext";
 import { useConfig } from "./hooks/useConfig";
@@ -8,11 +8,6 @@ import { PortalPage } from "./pages/PortalPage";
 const AdminRoute = lazy(async () => {
   const module = await import("./pages/AdminRoute");
   return { default: module.AdminRoute };
-});
-
-const DeviceDashboardPage = lazy(async () => {
-  const module = await import("./devices/DeviceDashboardPage");
-  return { default: module.DeviceDashboardPage };
 });
 
 function AdminRouteLoader() {
@@ -31,7 +26,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PortalPage />} />
-          <Route path="/devices" element={<Suspense fallback={<main aria-busy="true">Loading...</main>}><DeviceDashboardPage /></Suspense>} />
+          <Route path="/devices" element={<Navigate to="/" replace />} />
           <Route path="/admin" element={<AdminRouteLoader />} />
         </Routes>
       </BrowserRouter>

@@ -6,6 +6,15 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.20] - 2026-09-07
+
+### Geändert
+
+- Geräte-Verwaltung als voll integrierten Tab im Admin-Bereich eingebunden (Netzwerk-Scan, manuelle Anlage, Gruppen, Inventar, Import/Export).
+- Geräte-Dashboard im Portal-Bereich als native Alternative zu Grafana und Co. ohne Iframe eingebunden.
+- Admin-Dashboard-Einstellungen und Live-Vorschau für das native Geräte-Dashboard harmonisiert.
+- Design, i18n-Übersetzungen und Komponenten-Styling an das restliche Projekt angepasst.
+
 ## [1.5.19] - 2026-09-07
 
 ### Hinzugefügt
