@@ -249,6 +249,7 @@ write_progress updating 74 "Anwendung wird kompiliert" "${TARGET_VERSION}"
 npm run build
 write_progress updating 78 "Anwendung erfolgreich gebaut" "${TARGET_VERSION}"
 chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
+chmod 755 "${STAGING_DIR}"
 echo "Wechsle auf die erfolgreich gebaute Version ..."
 write_progress updating 88 "Neue Version wird aktiviert" "${TARGET_VERSION}"
 if [[ ! -f "${STAGING_DIR}/package.json" ]]; then

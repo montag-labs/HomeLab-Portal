@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.17] - 2026-09-07
+
+### Behoben
+
+- LXC-Updates setzen die Zugriffsberechtigung des aktivierten Staging-Verzeichnisses korrekt, damit der unprivilegierte Systemdienst sein Arbeitsverzeichnis betreten kann.
+
 ## [1.5.16] - 2026-09-07
 
 ### Hinzugefügt
