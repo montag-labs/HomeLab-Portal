@@ -128,6 +128,17 @@ export function cancelScan(id: string) {
   return entry.job;
 }
 const xmlValue = (xml: string, name: string) => new RegExp(`<${name}[^>]*>([^<]*)</${name}>`).exec(xml)?.[1]?.replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", '"') ?? "";
+
+function detectDeviceIcon(name: string): Device["icon"] {
+  const n = name.toLowerCase();
+  if (n.includes("light") || n.includes("lampe") || n.includes("hue") || n.includes("bulb") || n.includes("led")) return "light";
+  if (n.includes("cam") || n.includes("kamera")) return "camera";
+  if (n.includes("plug") || n.includes("steckdose") || n.includes("shelly") || n.includes("gosund") || n.includes("tasmota") || n.includes("switch")) return "plug";
+  if (n.includes("router") || n.includes("fritz") || n.includes("repeater") || n.includes("ap") || n.includes("gateway")) return "router";
+  if (n.includes("sensor") || n.includes("temp") || n.includes("motion") || n.includes("wetter")) return "sensor";
+  return "device";
+}
+
 async function fritzbox(ip: string, job: ScanJob, signal: AbortSignal) {
   const service = "urn:dslforum-org:service:Hosts:1";
   const call = (action: string, content = "") => probe(`http://${ip}:49000/upnp/control/hosts`, signal, "POST", `<?xml version="1.0"?><s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/"><s:Body><u:${action} xmlns:u="${service}">${content}</u:${action}></s:Body></s:Envelope>`, `${service}#${action}`);
@@ -137,20 +148,44 @@ async function fritzbox(ip: string, job: ScanJob, signal: AbortSignal) {
     if (!signal.aborted) { job.state = "unavailable"; job.message = "FRITZ!Box-Geräteliste ohne Anmeldung nicht verfügbar. TR-064 muss aktiviert sein; bei erforderlicher Authentifizierung bleibt diese Quelle deaktiviert."; }
     return;
   }
-  job.total = Math.min(Number(countText), 256);
-  for (let index = 0; index < job.total && !signal.aborted; index++) {
-    const result = await call("GetGenericHostEntry", `<NewIndex>${index}</NewIndex>`);
-    if (!result || result.status !== 200) throw new Error("FRITZ!Box-Abfrage fehlgeschlagen");
-    const target = xmlValue(result.body, "NewIPAddress");
-    if (ipv4(target) !== null) {
-      try {
-        scanAddresses(`${target}/32`);
-        const device = await discover(target, [80, 443], signal);
-        if (device) job.devices.push({ ...device, source: "fritzbox", name: xmlValue(result.body, "NewHostName").slice(0, 120) || device.name, mac: xmlValue(result.body, "NewMACAddress").slice(0, 32) || undefined });
-      } catch { /* Never contact hosts outside the allowlist. */ }
-    }
-    job.checked++;
-  }
+  const totalEntries = Math.min(Number(countText), 512);
+  job.total = totalEntries;
+
+  let nextIndex = 0;
+  const concurrency = Math.min(16, totalEntries);
+
+  await Promise.all(
+    Array.from({ length: concurrency }, async () => {
+      while (nextIndex < totalEntries && !signal.aborted) {
+        const index = nextIndex++;
+        try {
+          const result = await call("GetGenericHostEntry", `<NewIndex>${index}</NewIndex>`);
+          if (result && result.status === 200) {
+            const target = xmlValue(result.body, "NewIPAddress");
+            const hostName = xmlValue(result.body, "NewHostName").slice(0, 120);
+            const mac = xmlValue(result.body, "NewMACAddress").slice(0, 32);
+            const active = xmlValue(result.body, "NewActive");
+            const cleanMac = mac && mac !== "00:00:00:00:00:00" ? mac.replaceAll("-", ":").toUpperCase() : undefined;
+
+            if (ipv4(target) !== null && active !== "0") {
+              job.devices.push({
+                id: randomUUID(),
+                name: hostName || `Gerät ${target}`,
+                url: `http://${target}`,
+                ip: target,
+                mac: cleanMac,
+                source: "fritzbox",
+                icon: detectDeviceIcon(hostName),
+              });
+            }
+          }
+        } catch {
+          // Einzelnen Eintrag bei Fehler überspringen
+        }
+        job.checked++;
+      }
+    }),
+  );
 }
 export function startScan(input: ScanInput) {
   const addresses = input.source === "network" ? scanAddresses(input.subnet) : scanAddresses(`${input.address}/32`);
