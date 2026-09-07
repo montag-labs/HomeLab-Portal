@@ -2329,7 +2329,7 @@ img.admin-icon-option-preview {
 }
 
 .admin-content {
-  width: min(100%, 82rem);
+  width: 100%;
   max-width: none;
   margin: 0;
   padding: 5px;
@@ -3721,9 +3721,15 @@ img.admin-icon-option-preview {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
-.admin-header-row {
+.device-manager-section .admin-tools-card {
+  width: 100%;
+  max-width: none;
+}
+
+.device-scan-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3731,7 +3737,7 @@ img.admin-icon-option-preview {
   flex-wrap: wrap;
 }
 
-.admin-header-actions {
+.device-scan-header-actions {
   display: flex;
   gap: 0.5rem;
 }

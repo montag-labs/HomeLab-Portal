@@ -422,39 +422,6 @@ export function DeviceManager() {
 
   return (
     <div className="admin-section device-manager-section">
-      <div className="admin-header-row">
-        <div>
-          <h2>{t("admin.devicesTitle")}</h2>
-          <p>{t("admin.devicesDescription")}</p>
-        </div>
-        <div className="admin-header-actions">
-          <button type="button" className="btn btn-secondary" onClick={exportDashboard} title={t("devices.export")}>
-            <Download size={16} />
-            {t("devices.export")}
-          </button>
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={() => fileInputRef.current?.click()}
-            title={t("devices.import")}
-          >
-            <Upload size={16} />
-            {t("devices.import")}
-          </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="application/json"
-            style={{ display: "none" }}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) importDashboard(file);
-              e.target.value = "";
-            }}
-          />
-        </div>
-      </div>
-
       {error && (
         <div className="update-error dashboard-save-message" role="alert">
           <AlertCircle size={16} />
@@ -481,21 +448,50 @@ export function DeviceManager() {
           </span>
         </div>
 
-        <div className="device-scan-source-selector">
-          <button
-            type="button"
-            className={scanSource === "network" ? "active" : ""}
-            onClick={() => setScanSource("network")}
-          >
-            {t("devices.network")}
-          </button>
-          <button
-            type="button"
-            className={scanSource === "fritzbox" ? "active" : ""}
-            onClick={() => setScanSource("fritzbox")}
-          >
-            {t("devices.fritz")}
-          </button>
+        <div className="device-scan-toolbar">
+          <div className="device-scan-source-selector">
+            <button
+              type="button"
+              className={scanSource === "network" ? "active" : ""}
+              onClick={() => setScanSource("network")}
+            >
+              {t("devices.network")}
+            </button>
+            <button
+              type="button"
+              className={scanSource === "fritzbox" ? "active" : ""}
+              onClick={() => setScanSource("fritzbox")}
+            >
+              {t("devices.fritz")}
+            </button>
+          </div>
+
+          <div className="device-scan-header-actions">
+            <button type="button" className="btn btn-secondary" onClick={exportDashboard} title={t("devices.export")}>
+              <Download size={16} />
+              {t("devices.export")}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => fileInputRef.current?.click()}
+              title={t("devices.import")}
+            >
+              <Upload size={16} />
+              {t("devices.import")}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json"
+              style={{ display: "none" }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) importDashboard(file);
+                e.target.value = "";
+              }}
+            />
+          </div>
         </div>
 
         {scanSource === "network" ? (
