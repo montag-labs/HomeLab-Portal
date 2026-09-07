@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.22] - 2026-09-07
+
+### Behoben
+
+- FRITZ!Box-Integration liest die Netzwerk-Teilnehmerliste (IP, Hostname, MAC, Status) via TR-064 nun direkt und parallel in wenigen Sekunden aus, statt jedes gefundene Gerät einzeln sequentiell mit Timeouts auf Web-Ports zu prüfen.
+
 ## [1.5.21] - 2026-09-07
 
 ### Geändert

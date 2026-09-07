@@ -51,7 +51,7 @@ export function DeviceManager() {
   const [scanSource, setScanSource] = useState<"network" | "fritzbox">("network");
   const [selectedSubnet, setSelectedSubnet] = useState("");
   const [portsInput, setPortsInput] = useState("80,443");
-  const [fritzIp, setFritzIp] = useState("");
+  const [fritzIp, setFritzIp] = useState("192.168.178.1");
   const [availableSubnets, setAvailableSubnets] = useState<string[]>([]);
   const [currentScan, setCurrentScan] = useState<ScanJob | null>(null);
 
