@@ -6,6 +6,17 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.24] - 2026-09-07
+
+### Geändert
+
+- Portal-Header und Geräte-Dashboard-Layout optimiert:
+  - HomeLab-Portal Logo und Versionsanzeige oben in die linke Seitenleiste (Sidebar) verschoben für ein einheitliches Erscheinungsbild.
+  - Dashboard-Titelkachel (Icon + Titel horizontal zentriert ohne doppelten Subtext) oben links im Portal-Header platziert.
+  - Gerätesuchleiste direkt mittig in den oberen Portal-Header integriert.
+  - Dashboard-Aktualisieren-Button rechts neben die Theme-Umschaltung im Header als einheitliche Kachel einsortiert.
+  - Redundante Statistik-Anzeige („6 Geräte 1 Gruppen“) im Content-Bereich entfernt.
+
 ## [1.5.23] - 2026-09-07
 
 ### Behoben
