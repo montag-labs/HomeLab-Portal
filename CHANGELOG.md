@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.19] - 2026-09-07
+
+### Hinzugefügt
+
+- Geräte-Dashboard als auswählbarer Provider für die öffentliche Portalübersicht ergänzt.
+- Eingebettete Geräteansicht ohne doppelte Portalnavigation ergänzt.
+
 ## [1.5.18] - 2026-09-07
 
 ### Hinzugefügt

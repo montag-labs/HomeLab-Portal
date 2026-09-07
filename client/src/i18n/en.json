@@ -119,6 +119,11 @@
         "description": "Public status page for services and availability.",
         "placeholder": "https://status.example.com/status/homelab"
       },
+      "devices": {
+        "title": "Device dashboard",
+        "description": "Show smart-home devices directly in the public portal overview.",
+        "placeholder": "Loaded automatically from /devices"
+      },
       "custom": {
         "title": "Custom URL",
         "description": "Any other web interface that permits iframes.",

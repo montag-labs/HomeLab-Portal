@@ -19,6 +19,7 @@ const message = (error: unknown) => error instanceof Error ? error.message : Str
 const bottom = (items: Rectangle[]) => items.reduce((max, item) => Math.max(max, item.y + item.h), 0);
 
 export function DeviceDashboardPage() {
+  const embedded = new URLSearchParams(window.location.search).get("embedded") === "1";
   const { i18n } = useTranslation();
   const t = i18n.language.startsWith("de") ? de : en;
   const [data, setData] = useState<DeviceDashboard | null>(null);
@@ -50,17 +51,17 @@ export function DeviceDashboardPage() {
       const dashboard = await api.getDeviceDashboard();
       setData(dashboard); saved.current = dashboard;
       const session = await api.getAuthSession();
-      setAdmin(session.authenticated);
+      setAdmin(session.authenticated && !embedded);
     } catch (reason) { setError(message(reason)); }
     finally { setBusy(false); }
   };
   useEffect(() => {
     let active = true;
     Promise.all([api.getDeviceDashboard(), api.getAuthSession()]).then(([dashboard, session]) => {
-      if (active) { setData(dashboard); saved.current = dashboard; setAdmin(session.authenticated); }
+      if (active) { setData(dashboard); saved.current = dashboard; setAdmin(session.authenticated && !embedded); }
     }).catch(reason => { if (active) setError(message(reason)); }).finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
-  }, []);
+  }, [embedded]);
   useEffect(() => {
     if (!editing) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
@@ -177,8 +178,8 @@ export function DeviceDashboardPage() {
   };
   const drawTiles = (groupId: string | null) => <DeviceGrid items={(editing ? data!.tiles : visibleTiles).filter(item => item.groupId === groupId)} editable={editing && !busy} onChange={changes => changeGeometry("tiles", changes)} render={drawTile} />;
 
-  return <ReachabilityProvider><div className="portal-layout"><Sidebar /><div className="portal-workspace">
-    <header className="portal-header"><div className="portal-brand-card"><BrandIdentity /></div><ThemeToggle /></header>
+  return <ReachabilityProvider><div className={embedded ? "devices-embedded" : "portal-layout"}>{!embedded && <Sidebar />}<div className={embedded ? "devices-embedded-workspace" : "portal-workspace"}>
+    {!embedded && <header className="portal-header"><div className="portal-brand-card"><BrandIdentity /></div><ThemeToggle /></header>}
     <main className={`portal-main devices-page ${editing ? "devices-editing" : ""}`}>
       <header className="devices-heading"><div><span className="devices-eyebrow"><CircuitBoard size={17} /> SMART HOME</span><h1>{t.title}</h1><p>{t.subtitle}</p></div><div className="devices-actions">{editing ? <><button className="btn btn-primary" disabled={busy} onClick={save}>{t.save}</button><button className="btn" disabled={busy} onClick={cancel}>{t.cancel}</button></> : admin ? <button className="btn btn-primary" disabled={busy || !data} onClick={beginEdit}><Pencil size={16} /> {t.edit}</button> : <Link className="btn" to="/admin">{t.login}</Link>}</div></header>
       {error && <div className="devices-error" role="alert">{error} {!data && <button className="btn" onClick={load}>{t.retry}</button>}</div>}
