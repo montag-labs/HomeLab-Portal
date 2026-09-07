@@ -1,15 +1,42 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowRight, Heart, Scale, Settings2 } from "lucide-react";
 import { useConfig } from "../hooks/useConfig";
 import { CategoryGroup } from "./CategoryGroup";
+import { BrandIdentity } from "./BrandIdentity";
+import { api } from "../api";
+import type { UpdateStatus } from "../types";
 
-export function Sidebar() {
+export function Sidebar({ updateStatus: initialStatus }: { updateStatus?: UpdateStatus | null }) {
   const { config } = useConfig();
   const { t } = useTranslation();
+  const [updateStatus, setUpdateStatus] = useState<UpdateStatus | null>(initialStatus ?? null);
+
+  useEffect(() => {
+    if (initialStatus !== undefined) {
+      setUpdateStatus(initialStatus);
+      return;
+    }
+    api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
+  }, [initialStatus]);
+
+  const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
+  const versionStatus = updateStatus
+    ? t(`app.versionStates.${versionState}`)
+    : t("app.versionStates.loading");
 
   return (
     <aside className="sidebar">
+      <Link className="sidebar-brand-link" to="/">
+        <BrandIdentity
+          details={(
+            <span className={`portal-brand-status portal-brand-status-${versionState}`}>
+              v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
+            </span>
+          )}
+        />
+      </Link>
       <nav className="sidebar-categories">
         {config &&
           [...config.categories]

@@ -10,7 +10,6 @@ import {
   Radio,
   RefreshCw,
   Router,
-  Search,
 } from "lucide-react";
 import { api } from "../api";
 import { useReachability } from "../hooks/useReachability";
@@ -69,12 +68,17 @@ function DeviceCard({ device }: { device: Device }) {
   );
 }
 
-export function DevicePortalView({ preview = false }: { preview?: boolean }) {
+export function DevicePortalView({
+  preview = false,
+  search = "",
+}: {
+  preview?: boolean;
+  search?: string;
+}) {
   const { t } = useTranslation();
   const [data, setData] = useState<DeviceDashboard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [search, setSearch] = useState("");
 
   const loadData = async () => {
     setLoading(true);
@@ -171,29 +175,6 @@ export function DevicePortalView({ preview = false }: { preview?: boolean }) {
 
   return (
     <div className={`portal-devices-container ${preview ? "portal-devices-preview" : ""}`}>
-      {!preview && (
-        <div className="portal-devices-toolbar">
-          <div className="portal-devices-search">
-            <Search size={16} />
-            <input
-              type="search"
-              placeholder={t("devices.search")}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label={t("devices.search")}
-            />
-          </div>
-          <div className="portal-devices-stats">
-            <span>
-              <strong>{filteredDevices.length}</strong> {t("devices.devices")}
-            </span>
-            <span>
-              <strong>{data.groups.length}</strong> {t("devices.groups")}
-            </span>
-          </div>
-        </div>
-      )}
-
       <div className="portal-devices-body">
         {groupedSections.map(({ group, devices }) => (
           <section key={group.id} className="category-group portal-devices-group">

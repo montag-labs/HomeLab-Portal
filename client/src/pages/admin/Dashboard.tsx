@@ -1,11 +1,8 @@
 import { useState } from "react";
 import {
-  Activity,
-  ChartNoAxesCombined,
   Check,
   CircuitBoard,
   ExternalLink,
-  HeartPulse,
   PanelsTopLeft,
   Save,
 } from "lucide-react";
@@ -19,6 +16,7 @@ import {
 import { useConfig } from "../../hooks/useConfig";
 import type { DashboardProvider, DashboardSettings } from "../../types";
 import { DevicePortalView } from "../../devices/DevicePortalView";
+import { ProviderIcon } from "../../components/ProviderIcon";
 
 const PROVIDER_TITLES: Record<DashboardProvider, string> = {
   grafana: "Grafana",
@@ -27,14 +25,6 @@ const PROVIDER_TITLES: Record<DashboardProvider, string> = {
   devices: "Geräte-Dashboard",
   custom: "",
 };
-
-function ProviderIcon({ provider, size = 21 }: { provider: DashboardProvider; size?: number }) {
-  if (provider === "grafana") return <ChartNoAxesCombined size={size} />;
-  if (provider === "netdata") return <Activity size={size} />;
-  if (provider === "uptime-kuma") return <HeartPulse size={size} />;
-  if (provider === "devices") return <CircuitBoard size={size} />;
-  return <PanelsTopLeft size={size} />;
-}
 
 export function Dashboard() {
   const { config, refresh, theme } = useConfig();
