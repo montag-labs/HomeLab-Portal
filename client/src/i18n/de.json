@@ -53,6 +53,7 @@
     "notConfigured": "Die Admin-Authentifizierung ist auf dem Server noch nicht konfiguriert."
   },
   "admin": {
+    "devices": "Geräte-Dashboard",
     "general": "Allgemein",
     "areaLabel": "Administration",
     "secureSession": "Sichere Sitzung",

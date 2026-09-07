@@ -6,6 +6,12 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.18] - 2026-09-07
+
+### Hinzugefügt
+
+- Geräte-Dashboard im Adminbereich direkt über einen eigenen Navigationslink erreichbar.
+
 ## [1.5.17] - 2026-09-07
 
 ### Behoben

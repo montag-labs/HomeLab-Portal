@@ -53,6 +53,7 @@
     "notConfigured": "Admin authentication has not been configured on the server."
   },
   "admin": {
+    "devices": "Device dashboard",
     "general": "General",
     "areaLabel": "Administration",
     "secureSession": "Secure session",
