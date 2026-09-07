@@ -5,6 +5,7 @@ import { api } from "../api";
 import { GeneralSettings } from "./admin/GeneralSettings";
 import { CategoryManager } from "./admin/CategoryManager";
 import { Dashboard } from "./admin/Dashboard";
+import { DeviceManager } from "./admin/DeviceManager";
 import { Updates } from "./admin/Updates";
 import { DevDebug } from "./admin/DevDebug";
 import { Logs } from "./admin/Logs";
@@ -28,8 +29,9 @@ import {
 
 export function AdminPage() {
   const { t } = useTranslation();
-  const [tab, setTab] = useState<"general" | "sso" | "categories" | "dashboard" | "updates" | "logs" | "dev">(() => {
+  const [tab, setTab] = useState<"general" | "sso" | "categories" | "dashboard" | "devices" | "updates" | "logs" | "dev">(() => {
     const query = new URLSearchParams(window.location.search);
+    if (query.get("tab") === "devices") return "devices";
     return query.has("sso_verified") || query.has("sso_error") ? "sso" : "general";
   });
   const [devEnabled, setDevEnabled] = useState(false);
@@ -85,6 +87,14 @@ export function AdminPage() {
           </button>
           <button
             type="button"
+            className={tab === "devices" ? "active" : ""}
+            onClick={() => setTab("devices")}
+          >
+            <CircuitBoard size={18} />
+            {t("admin.devices")}
+          </button>
+          <button
+            type="button"
             className={tab === "updates" ? "active" : ""}
             onClick={() => setTab("updates")}
           >
@@ -110,10 +120,6 @@ export function AdminPage() {
             </button>
           )}
         </nav>
-        <Link className="admin-sidebar-action" to="/devices">
-          <CircuitBoard size={17} />
-          {t("admin.devices")}
-        </Link>
         <div className="admin-sidebar-footer">
           <div className="admin-session-status">
             <ShieldCheck size={18} />
@@ -131,6 +137,7 @@ export function AdminPage() {
           {tab === "sso" && <SsoSettings />}
           {tab === "categories" && <CategoryManager />}
           {tab === "dashboard" && <Dashboard />}
+          {tab === "devices" && <DeviceManager />}
           {tab === "updates" && <Updates />}
           {tab === "logs" && <Logs />}
           {tab === "dev" && devEnabled && <DevDebug />}

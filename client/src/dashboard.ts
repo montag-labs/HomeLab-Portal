@@ -35,7 +35,8 @@ export function resolveDashboardSettings(settings?: Settings): DashboardSettings
 }
 
 export function buildDashboardUrl(settings: DashboardSettings, theme: ThemeMode): string {
-  if (settings.provider === "devices") return "/devices?embedded=1";
+  if (settings.provider === "devices") return "";
+  if (!settings.url) return "";
   const url = new URL(settings.url);
 
   if (settings.provider === "grafana") {

@@ -3,6 +3,7 @@ import {
   Activity,
   ChartNoAxesCombined,
   Check,
+  CircuitBoard,
   ExternalLink,
   HeartPulse,
   PanelsTopLeft,
@@ -17,6 +18,7 @@ import {
 } from "../../dashboard";
 import { useConfig } from "../../hooks/useConfig";
 import type { DashboardProvider, DashboardSettings } from "../../types";
+import { DevicePortalView } from "../../devices/DevicePortalView";
 
 const PROVIDER_TITLES: Record<DashboardProvider, string> = {
   grafana: "Grafana",
@@ -30,6 +32,7 @@ function ProviderIcon({ provider, size = 21 }: { provider: DashboardProvider; si
   if (provider === "grafana") return <ChartNoAxesCombined size={size} />;
   if (provider === "netdata") return <Activity size={size} />;
   if (provider === "uptime-kuma") return <HeartPulse size={size} />;
+  if (provider === "devices") return <CircuitBoard size={size} />;
   return <PanelsTopLeft size={size} />;
 }
 
@@ -155,28 +158,38 @@ export function Dashboard() {
             </span>
           </div>
 
-          <div className="dashboard-form-grid">
-            <label className="admin-field">
-              {t("admin.dashboardTitleLabel")}
-              <input
-                value={draft.title}
-                maxLength={80}
-                disabled={saving || draft.provider === "devices"}
-                placeholder={t("admin.dashboardTitlePlaceholder")}
-                onChange={(event) => updateDashboard({ title: event.target.value })}
-              />
-            </label>
-            <label className="admin-field dashboard-url-field">
-              {t("admin.dashboardUrl")}
-              <input
-                type="url"
-                value={draft.url}
-                disabled={saving}
-                placeholder={t(`admin.dashboardProviders.${draft.provider}.placeholder`)}
-                onChange={(event) => updateDashboard({ url: event.target.value })}
-              />
-            </label>
-          </div>
+          {draft.provider === "devices" ? (
+            <div className="dashboard-native-notice">
+              <CircuitBoard size={24} />
+              <div>
+                <strong>{t("admin.devicesNativeTitle")}</strong>
+                <p>{t("admin.devicesNativeDescription")}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="dashboard-form-grid">
+              <label className="admin-field">
+                {t("admin.dashboardTitleLabel")}
+                <input
+                  value={draft.title}
+                  maxLength={80}
+                  disabled={saving}
+                  placeholder={t("admin.dashboardTitlePlaceholder")}
+                  onChange={(event) => updateDashboard({ title: event.target.value })}
+                />
+              </label>
+              <label className="admin-field dashboard-url-field">
+                {t("admin.dashboardUrl")}
+                <input
+                  type="url"
+                  value={draft.url}
+                  disabled={saving}
+                  placeholder={t(`admin.dashboardProviders.${draft.provider}.placeholder`)}
+                  onChange={(event) => updateDashboard({ url: event.target.value })}
+                />
+              </label>
+            </div>
+          )}
 
           {draft.provider === "grafana" && (
             <div className="dashboard-grafana-options">
@@ -232,10 +245,12 @@ export function Dashboard() {
             </div>
           )}
 
-          <div className="dashboard-embed-notice">
-            <PanelsTopLeft size={18} />
-            <p>{t("admin.dashboardEmbedNotice")}</p>
-          </div>
+          {draft.provider !== "devices" && (
+            <div className="dashboard-embed-notice">
+              <PanelsTopLeft size={18} />
+              <p>{t("admin.dashboardEmbedNotice")}</p>
+            </div>
+          )}
         </section>
 
         <aside className="dashboard-preview-card">
@@ -251,7 +266,11 @@ export function Dashboard() {
             )}
           </div>
           <div className="dashboard-admin-preview">
-            {previewUrl ? (
+            {draft.provider === "devices" ? (
+              <div className="dashboard-native-preview-wrapper">
+                <DevicePortalView preview={true} />
+              </div>
+            ) : previewUrl ? (
               <iframe
                 key={previewUrl}
                 title={draft.title || t("dashboard.title")}
