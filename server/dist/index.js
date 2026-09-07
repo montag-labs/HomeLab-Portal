@@ -6,6 +6,7 @@ import { configRouter } from "./routes/config.js";
 import { statusRouter } from "./routes/status.js";
 import { updateRouter } from "./routes/update.js";
 import { devRouter } from "./routes/dev.js";
+import { devicesRouter } from "./routes/devices.js";
 import { logsRouter } from "./routes/logs.js";
 import { authRouter } from "./middleware/auth.js";
 import { securityHeaders } from "./middleware/security.js";
@@ -22,6 +23,7 @@ app.use("/api", configRouter);
 app.use("/api", statusRouter);
 app.use("/api", updateRouter);
 app.use("/api", logsRouter);
+app.use("/api", devicesRouter);
 if ((process.env.APP_ENV ?? process.env.NODE_ENV ?? "production") !== "production") {
     app.use("/api", devRouter);
 }

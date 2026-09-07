@@ -74,8 +74,12 @@ Die Konfigurationsvorlage liegt zusätzlich im Image. Ein leerer Datenordner wir
 | `TRUST_PROXY` | `false` | Vertraut genau einem vorgeschalteten Proxy bei `true` |
 | `FORCE_SECURE_COOKIES` | `false` | Erzwingt das `Secure`-Attribut für Session-Cookies |
 | `ALLOW_INSECURE_TLS` | `false` | Deaktiviert nur für Statusprüfungen die TLS-Zertifikatsprüfung |
+| `DEVICE_SCAN_SUBNETS` | automatisch | Kommaseparierte, freigegebene private IPv4-Netze für den Geräte-Scan, zum Beispiel `192.168.178.0/24` |
+| `DEVICE_VENDOR_FILE` | leer | Optionaler Pfad zu einer JSON-Datei mit OUI-Präfixen und Herstellername, zum Beispiel `{"AABBCC":"Hersteller"}` |
 
 Änderungen an diesen Werten werden nach `docker compose up -d --force-recreate` wirksam. Das Admin-Passwort kann nach der Anmeldung unter „Allgemein“ geändert werden und wird in `server/data/admin-password` gespeichert.
+
+Der Geräte-Scan läuft aus dem Portal-Container. Bei Docker muss der Container daher die Geräte-Webinterfaces über sein Netzwerk erreichen können. Der Standard-Compose-Service verwendet ein eigenes Bridge-Netzwerk; für andere VLANs, isolierte Netze oder eine FRITZ!Box außerhalb dieses Netzes ist eine passende Docker-Netzwerkkonfiguration erforderlich. Der Scan kontaktiert ausschließlich private IPv4-Ziele innerhalb der freigegebenen Netze, maximal 256 Adressen pro Auftrag, mit begrenzter Parallelität und einem Zeitlimit von 120 Sekunden. Für MAC-Adressen wird die Nachbartabelle des Containers verwendet; sie kann bei Bridge-/gerouteten Netzen leer bleiben.
 
 ## Port ändern
 

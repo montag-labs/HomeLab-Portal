@@ -70,6 +70,8 @@ Wichtige Parameter:
 | `TRUST_PROXY` | `false` | Vertraut einem vorgeschalteten Proxy |
 | `FORCE_SECURE_COOKIES` | `false` | Erzwingt Secure-Cookies |
 | `ALLOW_INSECURE_TLS` | `false` | Erlaubt selbstsignierte Zertifikate bei Statusprüfungen |
+| `DEVICE_SCAN_SUBNETS` | automatisch | Kommaseparierte, freigegebene private IPv4-Netze für den Geräte-Scan, zum Beispiel `192.168.178.0/24` |
+| `DEVICE_VENDOR_FILE` | leer | Optionaler absoluter Pfad zu einer JSON-OUI-Datei mit Herstellerzuordnung |
 | `OIDC_ISSUER_URL` | leer | Issuer-URL des OpenID Providers |
 | `OIDC_CLIENT_ID` | leer | OIDC-Client-ID |
 | `OIDC_CLIENT_SECRET` | leer | Optionales Client-Secret |
@@ -83,6 +85,8 @@ Nach Änderungen:
 ```bash
 sudo systemctl restart homelab-portal
 ```
+
+Der Geräte-Scan läuft mit dem Netzwerk des LXC und benötigt für den grundlegenden HTTP/HTTPS-Scan keine zusätzlichen Linux-Capabilities. Das Zielnetz muss vom Container aus geroutet erreichbar sein. MAC-Adressen stammen aus `ip neigh` und sind in gerouteten Netzen oder bei fehlenden Nachbareinträgen optional. Der Scanner akzeptiert nur private IPv4-Netze aus `DEVICE_SCAN_SUBNETS` oder automatisch erkannte lokale Netze, begrenzt Aufträge auf 256 Adressen und beendet sie spätestens nach 120 Sekunden.
 
 ## Port ändern
 
