@@ -16,7 +16,7 @@ export function useReachability(
   fallbackUrl?: string,
 ): ReachabilityStatus {
   const context = useContext(ReachabilityContext);
-  if (!context) throw new Error("useReachability must be used within ReachabilityProvider");
+  if (!context) return "checking";
 
   const urls = [primaryUrl, fallbackUrl]
     .filter((url): url is string => Boolean(url))

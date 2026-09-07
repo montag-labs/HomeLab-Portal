@@ -111,7 +111,7 @@ RUNTIME_DATA_SNAPSHOT=""
 snapshot_runtime_data() {
   [[ -n "${RUNTIME_DATA_SNAPSHOT}" ]] && rm -rf "${RUNTIME_DATA_SNAPSHOT}"
   RUNTIME_DATA_SNAPSHOT="$(mktemp -d "/tmp/homelab-portal-runtime.XXXXXX")"
-  for file in config.json oidc.json; do
+  for file in config.json oidc.json devices-dashboard.json; do
     if [[ -f "${APP_DIR}/server/data/${file}" ]]; then
       cp -a "${APP_DIR}/server/data/${file}" "${RUNTIME_DATA_SNAPSHOT}/${file}"
     fi
@@ -121,7 +121,7 @@ snapshot_runtime_data() {
 restore_runtime_data() {
   local target_dir="$1"
   install -d -m 700 "${target_dir}"
-  for file in config.json oidc.json; do
+  for file in config.json oidc.json devices-dashboard.json; do
     if [[ -f "${RUNTIME_DATA_SNAPSHOT}/${file}" ]]; then
       cp -a "${RUNTIME_DATA_SNAPSHOT}/${file}" "${target_dir}/${file}"
     fi
