@@ -15,6 +15,7 @@ export const DASHBOARD_PROVIDERS: DashboardProvider[] = [
   "grafana",
   "netdata",
   "uptime-kuma",
+  "devices",
   "custom",
 ];
 
@@ -34,6 +35,7 @@ export function resolveDashboardSettings(settings?: Settings): DashboardSettings
 }
 
 export function buildDashboardUrl(settings: DashboardSettings, theme: ThemeMode): string {
+  if (settings.provider === "devices") return "/devices?embedded=1";
   const url = new URL(settings.url);
 
   if (settings.provider === "grafana") {

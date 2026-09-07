@@ -38,7 +38,7 @@ export const settingsSchema = z.object({
   dashboard: z
     .object({
       enabled: z.boolean(),
-      provider: z.enum(["grafana", "netdata", "uptime-kuma", "custom"]),
+      provider: z.enum(["grafana", "netdata", "uptime-kuma", "devices", "custom"]),
       title: z.string().max(80),
       url: z.string().refine((value) => !value || /^https?:\/\//i.test(value), {
         message: "Dashboard URL must use http or https",

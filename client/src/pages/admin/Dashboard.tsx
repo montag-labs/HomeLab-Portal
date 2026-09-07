@@ -22,6 +22,7 @@ const PROVIDER_TITLES: Record<DashboardProvider, string> = {
   grafana: "Grafana",
   netdata: "Netdata",
   "uptime-kuma": "Uptime Kuma",
+  devices: "Geräte-Dashboard",
   custom: "",
 };
 
@@ -160,7 +161,7 @@ export function Dashboard() {
               <input
                 value={draft.title}
                 maxLength={80}
-                disabled={saving}
+                disabled={saving || draft.provider === "devices"}
                 placeholder={t("admin.dashboardTitlePlaceholder")}
                 onChange={(event) => updateDashboard({ title: event.target.value })}
               />

@@ -35,7 +35,7 @@ export interface GrafanaSettings {
   refreshInterval: string;
 }
 
-export type DashboardProvider = "grafana" | "netdata" | "uptime-kuma" | "custom";
+export type DashboardProvider = "grafana" | "netdata" | "uptime-kuma" | "devices" | "custom";
 
 export interface DashboardSettings extends GrafanaSettings {
   provider: DashboardProvider;

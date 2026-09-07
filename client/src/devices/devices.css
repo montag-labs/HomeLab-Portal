@@ -7,6 +7,20 @@
   max-width: 1500px;
 }
 
+.devices-embedded {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+.devices-embedded-workspace {
+  min-width: 0;
+}
+
+.devices-embedded .devices-page {
+  max-width: none;
+  padding: 1.25rem;
+}
+
 .devices-heading,
 .devices-toolbar,
 .devices-draft,
