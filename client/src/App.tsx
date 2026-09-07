@@ -10,6 +10,11 @@ const AdminRoute = lazy(async () => {
   return { default: module.AdminRoute };
 });
 
+const DeviceDashboardPage = lazy(async () => {
+  const module = await import("./devices/DeviceDashboardPage");
+  return { default: module.DeviceDashboardPage };
+});
+
 function AdminRouteLoader() {
   const { t } = useTranslation();
   return (
@@ -26,6 +31,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PortalPage />} />
+          <Route path="/devices" element={<Suspense fallback={<main aria-busy="true">Loading...</main>}><DeviceDashboardPage /></Suspense>} />
           <Route path="/admin" element={<AdminRouteLoader />} />
         </Routes>
       </BrowserRouter>

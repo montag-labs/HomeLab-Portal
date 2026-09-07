@@ -1,5 +1,7 @@
 import type { AppEntry, AuthSession, Category, LogContent, LogPolicy, LogSource, OidcAdminConfig, OidcAdminConfigInput, PortalConfig, ReachabilitySnapshot, Settings, UpdateStartResult, UpdateStatus } from "./types";
 
+import type { DeviceDashboard, ScanInput, ScanJob } from "./devices/types";
+
 let csrfToken = "";
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
@@ -30,6 +32,14 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  getDeviceDashboard: () => request<DeviceDashboard>("/api/devices/dashboard"),
+  getDeviceInventory: () => request<DeviceDashboard>("/api/devices/inventory"),
+  saveDeviceDashboard: (data: DeviceDashboard) => request<DeviceDashboard>("/api/devices/dashboard", { method: "PUT", body: JSON.stringify(data) }),
+  validateDeviceDashboard: (data: unknown) => request<DeviceDashboard>("/api/devices/dashboard/validate", { method: "POST", body: JSON.stringify(data) }),
+  getDeviceScanOptions: () => request<{ subnets: string[] }>("/api/devices/scans/options"),
+  startDeviceScan: (data: ScanInput) => request<ScanJob>("/api/devices/scans", { method: "POST", body: JSON.stringify(data) }),
+  getDeviceScan: (id: string) => request<ScanJob>(`/api/devices/scans/${encodeURIComponent(id)}`),
+  cancelDeviceScan: (id: string) => request<ScanJob>(`/api/devices/scans/${encodeURIComponent(id)}`, { method: "DELETE" }),
   getAuthSession: async () => {
     const session = await request<AuthSession>("/api/auth/session");
     csrfToken = session.csrfToken ?? "";

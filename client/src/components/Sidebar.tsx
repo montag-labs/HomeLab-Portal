@@ -11,6 +11,8 @@ export function Sidebar() {
   return (
     <aside className="sidebar">
       <nav className="sidebar-categories">
+        <Link to="/" className="sidebar-admin-link">{t("nav.overview")}</Link>
+        <Link to="/devices" className="sidebar-admin-link">{t("nav.devices")}</Link>
         {config &&
           [...config.categories]
             .sort((a, b) => a.order - b.order)

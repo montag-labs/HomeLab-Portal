@@ -6,6 +6,18 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.16] - 2026-09-07
+
+### Hinzugefügt
+
+- Geräte-Dashboard mit Gruppen, Kacheln, manueller Anlage, Import/Export und GridStack-Layouteditor.
+- Netzwerk- und FRITZ!Box-Discovery mit begrenzten, administrativen Scanaufträgen.
+- Betriebsdokumentation für Geräte-Scan-Netze, OUI-Herstellerdaten sowie Docker und LXC ergänzt.
+
+### Behoben
+
+- Geräte-Dashboard-Styles, Geometriegrenzen und Scan-Eingaben vervollständigt.
+
 ## [1.5.15] - 2026-09-05
 
 ### Behoben

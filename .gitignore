@@ -6,3 +6,8 @@ server/data/config.json
 server/data/admin-password
 server/data/oidc.json
 debug.md
+next.md
+next-modul.md
+plan.md
+server/data/devices-dashboard.json
+server/data/devices-dashboard.json.*.tmp

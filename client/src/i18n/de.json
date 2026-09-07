@@ -10,6 +10,8 @@
     }
   },
   "nav": {
+    "devices": "Geräte",
+    "overview": "Übersicht",
     "portal": "Portal",
     "admin": "Administration"
   },

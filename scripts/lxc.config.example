@@ -61,6 +61,16 @@
 # Nur für Homelab-Dienste mit selbstsignierten Zertifikaten aktivieren.
 # ALLOW_INSECURE_TLS=false
 
+# Freigegebene private IPv4-Netze für den Geräte-Scan.
+# Mehrere Netze kommasepariert angeben, zum Beispiel:
+# DEVICE_SCAN_SUBNETS=192.168.178.0/24,10.0.0.0/24
+# Leer lassen für automatisch erkannte lokale Netze.
+# DEVICE_SCAN_SUBNETS=
+
+# Optionaler Pfad zu einer JSON-Datei mit OUI-Präfixen und Herstellername.
+# Beispielinhalt: {"AABBCC":"Hersteller"}
+# DEVICE_VENDOR_FILE=
+
 # Optionales OpenID-Connect-SSO. SSO wird nur aktiviert, wenn Issuer,
 # Client-ID, Redirect-URI und mindestens eine erlaubte Admin-Gruppe gesetzt sind.
 # OIDC_ISSUER_URL=https://auth.example.com/application/o/homelab-portal/
