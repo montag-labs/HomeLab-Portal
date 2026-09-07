@@ -6,6 +6,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.21] - 2026-09-07
+
+### Geändert
+
+- Geräte-Verwaltung im Admin-Bereich nutzt die volle Bildschirmbreite ohne Begrenzung auf 48rem.
+- Oberen Header der Geräte-Verwaltung entfernt für eine kompaktere Darstellung.
+- Export- und Import-Aktionen direkt in die Symbolleiste des Bereichs „Netzwerk-Scan & Geräteerkennung“ integriert.
+
 ## [1.5.20] - 2026-09-07
 
 ### Geändert
