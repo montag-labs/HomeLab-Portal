@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import http from "node:http";
 import https from "node:https";
+import { dashboardStore, publicDashboard } from "../services/deviceDashboard.js";
 import { readConfig } from "../services/configStore.js";
 import { limitStatusRequests } from "../middleware/security.js";
 export const statusRouter = Router();
@@ -100,18 +101,21 @@ export async function checkReachabilities(urls) {
     return results;
 }
 async function getConfiguredUrls() {
-    const config = await readConfig();
-    return new Set(config.categories.flatMap((category) => category.apps.flatMap((app) => [app.domain, app.localIp])
-        .filter((url) => Boolean(url))
-        .map((url) => {
-        try {
-            return new URL(url).href;
-        }
-        catch {
-            return "";
-        }
-    })
-        .filter(Boolean)));
+    const [config, dashboard] = await Promise.all([readConfig(), dashboardStore.read()]);
+    return new Set([
+        ...config.categories.flatMap((category) => category.apps.flatMap((app) => [app.domain, app.localIp])
+            .filter((url) => Boolean(url))
+            .map((url) => {
+            try {
+                return new URL(url).href;
+            }
+            catch {
+                return "";
+            }
+        })
+            .filter(Boolean)),
+        ...publicDashboard(dashboard).devices.map((device) => new URL(device.url).href),
+    ]);
 }
 statusRouter.get("/statuses", limitStatusRequests, async (_req, res) => {
     const configuredUrls = await getConfiguredUrls();
