@@ -127,6 +127,8 @@
         "placeholder": "https://status.example.com/status/homelab"
       },
       "devices": {
+    "expandGroup": "Gruppe {{name}} ausklappen",
+    "collapseGroup": "Gruppe {{name}} einklappen",
         "title": "Geräte-Dashboard",
         "description": "Smart-Home-Geräte direkt in der öffentlichen Portalübersicht.",
         "placeholder": "Wird automatisch aus /devices geladen"

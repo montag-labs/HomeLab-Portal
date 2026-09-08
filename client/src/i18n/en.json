@@ -127,6 +127,8 @@
         "placeholder": "https://status.example.com/status/homelab"
       },
       "devices": {
+    "expandGroup": "Expand group {{name}}",
+    "collapseGroup": "Collapse group {{name}}",
         "title": "Device dashboard",
         "description": "Show smart-home devices directly in the public portal overview.",
         "placeholder": "Loaded automatically from /devices"

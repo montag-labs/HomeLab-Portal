@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.27] - 2026-09-08
+
+### Hinzugefügt
+
+- Gerätegruppen erhalten einen sichtbaren Rahmen um ihre Geräte und lassen sich über einen Button oben rechts einzeln ein- und ausklappen.
+- Gruppennamen bleiben eingeklappt sichtbar; die Buttons unterstützen Tastaturbedienung und deutsche sowie englische Beschriftungen für Screenreader.
+
 ## [1.5.26] - 2026-09-08
 
 ### Geändert

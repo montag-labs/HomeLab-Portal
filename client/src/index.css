@@ -4226,13 +4226,56 @@ img.admin-icon-option-preview {
 }
 
 .portal-devices-group {
+  min-width: 0;
+  padding: 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 0;
 }
 
+.portal-devices-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.portal-devices-group-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.portal-devices-group-toggle:hover {
+  color: var(--text);
+  border-color: var(--accent-color);
+}
+
+.portal-devices-group-toggle:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+.portal-devices-group-toggle[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+
 .portal-devices-group .category-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.4;
