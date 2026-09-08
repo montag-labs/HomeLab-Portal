@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Camera,
+  ChevronDown,
   CircuitBoard,
   ExternalLink,
   Lightbulb,
@@ -66,6 +67,41 @@ function DeviceCard({ device }: { device: Device }) {
         )}
       </div>
     </div>
+  );
+}
+
+function DeviceGroup({ name, devices }: { name: string; devices: Device[] }) {
+  const { t } = useTranslation();
+  const [collapsed, setCollapsed] = useState(false);
+  const contentId = useId();
+  const titleId = useId();
+
+  return (
+    <section className="category-group portal-devices-group" aria-labelledby={titleId}>
+      <div className="portal-devices-group-header">
+        <h2 id={titleId} className="category-title">{name}</h2>
+        <button
+          type="button"
+          className="portal-devices-group-toggle"
+          aria-expanded={!collapsed}
+          aria-controls={contentId}
+          aria-label={t(collapsed ? "devices.expandGroup" : "devices.collapseGroup", { name })}
+          title={t(collapsed ? "devices.expandGroup" : "devices.collapseGroup", { name })}
+          onClick={() => setCollapsed(current => !current)}
+        >
+          <ChevronDown size={18} aria-hidden="true" />
+        </button>
+      </div>
+      <div id={contentId} hidden={collapsed}>
+        {devices.length === 0 ? (
+          <p className="portal-devices-group-empty">{t("devices.noMatchingDevicesInGroup")}</p>
+        ) : (
+          <div className="apps-grid portal-devices-grid">
+            {devices.map(device => <DeviceCard key={device.id} device={device} />)}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
@@ -178,29 +214,11 @@ export function DevicePortalView({
     <div className={`portal-devices-container ${preview ? "portal-devices-preview" : ""}`}>
       <div className="portal-devices-body">
         {groupedSections.map(({ group, devices }) => (
-          <section key={group.id} className="category-group portal-devices-group">
-            <h2 className="category-title">{group.name}</h2>
-            {devices.length === 0 ? (
-              <p className="portal-devices-group-empty">{t("devices.noMatchingDevicesInGroup")}</p>
-            ) : (
-              <div className="apps-grid portal-devices-grid">
-                {devices.map((device) => (
-                  <DeviceCard key={device.id} device={device} />
-                ))}
-              </div>
-            )}
-          </section>
+          <DeviceGroup key={group.id} name={group.name} devices={devices} />
         ))}
 
         {allUngrouped.length > 0 && (
-          <section className="category-group portal-devices-group">
-            <h2 className="category-title">{t("devices.ungrouped")}</h2>
-            <div className="apps-grid portal-devices-grid">
-              {allUngrouped.map((device) => (
-                <DeviceCard key={device.id} device={device} />
-              ))}
-            </div>
-          </section>
+          <DeviceGroup name={t("devices.ungrouped")} devices={allUngrouped} />
         )}
 
         {filteredDevices.length === 0 && normalizedSearch && (
