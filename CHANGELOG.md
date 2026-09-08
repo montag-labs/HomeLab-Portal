@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.26] - 2026-09-08
+
+### Geändert
+
+- Geräte-Dashboard kompakter gestaltet: schmalere und flachere Karten, kleinere Symbole und reduzierte Raster-, Gruppen- und Innenabstände zeigen mehr Geräte gleichzeitig.
+- Lange Gerätenamen, URLs und Herstellerangaben werden platzsparend gekürzt und vollständig als Tooltip angezeigt; das Raster passt sich auch schmalen Ansichten an.
+
 ## [1.5.25] - 2026-09-08
 
 ### Behoben

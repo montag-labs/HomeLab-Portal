@@ -46,13 +46,14 @@ function DeviceCard({ device }: { device: Device }) {
     >
       <span className={`status-dot status-dot-${status}`} title={status} />
       <div className="app-card-icon device-card-icon">
-        <IconComponent size={24} />
+        <IconComponent size={20} />
       </div>
       <div className="app-card-body">
-        <div className="app-card-name">{device.name}</div>
+        <div className="app-card-name" title={device.name}>{device.name}</div>
         <a
           className="app-card-link"
           href={device.url}
+          title={device.url}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -61,7 +62,7 @@ function DeviceCard({ device }: { device: Device }) {
           <ExternalLink size={12} className="device-external-icon" />
         </a>
         {device.manufacturer && (
-          <span className="device-card-manufacturer">{device.manufacturer}</span>
+          <span className="device-card-manufacturer" title={device.manufacturer}>{device.manufacturer}</span>
         )}
       </div>
     </div>
