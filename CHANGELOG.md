@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.25] - 2026-09-08
+
+### Behoben
+
+- Online-Status im Geräte-Dashboard berücksichtigt jetzt die veröffentlichten Geräte-Links, statt sie wegen fehlender Prüfergebnisse dauerhaft als offline anzuzeigen.
+- Geräte-Status prüft die konfigurierte Link-URL; nicht platzierte Inventargeräte bleiben von öffentlichen Statusabfragen ausgeschlossen.
+
 ## [1.5.24] - 2026-09-07
 
 ### Geändert

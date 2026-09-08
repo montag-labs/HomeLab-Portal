@@ -25,7 +25,7 @@ const ICONS: Record<DeviceIcon, React.ComponentType<{ size?: number; className?:
 };
 
 function DeviceCard({ device }: { device: Device }) {
-  const status = useReachability(device.url, device.ip);
+  const status = useReachability(device.url);
   const IconComponent = ICONS[device.icon || "device"] || Monitor;
 
   const openUrl = () => {
