@@ -1,14 +1,43 @@
-import { readFile } from "node:fs/promises";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 const GITHUB_RELEASES_URL = "https://api.github.com/repos/montag-labs/HomeLab-Portal/releases/latest";
 const REQUEST_TIMEOUT_MS = 5000;
-const CACHE_TIME_MS = 5 * 60 * 1000;
+const statusPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../data/update-status.json");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPackagePath = path.resolve(__dirname, "../../package.json");
 const updateProgressPath = process.env.UPDATE_PROGRESS_FILE ?? "/run/homelab-portal-update/update-progress.json";
 let cachedStatus;
-let cachedAt = 0;
+let cacheLoaded = false;
+let pendingStatus;
+async function loadStatus() {
+    if (cacheLoaded)
+        return;
+    cacheLoaded = true;
+    try {
+        const value = JSON.parse(await readFile(statusPath, "utf8"));
+        if (["current", "available", "failed"].includes(value.state) &&
+            typeof value.installedVersion === "string" &&
+            typeof value.checkedAt === "string" && Number.isFinite(Date.parse(value.checkedAt)) &&
+            (value.state === "failed" || (typeof value.latestVersion === "string" && parseVersion(value.latestVersion)))) {
+            cachedStatus = value;
+        }
+    }
+    catch {
+        // Missing or invalid cache: check on this request.
+    }
+}
+async function saveStatus(status) {
+    try {
+        await mkdir(path.dirname(statusPath), { recursive: true });
+        const temporaryPath = statusPath + "." + process.pid + ".tmp";
+        await writeFile(temporaryPath, JSON.stringify(status), "utf8");
+        await rename(temporaryPath, statusPath);
+    }
+    catch (error) {
+        console.warn("[update-check] Could not persist status:", error);
+    }
+}
 async function readUpdateProgress() {
     try {
         const value = JSON.parse(await readFile(updateProgressPath, "utf8"));
@@ -63,6 +92,17 @@ async function getCapabilities() {
     return { mode: "unsupported", canUpdate: false, reason: "Betriebsmodus nicht konfiguriert." };
 }
 export async function getUpdateStatus(force = false) {
+    if (pendingStatus)
+        return pendingStatus;
+    pendingStatus = resolveUpdateStatus(force);
+    try {
+        return await pendingStatus;
+    }
+    finally {
+        pendingStatus = undefined;
+    }
+}
+async function resolveUpdateStatus(force) {
     const progress = await readUpdateProgress();
     if (progress?.state === "updating" || (progress?.state === "failed" && !force)) {
         const capabilities = await getCapabilities();
@@ -79,9 +119,7 @@ export async function getUpdateStatus(force = false) {
             error: progress.state === "failed" ? "Das Update-Skript ist fehlgeschlagen." : undefined,
         };
     }
-    if (!force && cachedStatus && Date.now() - cachedAt < CACHE_TIME_MS) {
-        return cachedStatus;
-    }
+    await loadStatus();
     const capabilities = await getCapabilities();
     let installedVersion;
     try {
@@ -96,6 +134,17 @@ export async function getUpdateStatus(force = false) {
             capabilities,
             errorCode: "UPDATE_CHECK_FAILED",
             error: "Installierte Version konnte nicht ermittelt werden.",
+        };
+    }
+    // Calendar days follow the server's configured timezone.
+    if (!force && cachedStatus && new Date(cachedStatus.checkedAt).toDateString() === new Date().toDateString()) {
+        const updateAvailable = cachedStatus.latestVersion ? isNewer(cachedStatus.latestVersion, installedVersion) : false;
+        return {
+            ...cachedStatus,
+            installedVersion,
+            capabilities,
+            updateAvailable,
+            state: cachedStatus.state === "failed" ? "failed" : updateAvailable ? "available" : "current",
         };
     }
     const controller = new AbortController();
@@ -139,6 +188,6 @@ export async function getUpdateStatus(force = false) {
     finally {
         clearTimeout(timeout);
     }
-    cachedAt = Date.now();
+    await saveStatus(cachedStatus);
     return cachedStatus;
 }

@@ -5,7 +5,7 @@
       "current": "aktuell",
       "available": "Update verfügbar",
       "updating": "Update läuft",
-      "failed": "nicht geprüft",
+      "failed": "Prüfung fehlgeschlagen",
       "loading": "wird geprüft"
     }
   },

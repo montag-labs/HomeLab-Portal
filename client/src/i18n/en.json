@@ -5,7 +5,7 @@
       "current": "up to date",
       "available": "update available",
       "updating": "Update running",
-      "failed": "not checked",
+      "failed": "check failed",
       "loading": "checking"
     }
   },

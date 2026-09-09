@@ -6,6 +6,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.28] - 2026-09-09
+
+### Behoben
+
+- Das letzte Update-Prüfergebnis wird dauerhaft im Datenverzeichnis gespeichert und nach Serverneustarts wiederverwendet.
+- Beim ersten Portalaufruf pro Kalendertag (Server-Zeitzone) wird automatisch geprüft; parallele Aufrufe teilen sich eine Prüfung. Die manuelle Prüfung bleibt verfügbar.
+- Fehlgeschlagene Prüfungen werden eindeutig als solche angezeigt statt als „nicht geprüft“.
+
 ## [1.5.27] - 2026-09-08
 
 ### Hinzugefügt

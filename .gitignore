@@ -11,3 +11,5 @@ next-modul.md
 plan.md
 server/data/devices-dashboard.json
 server/data/devices-dashboard.json.*.tmp
+server/data/update-status.json
+server/data/update-status.json.*.tmp
