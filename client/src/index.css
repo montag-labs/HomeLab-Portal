@@ -2868,9 +2868,9 @@ img.admin-icon-option-preview {
 
 .sidebar-footer {
   align-items: stretch;
-  gap: 0.45rem;
-  margin-top: 0.65rem;
-  padding-top: 0.75rem;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
   border-color: var(--portal-sidebar-border);
   color: var(--portal-sidebar-muted);
 }
@@ -2879,7 +2879,7 @@ img.admin-icon-option-preview {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.4rem;
-  margin-bottom: 0.25rem;
+  margin-bottom: 0;
 }
 
 .sidebar-support-link {
@@ -2887,7 +2887,9 @@ img.admin-icon-option-preview {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  min-height: 2rem;
+  min-height: 1.5rem;
+  padding: 0 0.35rem;
+  line-height: 1.2;
   border: 1px solid var(--portal-sidebar-border);
   border-radius: 8px;
   color: var(--portal-sidebar-muted);
@@ -2911,7 +2913,9 @@ img.admin-icon-option-preview {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  min-height: 1.35rem;
+  min-height: 1rem;
+  padding: 0;
+  line-height: 1.2;
 }
 
 .sidebar-author-link:hover,
@@ -3136,7 +3140,7 @@ img.admin-icon-option-preview {
     display: grid;
     grid-template-columns: minmax(12rem, 1fr) auto auto;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.125rem 0.75rem;
   }
 
   .sidebar-support-links {

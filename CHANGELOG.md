@@ -6,6 +6,13 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.5.29] - 2026-09-09
+
+### Geändert
+
+- Fußzeile der Portal-Seitenleiste kompakter gestaltet: flachere Spendenbuttons, engere Textzeilen und kleinere vertikale Abstände, auch auf mobilen Ansichten.
+- Vollständige Attribution und MIT-Lizenzlink bleiben erhalten.
+
 ## [1.5.28] - 2026-09-09
 
 ### Behoben
