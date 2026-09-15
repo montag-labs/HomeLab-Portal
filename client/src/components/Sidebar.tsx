@@ -18,7 +18,7 @@ export function Sidebar({ updateStatus: initialStatus }: { updateStatus?: Update
       setUpdateStatus(initialStatus);
       return;
     }
-    api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
+    return api.observeUpdateStatus(setUpdateStatus);
   }, [initialStatus]);
 
   const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
@@ -33,6 +33,8 @@ export function Sidebar({ updateStatus: initialStatus }: { updateStatus?: Update
           details={(
             <span className={`portal-brand-status portal-brand-status-${versionState}`}>
               v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
+              {updateStatus?.refreshing && <> · {t("app.versionStates.refreshing")}</>}
+              {updateStatus?.latestVersion && updateStatus.errorCode === "UPDATE_CHECK_FAILED" && <> · {t("app.versionStates.stale")}</>}
             </span>
           )}
         />

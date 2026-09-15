@@ -22,7 +22,7 @@ export function PortalPage() {
   const serviceCount = config?.categories.reduce((total, category) => total + category.apps.length, 0) ?? 0;
 
   useEffect(() => {
-    api.getUpdateStatus().then(setUpdateStatus).catch(() => setUpdateStatus(null));
+    return api.observeUpdateStatus(setUpdateStatus);
   }, []);
 
   const settings = resolveDashboardSettings(config?.settings);

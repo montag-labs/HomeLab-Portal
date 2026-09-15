@@ -6,6 +6,21 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-09-15
+
+### Behoben
+
+- Fehlgeschlagene Update-Prüfungen blockieren automatische Versuche nicht mehr für den gesamten Tag. Nach der Wartefrist kann der nächste öffentliche Abruf erneut prüfen.
+- Das letzte erfolgreiche Release-Ergebnis bleibt bei temporären GitHub-Fehlern erhalten.
+
+### Geändert
+
+- Persistenter Update-Cache mit ETag-Revalidierung, gemeinsamen parallelen Prüfungen und Hintergrundaktualisierung.
+- GitHub-Wartefristen und eine persistente Mindestpause begrenzen automatische und manuelle Anfragen.
+- Portal und Adminbereich zeigen laufende Hintergrundprüfungen und fehlgeschlagene Aktualisierungen an; der Admin-Prüfbutton berücksichtigt die Wartefrist.
+- Docker Compose lädt zusätzliche Einstellungen direkt aus einer optionalen .env-Datei.
+- Regressionstests für Cache-Wiederherstellung, Wiederholungen und begrenzte Statusabfragen ergänzt.
+
 ## [1.5.29] - 2026-09-09
 
 ### Geändert

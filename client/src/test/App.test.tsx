@@ -11,6 +11,7 @@ vi.mock("../api", () => ({
       categories: [],
     }),
     getUpdateStatus: vi.fn().mockResolvedValue(null),
+    observeUpdateStatus: vi.fn(() => () => {}),
   },
 }));
 

@@ -24,6 +24,15 @@ export function Updates() {
     return () => window.clearTimeout(timeout);
   }, [notification]);
 
+  const [clock, setClock] = useState(Date.now);
+  const nextCheck = status?.nextCheckAt ? Date.parse(status.nextCheckAt) : 0;
+  const checkBlocked = nextCheck > clock;
+  useEffect(() => {
+    if (!checkBlocked) return;
+    const timer = setTimeout(() => setClock(Date.now()), Math.min(nextCheck - Date.now() + 50, 2_147_483_647));
+    return () => clearTimeout(timer);
+  }, [checkBlocked, nextCheck, clock]);
+
   const checkForUpdates = async () => {
     setChecking(true);
     try {
@@ -104,7 +113,7 @@ export function Updates() {
   };
 
   useEffect(() => {
-    api.getUpdateStatus().then(setStatus).catch(() => setStatus(null));
+    return api.observeUpdateStatus(setStatus);
   }, []);
 
   const modeLabel = status
@@ -166,6 +175,8 @@ export function Updates() {
             </div>
           </div>
         )}
+        {status?.refreshing && <p className="update-hint">{t("app.versionStates.refreshing")}</p>}
+        {checkBlocked && <p className="update-hint">{t("admin.nextUpdateCheck", { time: formatDateTime(status!.nextCheckAt!, i18n.language) })}</p>}
         {status?.error && <p className="update-error">{status.error}</p>}
         {status?.errorCode === "UPDATE_SCRIPT_FAILED" && status.capabilities.mode === "lxc" && (
           <div className="update-manual-fallback" role="alert">
@@ -183,7 +194,7 @@ export function Updates() {
           <p className="update-hint">{status.capabilities.reason}</p>
         )}
         <div className="admin-tools-actions">
-          <button type="button" className="btn" disabled={checking} onClick={checkForUpdates}>
+          <button type="button" className="btn" disabled={checking || checkBlocked || status?.refreshing} onClick={checkForUpdates}>
             {checking ? t("admin.checkingUpdates") : t("admin.checkUpdates")}
           </button>
           {status?.releaseUrl && (

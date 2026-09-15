@@ -62,6 +62,9 @@ export interface UpdateStatus {
   updateAvailable: boolean;
   releaseUrl?: string;
   releaseName?: string;
+  lastAttemptAt?: string;
+  nextCheckAt?: string;
+  refreshing?: boolean;
   checkedAt: string;
   capabilities: {
     mode: UpdateMode;
