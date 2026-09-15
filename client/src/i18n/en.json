@@ -6,7 +6,9 @@
       "available": "update available",
       "updating": "Update running",
       "failed": "check failed",
-      "loading": "checking"
+      "loading": "checking",
+      "refreshing": "checking in background",
+      "stale": "latest check failed"
     }
   },
   "nav": {
@@ -210,7 +212,8 @@
     "installedVersion": "Installed version",
     "latestVersion": "Latest version",
     "updateMode": "Runtime mode",
-    "lastChecked": "Last checked",
+    "lastChecked": "Last check result",
+    "nextUpdateCheck": "Manual check available again at {{time}}.",
     "checkingUpdates": "Checking …",
     "checkUpdates": "Check now",
     "viewRelease": "View release",

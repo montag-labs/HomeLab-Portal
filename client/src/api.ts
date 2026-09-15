@@ -100,6 +100,24 @@ export const api = {
   emptyLog: (id: string) =>
     request<LogSource[]>(`/api/logs/${encodeURIComponent(id)}/empty`, { method: "POST" }),
   getUpdateStatus: () => request<UpdateStatus>("/api/update"),
+  observeUpdateStatus: (onStatus: (status: UpdateStatus) => void) => {
+    let stopped = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let followUps = 0;
+    const load = async () => {
+      try {
+        const status = await request<UpdateStatus>("/api/update");
+        if (stopped) return;
+        onStatus(status);
+        // Only follow an active background check; never poll idle portals.
+        if (status.refreshing && followUps++ < 3) timer = setTimeout(load, 6000);
+      } catch {
+        // Keep the last known status if the portal server is unavailable.
+      }
+    };
+    void load();
+    return () => { stopped = true; clearTimeout(timer); };
+  },
   checkForUpdates: () =>
     request<UpdateStatus>("/api/update/check", { method: "POST" }),
   installUpdate: () =>

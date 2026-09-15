@@ -18,15 +18,15 @@ interface GithubRelease {
   prerelease?: unknown;
 }
 
-let cachedStatus: UpdateStatus | undefined;
-let cacheLoaded = false;
+type StoredStatus = UpdateStatus & { etag?: string };
+let cachedStatus: StoredStatus | undefined;
+let cacheLoad: Promise<void> | undefined;
 let pendingStatus: Promise<UpdateStatus> | undefined;
 
 async function loadStatus(): Promise<void> {
-  if (cacheLoaded) return;
-  cacheLoaded = true;
+
   try {
-    const value = JSON.parse(await readFile(statusPath, "utf8")) as UpdateStatus;
+    const value = JSON.parse(await readFile(statusPath, "utf8")) as StoredStatus;
     if (["current", "available", "failed"].includes(value.state) &&
         typeof value.installedVersion === "string" &&
         typeof value.checkedAt === "string" && Number.isFinite(Date.parse(value.checkedAt)) &&
@@ -38,7 +38,7 @@ async function loadStatus(): Promise<void> {
   }
 }
 
-async function saveStatus(status: UpdateStatus): Promise<void> {
+async function saveStatus(status: StoredStatus): Promise<void> {
   try {
     await mkdir(path.dirname(statusPath), { recursive: true });
     const temporaryPath = statusPath + "." + process.pid + ".tmp";
@@ -106,16 +106,6 @@ async function getCapabilities(): Promise<UpdateStatus["capabilities"]> {
 }
 
 export async function getUpdateStatus(force = false): Promise<UpdateStatus> {
-  if (pendingStatus) return pendingStatus;
-  pendingStatus = resolveUpdateStatus(force);
-  try {
-    return await pendingStatus;
-  } finally {
-    pendingStatus = undefined;
-  }
-}
-
-async function resolveUpdateStatus(force: boolean): Promise<UpdateStatus> {
   const progress = await readUpdateProgress();
   if (progress?.state === "updating" || (progress?.state === "failed" && !force)) {
     const capabilities = await getCapabilities();
@@ -132,7 +122,7 @@ async function resolveUpdateStatus(force: boolean): Promise<UpdateStatus> {
       error: progress.state === "failed" ? "Das Update-Skript ist fehlgeschlagen." : undefined,
     };
   }
-  await loadStatus();
+  await (cacheLoad ??= loadStatus());
 
   const capabilities = await getCapabilities();
   let installedVersion: string;
@@ -150,56 +140,92 @@ async function resolveUpdateStatus(force: boolean): Promise<UpdateStatus> {
     };
   }
 
-  // Calendar days follow the server's configured timezone.
-  if (!force && cachedStatus && new Date(cachedStatus.checkedAt).toDateString() === new Date().toDateString()) {
-    const updateAvailable = cachedStatus.latestVersion ? isNewer(cachedStatus.latestVersion, installedVersion) : false;
+  const now = Date.now();
+  const snapshot = (): UpdateStatus => {
+    const { etag: _etag, ...value } = cachedStatus!;
+    const updateAvailable = value.latestVersion ? isNewer(value.latestVersion, installedVersion) : false;
     return {
-      ...cachedStatus,
-      installedVersion,
-      capabilities,
-      updateAvailable,
-      state: cachedStatus.state === "failed" ? "failed" : updateAvailable ? "available" : "current",
+      ...value, installedVersion, capabilities, updateAvailable,
+      state: value.latestVersion ? (updateAvailable ? "available" : "current") : "failed",
+      refreshing: Boolean(pendingStatus),
     };
+  };
+  if (pendingStatus) {
+    if (!force && cachedStatus) return snapshot();
+    await pendingStatus;
+    return snapshot();
   }
+  const lastAttempt = cachedStatus?.lastAttemptAt ?? cachedStatus?.checkedAt;
+  const sameDay = lastAttempt && new Date(lastAttempt).toDateString() === new Date().toDateString();
+  const coolingDown = cachedStatus?.nextCheckAt && Date.parse(cachedStatus.nextCheckAt) > now;
+  // Only successful checks satisfy the daily cache; failures may retry after backoff.
+  const successful = cachedStatus && cachedStatus.state !== "failed" && !cachedStatus.errorCode;
+  if (cachedStatus && (coolingDown || (!force && sameDay && successful))) return snapshot();
 
+  pendingStatus = checkRelease(installedVersion, capabilities).finally(() => { pendingStatus = undefined; });
+  if (cachedStatus && !force) return snapshot();
+  await pendingStatus;
+  return snapshot();
+}
+
+async function checkRelease(installedVersion: string, capabilities: UpdateStatus["capabilities"]): Promise<UpdateStatus> {
+  const attemptedAt = new Date().toISOString();
+  let nextCheckAt = new Date(Date.now() + 60_000).toISOString();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
-    const response = await fetch(GITHUB_RELEASES_URL, {
-      headers: { Accept: "application/vnd.github+json", "User-Agent": "HomeLab-Portal" },
-      signal: controller.signal,
-    });
-    if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
-    const release = (await response.json()) as GithubRelease;
-    const latestVersion = typeof release.tag_name === "string" ? release.tag_name.replace(/^v/, "") : "";
-    const version = parseVersion(latestVersion);
-    if (!version || release.prerelease === true) throw new Error("No stable release found");
-
-    cachedStatus = {
-      state: isNewer(latestVersion, installedVersion) ? "available" : "current",
-      installedVersion,
-      latestVersion,
-      updateAvailable: isNewer(latestVersion, installedVersion),
-      releaseUrl: typeof release.html_url === "string" ? release.html_url : undefined,
-      releaseName: typeof release.name === "string" ? release.name : undefined,
-      checkedAt: new Date().toISOString(),
-      capabilities,
+    const headers: Record<string, string> = {
+      Accept: "application/vnd.github+json", "User-Agent": "HomeLab-Portal",
     };
+    if (cachedStatus?.etag && cachedStatus.latestVersion) headers["If-None-Match"] = cachedStatus.etag;
+    const response = await fetch(GITHUB_RELEASES_URL, { headers, signal: controller.signal });
+    if (response.status === 403 || response.status === 429) {
+      const retryAfter = response.headers.get("retry-after");
+      const reset = response.headers.get("x-ratelimit-reset");
+      const retryAt = retryAfter
+        ? (/^\d+$/.test(retryAfter) ? Date.now() + Number(retryAfter) * 1000 : Date.parse(retryAfter))
+        : 0;
+      const resetAt = response.headers.get("x-ratelimit-remaining") === "0" && reset ? Number(reset) * 1000 : 0;
+      nextCheckAt = new Date(Math.max(Date.now() + 60_000,
+        Number.isFinite(retryAt) ? retryAt : 0, Number.isFinite(resetAt) ? resetAt : 0)).toISOString();
+    }
+    if (response.status === 304 && cachedStatus?.latestVersion) {
+      cachedStatus = {
+        ...cachedStatus, installedVersion, capabilities,
+        checkedAt: attemptedAt, lastAttemptAt: attemptedAt, nextCheckAt,
+        error: undefined, errorCode: undefined,
+      };
+    } else {
+      if (!response.ok) throw new Error("GitHub returned " + response.status);
+      const release = (await response.json()) as GithubRelease;
+      const latestVersion = typeof release.tag_name === "string" ? release.tag_name.replace(/^v/, "") : "";
+      if (!parseVersion(latestVersion) || release.prerelease === true) throw new Error("No stable release found");
+      cachedStatus = {
+        state: isNewer(latestVersion, installedVersion) ? "available" : "current",
+        installedVersion, latestVersion,
+        updateAvailable: isNewer(latestVersion, installedVersion),
+        releaseUrl: typeof release.html_url === "string" ? release.html_url : undefined,
+        releaseName: typeof release.name === "string" ? release.name : undefined,
+        checkedAt: attemptedAt, lastAttemptAt: attemptedAt, nextCheckAt, capabilities,
+        etag: response.headers.get("etag") ?? undefined,
+      };
+    }
   } catch (error) {
-    const reason = error instanceof Error ? error.message : String(error);
-    console.warn(`[update-check] GitHub release check failed: ${reason}`);
+    console.warn("[update-check] GitHub release check failed:", error);
     cachedStatus = {
-      state: "failed",
-      installedVersion,
-      updateAvailable: false,
-      checkedAt: new Date().toISOString(),
-      capabilities,
+      ...cachedStatus,
+      state: cachedStatus?.latestVersion
+        ? (isNewer(cachedStatus.latestVersion, installedVersion) ? "available" : "current") : "failed",
+      installedVersion, capabilities,
+      updateAvailable: cachedStatus?.latestVersion ? isNewer(cachedStatus.latestVersion, installedVersion) : false,
+      checkedAt: cachedStatus?.checkedAt ?? attemptedAt,
+      lastAttemptAt: attemptedAt, nextCheckAt,
       errorCode: "UPDATE_CHECK_FAILED",
       error: "GitHub-Version konnte nicht geprüft werden.",
     };
   } finally {
     clearTimeout(timeout);
   }
-  await saveStatus(cachedStatus);
-  return cachedStatus;
+  await saveStatus(cachedStatus!);
+  return cachedStatus!;
 }

@@ -6,7 +6,9 @@
       "available": "Update verfügbar",
       "updating": "Update läuft",
       "failed": "Prüfung fehlgeschlagen",
-      "loading": "wird geprüft"
+      "loading": "wird geprüft",
+      "refreshing": "Prüfung läuft im Hintergrund",
+      "stale": "erneute Prüfung fehlgeschlagen"
     }
   },
   "nav": {
@@ -210,7 +212,8 @@
     "installedVersion": "Installierte Version",
     "latestVersion": "Neueste Version",
     "updateMode": "Betriebsmodus",
-    "lastChecked": "Zuletzt geprüft",
+    "lastChecked": "Letztes Prüfergebnis",
+    "nextUpdateCheck": "Erneute manuelle Prüfung möglich ab {{time}}.",
     "checkingUpdates": "Prüfe …",
     "checkUpdates": "Jetzt prüfen",
     "viewRelease": "Release ansehen",
