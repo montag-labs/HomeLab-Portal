@@ -4372,3 +4372,20 @@ img.admin-icon-option-preview {
   padding: 0.5rem 0;
 }
 
+
+.admin-address-input {
+  display: flex;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.admin-address-input > select {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.admin-address-input > input {
+  flex: 1 1 0;
+  width: 0;
+  min-width: 0;
+}

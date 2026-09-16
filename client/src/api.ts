@@ -19,6 +19,17 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
       const body = (await res.json()) as { code?: unknown; message?: unknown; error?: unknown };
       if (typeof body.message === "string") message = body.message;
       else if (typeof body.error === "string") message = body.error;
+      else if (body.error && typeof body.error === "object" && "fieldErrors" in body.error) {
+        const fields = body.error.fieldErrors;
+        if (fields && typeof fields === "object") {
+          const details = Object.entries(fields).flatMap(([field, errors]) =>
+            Array.isArray(errors)
+              ? errors.filter((error): error is string => typeof error === "string").map((error) => field + ": " + error)
+              : [],
+          );
+          if (details.length) message = details.join("; ");
+        }
+      }
       if (typeof body.code === "string") message = `${message} (${body.code})`;
     } catch {
       // Keep the HTTP error when the response has no JSON body.

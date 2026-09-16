@@ -6,6 +6,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-09-16
+
+### Behoben
+
+- Beim Hinzufügen von Apps werden fehlende Namen und API-Fehler sichtbar angezeigt; Eingaben bleiben bei fehlgeschlagenem Speichern erhalten.
+- Mehrfachklicks während des Speicherns werden verhindert.
+
+### Geändert
+
+- Domain und lokale IP erhalten beim Hinzufügen und Bearbeiten eine Auswahl zwischen HTTPS und HTTP. Standard ist HTTPS für Domains und HTTP für lokale IPs.
+- Vollständig eingefügte URLs übernehmen ihr Protokoll automatisch; Ports und Pfade bleiben erhalten.
+- Regressionstests für App-Erstellung, Protokollauswahl und Fehlermeldungen ergänzt.
+
 ## [1.6.0] - 2026-09-15
 
 ### Behoben
