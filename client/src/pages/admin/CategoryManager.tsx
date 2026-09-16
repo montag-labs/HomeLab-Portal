@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import { useConfig } from "../../hooks/useConfig";
@@ -15,6 +15,63 @@ interface AppFormState {
 
 function resolveAutoIconKey(name: string, domain: string, localIp: string): string {
   return detectAppIconKey(name, domain, localIp) ?? "";
+}
+
+type AddressProtocol = "https://" | "http://";
+
+function addressParts(value: string, fallback: AddressProtocol) {
+  const match = value.trim().match(/^(https?:\/\/)(.*)$/i);
+  return {
+    protocol: match ? match[1].toLowerCase() as AddressProtocol : fallback,
+    address: match ? match[2] : value.trim(),
+  };
+}
+
+function completeAddress(value: string, fallback: AddressProtocol) {
+  const { protocol, address } = addressParts(value, fallback);
+  return address ? protocol + address : "";
+}
+
+function AddressField({ label, value, defaultProtocol, placeholder, onChange }: {
+  label: string;
+  value: string;
+  defaultProtocol: AddressProtocol;
+  placeholder: string;
+  onChange: (value: string) => void;
+}) {
+  const id = useId();
+  const { t } = useTranslation();
+  const [selectedProtocol, setSelectedProtocol] = useState(defaultProtocol);
+  const { protocol, address } = addressParts(value, selectedProtocol);
+  return (
+    <div className="admin-form-field">
+      <label className="admin-form-label" htmlFor={id}>{label}</label>
+      <div className="admin-address-input">
+        <select
+          aria-label={label + " " + t("admin.addressProtocol")}
+          value={protocol}
+          onChange={(event) => {
+            const next = event.target.value as AddressProtocol;
+            setSelectedProtocol(next);
+            onChange(address ? next + address : "");
+          }}
+        >
+          <option value="https://">https://</option>
+          <option value="http://">http://</option>
+        </select>
+        <input
+          id={id}
+          placeholder={placeholder}
+          value={address}
+          onChange={(event) => {
+            const next = addressParts(event.target.value, protocol);
+            setSelectedProtocol(next.protocol);
+            onChange(next.address ? next.protocol + next.address : "");
+          }}
+        />
+      </div>
+    </div>
+  );
 }
 
 function AppFormFields({
@@ -49,32 +106,20 @@ function AppFormFields({
           }
         />
       </label>
-      <label className="admin-form-field">
-        <span className="admin-form-label">{t("admin.domain")}</span>
-        <input
-          placeholder="https://..."
-          value={form.domain}
-          onChange={(e) =>
-            onChange({
-              ...form,
-              domain: e.target.value,
-            })
-          }
-        />
-      </label>
-      <label className="admin-form-field">
-        <span className="admin-form-label">{t("admin.localIp")}</span>
-        <input
-          placeholder="http://192.168.x.x"
-          value={form.localIp}
-          onChange={(e) =>
-            onChange({
-              ...form,
-              localIp: e.target.value,
-            })
-          }
-        />
-      </label>
+      <AddressField
+        label={t("admin.domain")}
+        value={form.domain}
+        defaultProtocol="https://"
+        placeholder="app.example.com"
+        onChange={(domain) => onChange({ ...form, domain })}
+      />
+      <AddressField
+        label={t("admin.localIp")}
+        value={form.localIp}
+        defaultProtocol="http://"
+        placeholder="192.168.1.10:8080"
+        onChange={(localIp) => onChange({ ...form, localIp })}
+      />
       <div className="admin-form-field">
         <span className="admin-form-label">Icon auswählen</span>
         <input
@@ -176,6 +221,8 @@ function AppRow({
   const save = async () => {
     const normalized = {
       ...form,
+      domain: completeAddress(form.domain, "https://"),
+      localIp: completeAddress(form.localIp, "http://"),
       iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
     };
     await api.updateApp(category.id, app.id, normalized);
@@ -258,6 +305,8 @@ function AppRow({
 function NewAppForm({ category }: { category: Category }) {
   const { refresh } = useConfig();
   const { t } = useTranslation();
+  const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<AppFormState>({
     name: "",
     domain: "",
@@ -267,20 +316,37 @@ function NewAppForm({ category }: { category: Category }) {
   });
 
   const add = async () => {
-    if (!form.name.trim()) return;
-    await api.createApp(category.id, {
-      ...form,
-      iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
-    });
-    await refresh();
-    setForm({ name: "", domain: "", localIp: "", iconUrl: "", iconKey: "" });
+    if (saving) return;
+    setError("");
+    if (!form.name.trim()) {
+      setError(t("admin.appNameRequired"));
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.createApp(category.id, {
+        ...form,
+        name: form.name.trim(),
+        domain: completeAddress(form.domain, "https://"),
+        localIp: completeAddress(form.localIp, "http://"),
+        iconUrl: form.iconUrl.trim(),
+        iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
+      });
+      setForm({ name: "", domain: "", localIp: "", iconUrl: "", iconKey: "" });
+      await refresh();
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : t("admin.appCreateFailed"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
     <div className="admin-new-app-form">
       <AppFormFields form={form} onChange={setForm} />
-      <button type="button" onClick={add}>
-        {t("admin.addApp")}
+      <p role="alert" className="admin-login-error" hidden={!error}>{error}</p>
+      <button type="button" onClick={add} disabled={saving}>
+        {t(saving ? "admin.appSaving" : "admin.addApp")}
       </button>
     </div>
   );
@@ -443,6 +509,7 @@ export function CategoryManager() {
         <div className="admin-category-detail-panel">
           {selectedCategory ? (
             <CategoryDetail
+              key={selectedCategory.id}
               category={selectedCategory}
               allCategories={categories}
               onDeleted={() => setSelectedId(null)}
