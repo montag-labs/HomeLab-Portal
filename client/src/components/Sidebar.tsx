@@ -21,8 +21,10 @@ export function Sidebar({ updateStatus: initialStatus }: { updateStatus?: Update
     return api.observeUpdateStatus(setUpdateStatus);
   }, [initialStatus]);
 
-  const versionState = updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
-  const versionStatus = updateStatus
+  const versionState = updateStatus?.state === "failed" || updateStatus?.errorCode === "UPDATE_CHECK_FAILED"
+    ? "unknown"
+    : updateStatus?.updateAvailable ? "available" : updateStatus?.state ?? "loading";
+  const versionStatus = versionState === "unknown" ? "" : updateStatus
     ? t(`app.versionStates.${versionState}`)
     : t("app.versionStates.loading");
 
@@ -32,9 +34,7 @@ export function Sidebar({ updateStatus: initialStatus }: { updateStatus?: Update
         <BrandIdentity
           details={(
             <span className={`portal-brand-status portal-brand-status-${versionState}`}>
-              v{updateStatus?.installedVersion ?? "-"} · {versionStatus}
-              {updateStatus?.refreshing && <> · {t("app.versionStates.refreshing")}</>}
-              {updateStatus?.latestVersion && updateStatus.errorCode === "UPDATE_CHECK_FAILED" && <> · {t("app.versionStates.stale")}</>}
+              v{updateStatus?.installedVersion ?? "-"}{versionState !== "unknown" && <> · {versionStatus}</>}
             </span>
           )}
         />

@@ -1,11 +1,11 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { UpdateStatus } from "../types.js";
 
 const GITHUB_RELEASES_URL =
   "https://api.github.com/repos/montag-labs/HomeLab-Portal/releases/latest";
-const REQUEST_TIMEOUT_MS = 5000;
+const REQUEST_TIMEOUT_MS = 15_000;
 const statusPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../data/update-status.json");
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const serverPackagePath = path.resolve(__dirname, "../../package.json");
@@ -173,12 +173,18 @@ async function checkRelease(installedVersion: string, capabilities: UpdateStatus
   let nextCheckAt = new Date(Date.now() + 60_000).toISOString();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let httpStatus: number | undefined;
+  let rateLimitRemaining: string | null = null;
+  let requestId: string | null = null;
   try {
     const headers: Record<string, string> = {
       Accept: "application/vnd.github+json", "User-Agent": "HomeLab-Portal",
     };
     if (cachedStatus?.etag && cachedStatus.latestVersion) headers["If-None-Match"] = cachedStatus.etag;
     const response = await fetch(GITHUB_RELEASES_URL, { headers, signal: controller.signal });
+    httpStatus = response.status;
+    rateLimitRemaining = response.headers.get("x-ratelimit-remaining");
+    requestId = response.headers.get("x-github-request-id");
     if (response.status === 403 || response.status === 429) {
       const retryAfter = response.headers.get("retry-after");
       const reset = response.headers.get("x-ratelimit-reset");
@@ -212,6 +218,22 @@ async function checkRelease(installedVersion: string, capabilities: UpdateStatus
     }
   } catch (error) {
     console.warn("[update-check] GitHub release check failed:", error);
+    const cause = error instanceof Error ? error.cause as { code?: unknown } | undefined : undefined;
+    const diagnostic = JSON.stringify({
+      timestamp: attemptedAt, event: "update-check", outcome: "failed",
+      url: GITHUB_RELEASES_URL, httpStatus, rateLimitRemaining, requestId,
+      reason: controller.signal.aborted ? "TIMEOUT" : error instanceof Error ? error.message : "Unknown error",
+      networkCode: typeof cause?.code === "string" ? cause.code : undefined,
+      timeoutMs: REQUEST_TIMEOUT_MS, nextCheckAt,
+    });
+    console.warn("[update-check]", diagnostic);
+    try {
+      const logDir = process.env.LOG_DIR ?? "/var/log/homelab-portal";
+      await mkdir(logDir, { recursive: true });
+      await appendFile(path.join(logDir, "homelab-portal-service.log"), diagnostic + "\n", { mode: 0o640 });
+    } catch (logError) {
+      console.warn("[update-check] Could not write service log:", logError);
+    }
     cachedStatus = {
       ...cachedStatus,
       state: cachedStatus?.latestVersion

@@ -6,6 +6,18 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.6.2] - 2026-09-19
+
+### Behoben
+
+- Bei fehlgeschlagenen Versionsprüfungen zeigt das Portal nur die installierte Version statt einer Fehlermeldung oder eines veralteten Aktualitätsstatus.
+
+### Geändert
+
+- Zeitlimit der GitHub-Versionsprüfung von 5 auf 15 Sekunden erhöht.
+- Fehlerdiagnose im Portal-Service-Log um HTTP-Status, GitHub-Request-ID, Rate-Limit-Angaben, Netzwerkfehlercode und nächsten Prüfzeitpunkt ergänzt.
+- Betriebsdokumentation und Regressionstests für Versionsanzeige und Fehlerprotokollierung ergänzt.
+
 ## [1.6.1] - 2026-09-16
 
 ### Behoben

@@ -2,12 +2,26 @@
 
 ## Updateprüfung
 
-Das Portal vergleicht die installierte Version mit dem neuesten stabilen GitHub-Release. Ergebnisse werden fünf Minuten zwischengespeichert; ein nicht erreichbares GitHub blockiert den Portalbetrieb nicht.
+Das Portal vergleicht die installierte Version mit dem neuesten stabilen GitHub-Release. Erfolgreiche Ergebnisse werden bis zum nächsten Kalendertag zwischengespeichert; ein nicht erreichbares GitHub blockiert den Portalbetrieb nicht.
 
 - **LXC:** Ein Update kann nach Admin-Anmeldung direkt angestoßen werden. Session und CSRF-Token schützen die Anfrage; die eigentliche Installation übernimmt ein root-eigener systemd-Service.
 - **Docker:** Die Oberfläche zeigt Version und Release-Link. Das Update wird auf dem Host mit [update-docker.sh](../scripts/update-docker.sh) oder Docker Compose ausgeführt.
 
 Details stehen in den Anleitungen für [Docker](docker.md) und [LXC](lxc.md).
+
+Fehlgeschlagene Prüfungen werden auf der Portalseite ausgeblendet; dort bleibt nur die installierte Version sichtbar. Details bleiben im Admin-Bereich verfügbar. Die GitHub-Abfrage hat ein Zeitlimit von 15 Sekunden. Nach Fehlern wird frühestens nach einer Minute erneut geprüft; von GitHub vorgegebene längere Wartezeiten werden berücksichtigt.
+
+Zur Diagnose im Admin-Bereich **Logs → Portal-Service** öffnen und nach `update-check` suchen. Neue Fehler enthalten HTTP-Status, verbleibendes API-Limit, GitHub-Request-ID, Netzwerkfehlercode (falls vorhanden), Zeitlimit und nächsten Prüfzeitpunkt. Beispielsweise deutet `ENOTFOUND` auf DNS-Probleme hin; `TIMEOUT` zeigt das erreichte Zeitlimit. HTTP 403/429 und die Rate-Limit-Angaben helfen bei der Einordnung von API-Sperren.
+
+Bei älteren Versionen stehen die Fehler nur in der Prozessausgabe:
+
+```bash
+# LXC
+journalctl -u homelab-portal --since "24 hours ago" --no-pager | grep -A 15 '\[update-check\]'
+
+# Docker
+docker compose logs --since 24h homelab-portal 2>&1 | grep -A 15 '\[update-check\]'
+```
 
 ## Backups
 
