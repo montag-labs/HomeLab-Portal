@@ -8,6 +8,7 @@ vi.mock("node:fs/promises", () => ({
     throw new Error("ENOENT");
   }),
   mkdir: vi.fn(),
+  appendFile: vi.fn(),
   writeFile: vi.fn(async (_file: string, contents: string) => { disk.saved = contents; }),
   rename: vi.fn(),
 }));
@@ -176,5 +177,28 @@ it("automatically retries a failed refresh even with a successful cached version
   expect(fetch).toHaveBeenCalledTimes(3);
   await vi.waitFor(async () => {
     expect((await service.getUpdateStatus()).errorCode).toBeUndefined();
+  });
+});
+it("logs HTTP failures to the service log with retry details", async () => {
+  vi.mocked(fetch).mockResolvedValue({
+    ok: false, status: 429, headers: new Headers({ "retry-after": "3600", "x-github-request-id": "test-id" }),
+  } as Response);
+  const service = await import("../src/services/updateService.js");
+  const result = await service.getUpdateStatus(true);
+  const { appendFile } = await import("node:fs/promises");
+  const line = vi.mocked(appendFile).mock.lastCall?.[1] as string;
+  expect(JSON.parse(line)).toMatchObject({
+    event: "update-check", httpStatus: 429, requestId: "test-id", nextCheckAt: result.nextCheckAt,
+  });
+});
+
+it("records the network cause and survives an unwritable service log", async () => {
+  const { appendFile } = await import("node:fs/promises");
+  vi.mocked(appendFile).mockRejectedValueOnce(new Error("EACCES"));
+  vi.mocked(fetch).mockRejectedValue(new Error("fetch failed", { cause: { code: "ENOTFOUND" } }));
+  const service = await import("../src/services/updateService.js");
+  expect((await service.getUpdateStatus(true)).state).toBe("failed");
+  expect(JSON.parse(vi.mocked(appendFile).mock.lastCall?.[1] as string)).toMatchObject({
+    networkCode: "ENOTFOUND",
   });
 });
