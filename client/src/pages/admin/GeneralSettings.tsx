@@ -29,7 +29,7 @@ export function GeneralSettings() {
   const exportConfig = async () => {
     setSaving(true);
     try {
-      const currentConfig = await api.getConfig();
+      const currentConfig = await api.getAdminConfig();
       const blob = new Blob([JSON.stringify(currentConfig, null, 2)], {
         type: "application/json",
       });

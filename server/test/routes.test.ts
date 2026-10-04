@@ -19,6 +19,16 @@ describe("public and admin route boundaries", () => {
     const response = await request(app).get("/config");
 
     expect(response.status).toBe(200);
+    expect(response.body.settings).not.toHaveProperty("logPolicy");
+  });
+
+  test("requires an admin session for the full configuration", async () => {
+    const app = createApp();
+    app.use(configRouter);
+
+    const response = await request(app).get("/config/admin");
+
+    expect(response.status).toBe(401);
   });
 
   test("rejects configuration writes without an admin session", async () => {

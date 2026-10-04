@@ -13,12 +13,19 @@ import { requireAdmin } from "../middleware/auth.js";
 
 export const configRouter = Router();
 
+// The portal view only contains what the public page renders; admin-only settings stay out.
 configRouter.get("/config", async (_req, res) => {
   const config = await readConfig();
-  res.json(config);
+  const { logPolicy: _logPolicy, ...settings } = config.settings;
+  res.json({ ...config, settings });
 });
 
 configRouter.use(["/config", "/settings", "/categories", "/orders"], requireAdmin);
+
+configRouter.get("/config/admin", async (_req, res) => {
+  res.setHeader("Cache-Control", "no-store");
+  res.json(await readConfig());
+});
 
 configRouter.put("/config", async (req, res) => {
   const parsed = portalConfigSchema.safeParse(req.body);
