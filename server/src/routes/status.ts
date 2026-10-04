@@ -27,7 +27,8 @@ const MAX_CONCURRENT_CHECKS = 8;
 const resultCache = new Map<string, { expiresAt: number; result: ReachabilityDetails }>();
 const pendingChecks = new Map<string, Promise<ReachabilityDetails>>();
 
-export function checkReachability(urlString: string): Promise<ReachabilityDetails> {
+/** Self-signed certificates are accepted globally via ALLOW_INSECURE_TLS or per URL via the app settings. */
+export function checkReachability(urlString: string, insecureTls = false): Promise<ReachabilityDetails> {
   return new Promise((resolve) => {
     let target: URL;
     try {
@@ -55,7 +56,7 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
         {
           method,
           timeout: 8000,
-          rejectUnauthorized: process.env.ALLOW_INSECURE_TLS !== "true",
+          rejectUnauthorized: !insecureTls && process.env.ALLOW_INSECURE_TLS !== "true",
         },
         (res) => {
           const shouldFallback = method === "HEAD" && (res.statusCode === 405 || res.statusCode === 501);
@@ -79,12 +80,12 @@ export function checkReachability(urlString: string): Promise<ReachabilityDetail
   });
 }
 
-async function checkReachabilityReliably(url: string): Promise<ReachabilityDetails> {
-  const firstResult = await checkReachability(url);
-  return firstResult.online ? firstResult : checkReachability(url);
+async function checkReachabilityReliably(url: string, insecureTls: boolean): Promise<ReachabilityDetails> {
+  const firstResult = await checkReachability(url, insecureTls);
+  return firstResult.online ? firstResult : checkReachability(url, insecureTls);
 }
 
-async function checkReachabilityCached(url: string): Promise<ReachabilityDetails> {
+async function checkReachabilityCached(url: string, insecureTls: boolean): Promise<ReachabilityDetails> {
   const cached = resultCache.get(url);
   if (cached && cached.expiresAt > Date.now()) return cached.result;
   if (cached) resultCache.delete(url);
@@ -92,7 +93,7 @@ async function checkReachabilityCached(url: string): Promise<ReachabilityDetails
   const pending = pendingChecks.get(url);
   if (pending) return pending;
 
-  const check = checkReachabilityReliably(url)
+  const check = checkReachabilityReliably(url, insecureTls)
     .then((result) => {
       resultCache.set(url, { expiresAt: Date.now() + RESULT_CACHE_MS, result });
       return result;
@@ -104,6 +105,7 @@ async function checkReachabilityCached(url: string): Promise<ReachabilityDetails
 
 export async function checkReachabilities(
   urls: string[],
+  insecureUrls: ReadonlySet<string> = new Set(),
 ): Promise<Record<string, ReachabilityDetails>> {
   const uniqueUrls = [...new Set(urls)];
   const results: Record<string, ReachabilityDetails> = {};
@@ -113,7 +115,7 @@ export async function checkReachabilities(
     while (nextIndex < uniqueUrls.length) {
       const url = uniqueUrls[nextIndex];
       nextIndex += 1;
-      results[url] = await checkReachabilityCached(url);
+      results[url] = await checkReachabilityCached(url, insecureUrls.has(url));
     }
   };
 
@@ -122,25 +124,32 @@ export async function checkReachabilities(
   return results;
 }
 
-async function getConfiguredUrls(): Promise<Set<string>> {
+function normalizeUrl(url: string | undefined): string {
+  if (!url) return "";
+  try { return new URL(url).href; }
+  catch { return ""; }
+}
+
+/** All checkable URLs; `insecure` holds those an app marked as accepting self-signed certificates. */
+export async function getConfiguredUrls(): Promise<{ urls: Set<string>; insecure: Set<string> }> {
   const [config, dashboard] = await Promise.all([readConfig(), dashboardStore.read()]);
-  return new Set([
-    ...config.categories.flatMap((category) =>
-      category.apps.flatMap((app) => [app.domain, app.localIp])
-        .filter((url): url is string => Boolean(url))
-        .map((url) => {
-          try { return new URL(url).href; }
-          catch { return ""; }
-        })
-        .filter(Boolean),
-    ),
-    ...publicDashboard(dashboard).devices.map((device) => new URL(device.url).href),
-  ]);
+  const urls = new Set<string>();
+  const insecure = new Set<string>();
+  for (const app of config.categories.flatMap((category) => category.apps)) {
+    for (const [address, tolerant] of [[app.domain, app.domainInsecureTls], [app.localIp, app.localIpInsecureTls]] as const) {
+      const url = normalizeUrl(address);
+      if (!url) continue;
+      urls.add(url);
+      if (tolerant && url.startsWith("https:")) insecure.add(url);
+    }
+  }
+  for (const device of publicDashboard(dashboard).devices) urls.add(new URL(device.url).href);
+  return { urls, insecure };
 }
 
 statusRouter.get("/statuses", limitStatusRequests, async (_req, res) => {
-  const configuredUrls = await getConfiguredUrls();
-  const results = await checkReachabilities([...configuredUrls]);
+  const { urls, insecure } = await getConfiguredUrls();
+  const results = await checkReachabilities([...urls], insecure);
   res.json({ checkedAt: new Date().toISOString(), results });
 });
 
@@ -149,11 +158,11 @@ statusRouter.get("/status", limitStatusRequests, async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: parsed.error.flatten() });
   }
-  const allowedUrls = await getConfiguredUrls();
+  const { urls, insecure } = await getConfiguredUrls();
   const normalizedUrl = new URL(parsed.data.url).href;
-  if (!allowedUrls.has(normalizedUrl)) {
+  if (!urls.has(normalizedUrl)) {
     return res.status(403).json({ error: "Only configured service URLs can be checked" });
   }
-  const result = await checkReachabilityCached(normalizedUrl);
+  const result = await checkReachabilityCached(normalizedUrl, insecure.has(normalizedUrl));
   res.json(result);
 });

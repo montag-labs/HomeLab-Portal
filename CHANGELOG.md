@@ -12,6 +12,10 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Die öffentliche Konfiguration (`/api/config`) enthält keine Admin-Einstellungen (Log-Richtlinie) mehr; der vollständige Export läuft über `/api/config/admin`.
 - Bei der Passwort-Anmeldung wird eine bestehende Sitzung verworfen.
 
+### Hinzugefügt
+
+- Pro App lässt sich festlegen, dass bei der Statusprüfung Zertifikatsfehler (selbstsignierte Zertifikate) ignoriert werden. Das gilt je Domain bzw. lokaler Adresse und ersetzt die globale Variable `ALLOW_INSECURE_TLS` für die meisten Fälle.
+
 ### Geändert
 
 - Der Server beendet sich bei `SIGTERM`/`SIGINT` geordnet (laufende Anfragen werden abgeschlossen, Timeout 10 s).

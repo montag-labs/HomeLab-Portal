@@ -2,7 +2,7 @@ import { Router } from "express";
 import os from "node:os";
 import { readConfig } from "../services/configStore.js";
 import { getUpdateStatus } from "../services/updateService.js";
-import { checkReachabilities } from "./status.js";
+import { checkReachabilities, getConfiguredUrls } from "./status.js";
 import { requireAdmin } from "../middleware/auth.js";
 
 export const devRouter = Router();
@@ -22,10 +22,8 @@ function safeEnvironment(): Record<string, string> {
 
 devRouter.get("/dev/debug", async (_req, res) => {
   const config = await readConfig();
-  const urls = config.categories.flatMap((category) =>
-    category.apps.flatMap((app) => [app.domain, app.localIp].filter((url): url is string => Boolean(url))),
-  );
-  const reachability = await checkReachabilities(urls);
+  const { urls, insecure } = await getConfiguredUrls();
+  const reachability = await checkReachabilities([...urls], insecure);
 
   res.json({
     mode: "development",
