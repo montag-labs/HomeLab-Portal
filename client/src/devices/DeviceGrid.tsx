@@ -18,7 +18,7 @@ export function DeviceGrid({ items, editable, onChange, render, kind = "tiles" }
   const canEdit = useRef(editable);
   useLayoutEffect(() => { update.current = onChange; canEdit.current = editable; }, [onChange, editable]);
   useLayoutEffect(() => {
-    const instance = GridStack.init({ auto: false, column: 12, cellHeight: kind === "groups" ? 80 : 44, margin: 6, float: true, animate: false, handle: kind === "groups" ? ".device-group-handle" : ".device-tile-handle", draggable: { cancel: "input,select,button,a" }, resizable: { handles: "se" }, minRow: 1 }, container.current!);
+    const instance = GridStack.init({ auto: false, column: 12, cellHeight: kind === "groups" ? 80 : 44, margin: 6, mode: "float", animate: false, handle: kind === "groups" ? ".device-group-handle" : ".device-tile-handle", draggable: { cancel: "input,select,button,a" }, resizable: { handles: "se" }, minRow: 1 }, container.current!);
     if (!instance) return;
     grid.current = instance;
     instance.on("change", (_event, nodes: GridStackNode[]) => {

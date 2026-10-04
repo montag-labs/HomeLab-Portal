@@ -8,6 +8,10 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Behoben
+
+- Build mit gridstack 14: die Option `float: true` des Geräte-Rasters heißt dort `mode: "float"`.
+
 ### Sicherheit
 
 - Das Admin-Passwort wird als scrypt-Hash gespeichert. Bestehende Klartext-Dateien werden bei der nächsten erfolgreichen Anmeldung automatisch umgestellt.
