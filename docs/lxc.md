@@ -66,7 +66,8 @@ Wichtige Parameter:
 | --- | --- | --- |
 | `HOMELAB_PORT` | `80` | HTTP-Port |
 | `APP_ENV` | `production` | `development` aktiviert DEV-API und DEV-Diagnose |
-| `REPOSITORY_BRANCH` | `main` | Update-Branch |
+| `UPDATE_CHANNEL` | `release` | `release` installiert den neuesten stabilen GitHub-Release, `branch` folgt dem Branch aus `REPOSITORY_BRANCH` (nur für Entwicklung) |
+| `REPOSITORY_BRANCH` | `main` | Branch, dem der Kanal `branch` folgt |
 | `TRUST_PROXY` | `false` | Vertraut einem vorgeschalteten Proxy |
 | `FORCE_SECURE_COOKIES` | `false` | Erzwingt Secure-Cookies |
 | `ALLOW_INSECURE_TLS` | `false` | Erlaubt selbstsignierte Zertifikate bei Statusprüfungen |
@@ -106,14 +107,14 @@ Erneutes Ausführen des Installationsscripts erkennt eine vorhandene Installatio
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/montag-labs/HomeLab-Portal/main/scripts/install-lxc.sh)"
 ```
 
-Alternativ kann ein verfügbares Update im angemeldeten Admin-Bereich gestartet werden. Die Anwendung legt nach Session- und CSRF-Prüfung ausschließlich eine feste Triggerdatei an. Eine root-eigene systemd-Path-Unit startet anschließend den Bootstrap-Wrapper `/usr/local/sbin/homelab-portal-update`. Dieser lädt vor jedem Lauf das aktuelle Update-Skript aus dem Repository. Falls die Installation kein nutzbares Git-Repository mehr enthält, verwendet das Update-Skript automatisch einen GitHub-Tarball als Fallback.
+Alternativ kann ein verfügbares Update im angemeldeten Admin-Bereich gestartet werden. Die Anwendung legt nach Session- und CSRF-Prüfung ausschließlich eine feste Triggerdatei an. Eine root-eigene systemd-Path-Unit startet anschließend den Bootstrap-Wrapper `/usr/local/sbin/homelab-portal-update`. Dieser lädt vor jedem Lauf das Update-Skript aus dem neuesten stabilen Release. Falls die Installation kein nutzbares Git-Repository mehr enthält, verwendet das Update-Skript automatisch einen GitHub-Tarball als Fallback.
 
 Der Updateablauf:
 
 1. Sperrt parallele Updates.
 2. Sichert `config.json`.
 3. Aktualisiert Node.js auf Version 26.
-4. Holt `origin/main` beziehungsweise den konfigurierten Branch.
+4. Ermittelt den neuesten stabilen Release (Vorabversionen werden ignoriert) und holt genau diesen Tag. Im Kanal `branch` wird stattdessen der konfigurierte Branch geholt. Eine bereits installierte oder neuere Version wird nie ersetzt.
 5. Baut Abhängigkeiten, Client und Server in einem Staging-Verzeichnis, während der Dienst weiterläuft.
 6. Wechselt nach erfolgreichem Build mit einem kurzen Dienstneustart auf die neue Version und prüft bis zu 30 Sekunden den Healthcheck.
 7. Führt bei einem Fehler nach dem Wechsel ein Rollback auf das vorherige Verzeichnis aus.
