@@ -80,6 +80,7 @@ export const api = {
       body: JSON.stringify(config),
     }),
   getConfig: () => request<PortalConfig>("/api/config"),
+  getAdminConfig: () => request<PortalConfig>("/api/config/admin"),
   updateConfig: (config: PortalConfig) =>
     request<PortalConfig>("/api/config", {
       method: "PUT",

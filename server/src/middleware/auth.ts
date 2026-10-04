@@ -1,7 +1,8 @@
-import { randomBytes, timingSafeEqual } from "node:crypto";
+import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import type { NextFunction, Request, Response } from "express";
 import { Router } from "express";
 import {
@@ -12,6 +13,9 @@ import {
   updateAdminOidcConfig,
 } from "../services/oidcService.js";
 
+const scryptAsync = promisify(scrypt) as (password: string, salt: Buffer, keylen: number) => Promise<Buffer>;
+const HASH_PREFIX = "scrypt:";
+const HASH_BYTES = 64;
 const COOKIE_NAME = "homelab_admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
 const LOGIN_WINDOW_MS = 15 * 60 * 1000;
@@ -60,12 +64,30 @@ function constantTimeEqual(actual: string, expected: string): boolean {
   return actualBuffer.length === expectedBuffer.length && timingSafeEqual(actualBuffer, expectedBuffer);
 }
 
-async function readAdminPassword(): Promise<string | undefined> {
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16);
+  const hash = await scryptAsync(password.normalize("NFKC"), salt, HASH_BYTES);
+  return `${HASH_PREFIX}${salt.toString("base64")}:${hash.toString("base64")}`;
+}
+
+async function matchesHash(password: string, stored: string): Promise<boolean> {
+  const [salt, hash] = stored.slice(HASH_PREFIX.length).split(":");
+  if (!salt || !hash) return false;
+  const expected = Buffer.from(hash, "base64");
+  const actual = await scryptAsync(password.normalize("NFKC"), Buffer.from(salt, "base64"), expected.length);
+  return actual.length === expected.length && timingSafeEqual(actual, expected);
+}
+
+async function readStoredPassword(): Promise<string | undefined> {
   try {
     return (await readFile(PASSWORD_STORE_FILE, "utf8")).trim() || undefined;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
   }
+  return undefined;
+}
+
+async function readBootstrapPassword(): Promise<string | undefined> {
   const file = process.env.ADMIN_PASSWORD_FILE;
   if (file) {
     try { return (await readFile(file, "utf8")).trim() || undefined; }
@@ -74,11 +96,30 @@ async function readAdminPassword(): Promise<string | undefined> {
   return process.env.ADMIN_PASSWORD?.trim() || undefined;
 }
 
+async function isPasswordConfigured(): Promise<boolean> {
+  return Boolean((await readStoredPassword()) ?? (await readBootstrapPassword()));
+}
+
+/** Checks a password against the stored hash, falling back to the ADMIN_PASSWORD bootstrap value. */
+async function verifyAdminPassword(candidate: string): Promise<boolean> {
+  const stored = await readStoredPassword();
+  if (stored?.startsWith(HASH_PREFIX)) return matchesHash(candidate, stored);
+  if (stored !== undefined) {
+    // Legacy plaintext store: upgrade to a hash after the first successful check.
+    if (!constantTimeEqual(candidate, stored)) return false;
+    await writeAdminPassword(candidate);
+    return true;
+  }
+  const bootstrap = await readBootstrapPassword();
+  return bootstrap !== undefined && constantTimeEqual(candidate, bootstrap);
+}
+
 async function writeAdminPassword(password: string): Promise<void> {
   const directory = path.dirname(PASSWORD_STORE_FILE);
   const temporaryFile = `${PASSWORD_STORE_FILE}.${process.pid}.${randomBytes(8).toString("hex")}.tmp`;
   await mkdir(directory, { recursive: true, mode: 0o700 });
-  await writeFile(temporaryFile, `${password}\n`, { encoding: "utf8", mode: 0o600 });
+  await writeFile(temporaryFile, `${await hashPassword(password)}
+`, { encoding: "utf8", mode: 0o600 });
   try {
     await rename(temporaryFile, PASSWORD_STORE_FILE);
   } catch (error) {
@@ -153,7 +194,7 @@ export function requireAdmin(request: Request, response: Response, next: NextFun
 export const authRouter = Router();
 
 authRouter.get("/auth/session", async (request, response) => {
-  const passwordConfigured = Boolean(await readAdminPassword());
+  const passwordConfigured = await isPasswordConfigured();
   const oidcStatus = await getOidcStatus();
   const passwordEnabled = passwordConfigured && !oidcStatus.passwordLoginDisabled;
   const authenticated = getSession(request);
@@ -179,17 +220,19 @@ authRouter.post("/auth/login", async (request, response) => {
   if (attempt && attempt.resetAt > now && attempt.count >= LOGIN_ATTEMPTS) {
     return response.status(429).json({ error: "Too many login attempts" });
   }
-  const expected = await readAdminPassword();
+  const configured = await isPasswordConfigured();
   const supplied = typeof request.body?.password === "string" ? request.body.password : "";
-  if (!expected || !constantTimeEqual(supplied, expected)) {
+  if (!configured || !(await verifyAdminPassword(supplied))) {
     const current = attempt && attempt.resetAt > now ? attempt : { count: 0, resetAt: now + LOGIN_WINDOW_MS };
     current.count += 1;
     setBounded(loginAttempts, address, current, MAX_LOGIN_ATTEMPTS);
-    return response.status(expected ? 401 : 503).json({
-      error: expected ? "Invalid credentials" : "Admin authentication is not configured",
+    return response.status(configured ? 401 : 503).json({
+      error: configured ? "Invalid credentials" : "Admin authentication is not configured",
     });
   }
   loginAttempts.delete(address);
+  const previousSession = getSession(request);
+  if (previousSession) sessions.delete(previousSession.id);
   const session = createAdminSession(request, response, "password");
   const oidcStatus = await getOidcStatus();
   response.json({
@@ -248,14 +291,13 @@ authRouter.post("/auth/logout", requireAdmin, (_request, response) => {
 authRouter.put("/auth/password", requireAdmin, async (request, response) => {
   const currentPassword = typeof request.body?.currentPassword === "string" ? request.body.currentPassword : "";
   const newPassword = typeof request.body?.newPassword === "string" ? request.body.newPassword : "";
-  const expected = await readAdminPassword();
-  if (!expected || !constantTimeEqual(currentPassword, expected)) {
+  if (!(await verifyAdminPassword(currentPassword))) {
     return response.status(403).json({ error: "Current password is incorrect" });
   }
   if (newPassword.length < 12 || newPassword.length > 256) {
     return response.status(400).json({ error: "New password must contain between 12 and 256 characters" });
   }
-  if (constantTimeEqual(newPassword, expected)) {
+  if (constantTimeEqual(newPassword, currentPassword)) {
     return response.status(400).json({ error: "New password must be different" });
   }
   await writeAdminPassword(newPassword);

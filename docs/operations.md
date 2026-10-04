@@ -81,9 +81,10 @@ Empfehlungen:
 
 - HTTPS am Reverse Proxy terminieren.
 - Nur bekannte Proxy-IP-Adressen dürfen das Backend erreichen.
-- `TRUST_PROXY=true` ausschließlich hinter diesem Proxy setzen.
+- `TRUST_PROXY=true` ausschließlich hinter diesem Proxy setzen. Ohne diese Einstellung sieht der Server nur die Proxy-Adresse; die Sperre nach 5 fehlgeschlagenen Anmeldungen gilt dann für alle Nutzer gemeinsam.
 - `FORCE_SECURE_COOKIES=true` setzen, wenn ausschließlich HTTPS verwendet wird.
 - Admin-Passwort mit mindestens 12 Zeichen verwenden.
+- Admin-Sitzungen liegen nur im Arbeitsspeicher; nach einem Neustart oder Update ist eine neue Anmeldung nötig.
 - `ALLOW_INSECURE_TLS=true` nur in kontrollierten Netzen und nur für notwendige selbstsignierte Ziele aktivieren.
 
 ## Wiederherstellung

@@ -6,6 +6,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Sicherheit
+
+- Das Admin-Passwort wird als scrypt-Hash gespeichert. Bestehende Klartext-Dateien werden bei der nächsten erfolgreichen Anmeldung automatisch umgestellt.
+- Die öffentliche Konfiguration (`/api/config`) enthält keine Admin-Einstellungen (Log-Richtlinie) mehr; der vollständige Export läuft über `/api/config/admin`.
+- Bei der Passwort-Anmeldung wird eine bestehende Sitzung verworfen.
+
+### Geändert
+
+- Der Server beendet sich bei `SIGTERM`/`SIGINT` geordnet (laufende Anfragen werden abgeschlossen, Timeout 10 s).
+- CI prüft zusätzlich die Test-Typen, produktive Abhängigkeiten per `npm audit` und baut das Docker-Image; Dependabot ist eingerichtet.
+- Geräte-Scan in kleinere Module aufgeteilt (`services/scan/`), Verhalten unverändert.
+- Neue Tests für Anmeldung, CSRF, Sperre nach Fehlversuchen, Passwortwechsel und Subnetz-Prüfung.
+
 ## [1.6.2] - 2026-09-19
 
 ### Behoben
