@@ -3,6 +3,10 @@ export interface AppEntry {
   name: string;
   domain?: string;
   localIp?: string;
+  /** Accept self-signed certificates when checking the domain's reachability. */
+  domainInsecureTls?: boolean;
+  /** Accept self-signed certificates when checking the local address's reachability. */
+  localIpInsecureTls?: boolean;
   iconUrl?: string;
   iconKey?: string;
   order: number;

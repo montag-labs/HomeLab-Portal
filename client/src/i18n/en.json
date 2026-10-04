@@ -287,6 +287,7 @@
     "appName": "App name",
     "domain": "Domain",
     "localIp": "Local IP",
+    "insecureTls": "Ignore certificate errors for the status check (self-signed)",
     "iconUrl": "Icon URL",
     "save": "Save",
     "delete": "Delete",

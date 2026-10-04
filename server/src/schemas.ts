@@ -5,6 +5,8 @@ export const appEntrySchema = z.object({
   name: z.string().min(1),
   domain: z.string().url().optional().or(z.literal("")).transform((v) => v || undefined),
   localIp: z.string().min(1).optional().or(z.literal("")).transform((v) => v || undefined),
+  domainInsecureTls: z.boolean().optional().transform((v) => v || undefined),
+  localIpInsecureTls: z.boolean().optional().transform((v) => v || undefined),
   iconUrl: z
     .string()
     .refine((value) => !value || /^https?:\/\//i.test(value) || /^data:image\//i.test(value), {

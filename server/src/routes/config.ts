@@ -141,6 +141,8 @@ configRouter.post("/categories/:id/apps", async (req, res) => {
       name: parsed.data.name,
       domain: parsed.data.domain,
       localIp: parsed.data.localIp,
+      domainInsecureTls: parsed.data.domainInsecureTls,
+      localIpInsecureTls: parsed.data.localIpInsecureTls,
       iconUrl: parsed.data.iconUrl,
       iconKey: parsed.data.iconKey,
       order: parsed.data.order ?? category.apps.length,
