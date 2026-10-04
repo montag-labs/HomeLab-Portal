@@ -3,13 +3,18 @@ name: Release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 permissions:
   contents: write
+  checks: read
 
 jobs:
+  verify:
+    uses: ./.github/workflows/verify-release.yml
+
   release:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,12 +24,21 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
+        shell: bash
         run: |
           if gh release view "$RELEASE_TAG" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
             echo "Release $RELEASE_TAG existiert bereits, überspringe Erstellung."
-          else
-            gh release create "$RELEASE_TAG" \
-              --repo "${GITHUB_REPOSITORY}" \
-              --title "$RELEASE_TAG" \
-              --generate-notes
+            exit 0
           fi
+          version="${RELEASE_TAG#v}"
+          {
+            bash scripts/release-notes.sh "${version}"
+            printf '\n---\n\nDocker-Image: `montaglabs/homelab-portal:%s`\n' "${version}"
+            printf 'Alle Änderungen: [Changelog](https://github.com/%s/blob/%s/CHANGELOG.md)\n' "${GITHUB_REPOSITORY}" "${RELEASE_TAG}"
+          } > release-notes.md
+          gh release create "$RELEASE_TAG" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "$RELEASE_TAG" \
+            --notes-file release-notes.md \
+            --verify-tag \
+            --latest

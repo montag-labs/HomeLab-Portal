@@ -73,15 +73,22 @@ Der Admin-Bereich zeigt dann „DEV-Diagnose“. Die Ausgabe enthält Laufzeit-,
 Versionen folgen Semantic Versioning. Für einen Release:
 
 1. Version in Root-, Client- und Server-Paketdateien sowie Lockfiles erhöhen.
-2. `CHANGELOG.md` aktualisieren.
+2. `CHANGELOG.md` aktualisieren: Abschnitt `[Unreleased]` nach `[X.Y.Z] - Datum` überführen. Dieser Abschnitt wird zum Text des GitHub-Releases.
 3. Lint und vollständigen Build ausführen.
-4. Commit erstellen und nach `main` pushen.
-5. Tag `vX.Y.Z` erstellen und pushen.
+4. Als Pull Request nach `main` mergen (die Pflicht-Checks `validate` und `docker` müssen grün sein).
+5. Tag `vX.Y.Z` auf den Merge-Commit setzen und pushen.
 
-Der Tag startet zwei GitHub-Actions-Workflows:
+Nur stabile Tags (`vX.Y.Z`) starten die Workflows; Vorabversionen wie `v1.8.0-rc1` lösen nichts aus. Vor dem Veröffentlichen prüft `verify-release.yml`:
 
-- Erstellung eines GitHub-Releases
-- Build und Veröffentlichung von `montaglabs/homelab-portal` für `linux/amd64` und `linux/arm64`
+- Der Tag passt zu den Versionen in allen drei `package.json` und zu einem Eintrag im Changelog.
+- Die CI (`validate` und `docker`) ist für den getaggten Commit erfolgreich. Die Prüfung wartet bis zu 20 Minuten auf noch laufende Checks.
+
+Danach laufen zwei GitHub-Actions-Workflows:
+
+- Erstellung eines GitHub-Releases mit dem Changelog-Abschnitt als Text (`scripts/release-notes.sh`)
+- Build und Veröffentlichung von `montaglabs/homelab-portal` für `linux/amd64` und `linux/arm64` mit den Tags `X.Y.Z`, `X.Y`, `vX.Y.Z` und `latest`
+
+Der LXC-Betrieb und `scripts/update-docker.sh` installieren den neuesten stabilen Release, nicht den Stand von `main`.
 
 Erforderliche Repository-Secrets für Docker Hub:
 

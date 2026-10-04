@@ -1,0 +1,64 @@
+name: Verify release
+
+# Wiederverwendbare Prüfung für Tag-Workflows: Der Tag muss eine stabile Version sein,
+# zu den package.json-Dateien und dem Changelog passen, und die CI muss für den
+# getaggten Commit erfolgreich gewesen sein.
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  checks: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check tag, versions and changelog
+        env:
+          TAG: ${{ github.ref_name }}
+        shell: bash
+        run: |
+          if [[ ! "${TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Tag ${TAG} ist keine stabile Version (vX.Y.Z)."
+            exit 1
+          fi
+          version="${TAG#v}"
+          for file in package.json client/package.json server/package.json; do
+            actual="$(node -p "require('./${file}').version")"
+            if [[ "${actual}" != "${version}" ]]; then
+              echo "::error::${file} hat Version ${actual}, der Tag ist ${TAG}."
+              exit 1
+            fi
+          done
+          bash scripts/release-notes.sh "${version}" > /dev/null
+
+      - name: Wait for successful CI on the tagged commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          for attempt in $(seq 1 60); do
+            runs="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/check-runs" --paginate \
+              --jq '.check_runs[] | select(.name == "validate" or .name == "docker") | "\(.name) \(.status) \(.conclusion)"')"
+            # Erwartet je Check eine Zeile "name status conclusion"; ein erfolgloser Abschluss bricht ab.
+            failed="$(awk '$2 == "completed" && $3 != "success" && $3 != "skipped"' <<< "${runs}" | wc -l)"
+            passed="$(awk '$2 == "completed" && $3 == "success" { seen[$1] = 1 } END { print length(seen) }' <<< "${runs}")"
+            if (( failed > 0 )); then
+              echo "::error::Die CI ist für ${GITHUB_SHA} fehlgeschlagen. Release abgebrochen."
+              echo "${runs}"
+              exit 1
+            fi
+            if (( passed >= 2 )); then
+              echo "CI ist für ${GITHUB_SHA} erfolgreich."
+              exit 0
+            fi
+            echo "Warte auf die CI (Versuch ${attempt}/60) ..."
+            sleep 20
+          done
+          echo "::error::Keine erfolgreiche CI für ${GITHUB_SHA} gefunden (validate und docker erforderlich)."
+          exit 1

@@ -2,8 +2,9 @@
 set -Eeuo pipefail
 
 APP_DIR="/opt/homelab-portal"
-readonly ARCHIVE_URL="https://codeload.github.com/montag-labs/HomeLab-Portal/tar.gz/refs/heads"
+readonly ARCHIVE_URL="https://codeload.github.com/montag-labs/HomeLab-Portal/tar.gz/refs"
 REPOSITORY_BRANCH="main"
+UPDATE_CHANNEL="release"
 SERVICE_NAME="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOCK_FILE="/run/homelab-portal-update.lock"
@@ -28,7 +29,7 @@ load_parameters() {
     case "${key}" in
       APP_DIR|SERVICE_NAME|BACKUP_DIR|LOCK_FILE|LOG_DIR|HOMELAB_PORT)
         printf -v "${key}" '%s' "${value}" ;;
-      REPOSITORY_BRANCH|APP_ENV|SERVICE_FILE|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS)
+      REPOSITORY_BRANCH|UPDATE_CHANNEL|APP_ENV|SERVICE_FILE|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS)
         printf -v "${key}" '%s' "${value}" ;;
       *) echo "Unbekannter Parameter in ${CONFIG_FILE}: ${key}" >&2; exit 1 ;;
     esac
@@ -37,7 +38,27 @@ load_parameters() {
 }
 
 load_parameters
+case "${UPDATE_CHANNEL}" in
+  release|branch) ;;
+  *) echo "Ungültiger UPDATE_CHANNEL: ${UPDATE_CHANNEL} (erlaubt: release, branch)" >&2; exit 1 ;;
+esac
 HEALTH_URL="http://127.0.0.1:${HOMELAB_PORT}/api/config"
+
+# Liefert den Tag des neuesten stabilen Releases (vX.Y.Z, ohne Vorabversionen).
+# Primär über die GitHub-API (liefert nie Entwürfe oder Vorabversionen), sonst über die Tag-Liste.
+latest_release_tag() {
+  local tag=""
+  tag="$(curl --fail --silent --location --connect-timeout 15 --max-time 30 \
+    -H 'Accept: application/vnd.github+json' \
+    "https://api.github.com/repos/montag-labs/HomeLab-Portal/releases/latest" 2>/dev/null \
+    | sed -n 's/.*"tag_name": *"\(v[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)".*/\1/p' | head -n 1)" || true
+  if [[ -z "${tag}" ]]; then
+    tag="$(git ls-remote --tags --refs "https://github.com/montag-labs/HomeLab-Portal.git" 'v*' 2>/dev/null \
+      | sed -n 's#.*refs/tags/\(v[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)$#\1#p' | sort -V | tail -n 1)" || true
+  fi
+  [[ "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || return 1
+  printf '%s\n' "${tag}"
+}
 
 write_progress() {
   local state="$1" percent="$2" step="$3" target_version="${4:-}"
@@ -105,28 +126,51 @@ readonly CURRENT_VERSION="$(node -p "require('./package.json').version")"
 
 TARGET_COMMIT="unknown"
 TARGET_VERSION=""
+TARGET_TAG=""
+# release: neuester stabiler GitHub-Release (Standard); branch: aktueller Stand von REPOSITORY_BRANCH.
+if [[ "${UPDATE_CHANNEL}" == "release" ]]; then
+  TARGET_TAG="${RELEASE_TAG:-}"
+  [[ -n "${TARGET_TAG}" ]] || TARGET_TAG="$(latest_release_tag)" || { echo "Neuester Release konnte nicht ermittelt werden." >&2; exit 1; }
+  [[ "${TARGET_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Ungültiger Release-Tag: ${TARGET_TAG}" >&2; exit 1; }
+  TARGET_REF="tags/${TARGET_TAG}"
+  echo "Neuester stabiler Release: ${TARGET_TAG}"
+else
+  TARGET_REF="heads/${REPOSITORY_BRANCH}"
+  echo "Update-Kanal branch: ${REPOSITORY_BRANCH}"
+fi
+
+package_version() {
+  node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));'
+}
+
 if [[ "${HAS_GIT}" == true ]]; then
-  if git fetch --depth 1 --tags --force origin "${REPOSITORY_BRANCH}"; then
-    TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
-    TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
+  if git fetch --depth 1 --force origin "refs/${TARGET_REF}:refs/update-target"; then
+    TARGET_COMMIT="$(git rev-parse "refs/update-target^{commit}")"
+    TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | package_version)"
   else
     echo "Git-Repository konnte nicht aktualisiert werden. Verwende GitHub-Tarball-Fallback ..."
     HAS_GIT=false
   fi
 fi
 if [[ "${HAS_GIT}" == false ]]; then
-  SOURCE_ARCHIVE="$(mktemp "/tmp/homelab-portal-${REPOSITORY_BRANCH}.XXXXXX.tar.gz")"
+  SOURCE_ARCHIVE="$(mktemp "/tmp/homelab-portal-update.XXXXXX.tar.gz")"
   echo "Kein Git-Repository gefunden. Verwende GitHub-Tarball-Fallback ..."
   curl --fail --silent --show-error --location \
-    "${ARCHIVE_URL}/${REPOSITORY_BRANCH}" -o "${SOURCE_ARCHIVE}"
-  TARGET_VERSION="$(tar -xOzf "${SOURCE_ARCHIVE}" --wildcards '*/package.json' | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
+    "${ARCHIVE_URL}/${TARGET_REF}" -o "${SOURCE_ARCHIVE}"
+  TARGET_VERSION="$(tar -xOzf "${SOURCE_ARCHIVE}" --wildcards '*/package.json' | package_version)"
+fi
+if [[ -n "${TARGET_TAG}" && "${TARGET_VERSION}" != "${TARGET_TAG#v}" ]]; then
+  echo "Release ${TARGET_TAG} enthält die Version ${TARGET_VERSION}; Update abgebrochen." >&2
+  exit 1
 fi
 
 echo "Aktueller Stand: ${CURRENT_VERSION} (${CURRENT_COMMIT:0:12})"
-echo "Remote-Stand:    ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
+echo "Ziel-Stand:      ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
 write_progress updating 30 "Zielversion ${TARGET_VERSION} wird vorbereitet" "${TARGET_VERSION}"
 
-if [[ "${CURRENT_VERSION}" == "${TARGET_VERSION}" ]] || [[ "${HAS_GIT}" == true && "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
+# Nie auf eine ältere Version zurücksetzen (z. B. wenn der Kanal gewechselt wurde).
+newest_version="$(printf '%s\n%s\n' "${CURRENT_VERSION}" "${TARGET_VERSION}" | sort -V | tail -n 1)"
+if [[ "${newest_version}" == "${CURRENT_VERSION}" ]] || [[ "${HAS_GIT}" == true && "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
   echo "HomeLab-Portal ist bereits aktuell (${CURRENT_VERSION})."
   rm -f "${PROGRESS_FILE}" "${PROGRESS_FILE}.tmp"
   exit 0
@@ -244,6 +288,8 @@ write_progress updating 40 "Update wird gebaut" "${TARGET_VERSION}"
 if [[ "${HAS_GIT}" == true ]]; then
   git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
   cp -a "${APP_DIR}/.git" "${STAGING_DIR}/.git"
+  # Der Checkout soll auf dem installierten Stand stehen, nicht auf dem Vorgänger.
+  git -C "${STAGING_DIR}" update-ref HEAD "${TARGET_COMMIT}"
 else
   tar -xzf "${SOURCE_ARCHIVE}" --strip-components=1 -C "${STAGING_DIR}"
 fi
