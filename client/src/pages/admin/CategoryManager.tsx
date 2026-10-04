@@ -9,6 +9,8 @@ interface AppFormState {
   name: string;
   domain: string;
   localIp: string;
+  domainInsecureTls: boolean;
+  localIpInsecureTls: boolean;
   iconUrl: string;
   iconKey: string;
 }
@@ -32,12 +34,14 @@ function completeAddress(value: string, fallback: AddressProtocol) {
   return address ? protocol + address : "";
 }
 
-function AddressField({ label, value, defaultProtocol, placeholder, onChange }: {
+function AddressField({ label, value, defaultProtocol, placeholder, insecureTls, onChange, onInsecureTlsChange }: {
   label: string;
   value: string;
   defaultProtocol: AddressProtocol;
   placeholder: string;
+  insecureTls: boolean;
   onChange: (value: string) => void;
+  onInsecureTlsChange: (value: boolean) => void;
 }) {
   const id = useId();
   const { t } = useTranslation();
@@ -70,6 +74,16 @@ function AddressField({ label, value, defaultProtocol, placeholder, onChange }: 
           }}
         />
       </div>
+      {protocol === "https://" && address && (
+        <label className="admin-checkbox-field">
+          <input
+            type="checkbox"
+            checked={insecureTls}
+            onChange={(event) => onInsecureTlsChange(event.target.checked)}
+          />
+          <span>{t("admin.insecureTls")}</span>
+        </label>
+      )}
     </div>
   );
 }
@@ -111,14 +125,18 @@ function AppFormFields({
         value={form.domain}
         defaultProtocol="https://"
         placeholder="app.example.com"
+        insecureTls={form.domainInsecureTls}
         onChange={(domain) => onChange({ ...form, domain })}
+        onInsecureTlsChange={(domainInsecureTls) => onChange({ ...form, domainInsecureTls })}
       />
       <AddressField
         label={t("admin.localIp")}
         value={form.localIp}
         defaultProtocol="http://"
         placeholder="192.168.1.10:8080"
+        insecureTls={form.localIpInsecureTls}
         onChange={(localIp) => onChange({ ...form, localIp })}
+        onInsecureTlsChange={(localIpInsecureTls) => onChange({ ...form, localIpInsecureTls })}
       />
       <div className="admin-form-field">
         <span className="admin-form-label">Icon auswählen</span>
@@ -214,6 +232,8 @@ function AppRow({
     name: app.name,
     domain: app.domain ?? "",
     localIp: app.localIp ?? "",
+    domainInsecureTls: app.domainInsecureTls ?? false,
+    localIpInsecureTls: app.localIpInsecureTls ?? false,
     iconUrl: app.iconUrl ?? "",
     iconKey: app.iconKey ?? detectAppIconKey(app.name, app.domain ?? "", app.localIp ?? "") ?? "",
   });
@@ -311,6 +331,8 @@ function NewAppForm({ category }: { category: Category }) {
     name: "",
     domain: "",
     localIp: "",
+    domainInsecureTls: false,
+    localIpInsecureTls: false,
     iconUrl: "",
     iconKey: "",
   });
@@ -332,7 +354,7 @@ function NewAppForm({ category }: { category: Category }) {
         iconUrl: form.iconUrl.trim(),
         iconKey: form.iconKey || resolveAutoIconKey(form.name, form.domain, form.localIp),
       });
-      setForm({ name: "", domain: "", localIp: "", iconUrl: "", iconKey: "" });
+      setForm({ name: "", domain: "", localIp: "", domainInsecureTls: false, localIpInsecureTls: false, iconUrl: "", iconKey: "" });
       await refresh();
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t("admin.appCreateFailed"));
