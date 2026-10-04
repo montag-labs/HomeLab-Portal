@@ -3,7 +3,7 @@ name: Publish Docker image
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
 
 concurrency:
   group: docker-publish-${{ github.ref }}
@@ -14,9 +14,14 @@ env:
 
 permissions:
   contents: read
+  checks: read
 
 jobs:
+  verify:
+    uses: ./.github/workflows/verify-release.yml
+
   publish:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,9 +41,12 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.IMAGE_NAME }}
+          # v1.7.0 (bisheriger Name), 1.7.0, 1.7 und latest; nur stabile Tags lösen den Workflow aus.
           tags: |
             type=ref,event=tag
-            type=raw,value=latest,enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v7

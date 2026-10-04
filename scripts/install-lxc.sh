@@ -3,6 +3,7 @@ set -Eeuo pipefail
 
 readonly REPOSITORY_URL="https://github.com/montag-labs/HomeLab-Portal.git"
 REPOSITORY_BRANCH="main"
+UPDATE_CHANNEL="release"
 APP_DIR="/opt/homelab-portal"
 SERVICE_NAME="homelab-portal"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
@@ -39,7 +40,7 @@ load_parameters() {
     value="${value#\"}"
     value="${value%\"}"
     case "${key}" in
-      REPOSITORY_BRANCH|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS|OIDC_ISSUER_URL|OIDC_CLIENT_ID|OIDC_CLIENT_SECRET|OIDC_REDIRECT_URI|OIDC_ALLOWED_GROUPS|OIDC_GROUPS_CLAIM|OIDC_SCOPES|OIDC_DISPLAY_NAME|OIDC_CLIENT_AUTH_METHOD|OIDC_DISABLE_PASSWORD_LOGIN)
+      REPOSITORY_BRANCH|UPDATE_CHANNEL|APP_DIR|SERVICE_NAME|SERVICE_FILE|LOCK_FILE|BACKUP_DIR|LOG_DIR|HOMELAB_PORT|APP_ENV|TRUST_PROXY|FORCE_SECURE_COOKIES|ALLOW_INSECURE_TLS|OIDC_ISSUER_URL|OIDC_CLIENT_ID|OIDC_CLIENT_SECRET|OIDC_REDIRECT_URI|OIDC_ALLOWED_GROUPS|OIDC_GROUPS_CLAIM|OIDC_SCOPES|OIDC_DISPLAY_NAME|OIDC_CLIENT_AUTH_METHOD|OIDC_DISABLE_PASSWORD_LOGIN)
         printf -v "${key}" '%s' "${value}"
         ;;
       *)
@@ -48,6 +49,33 @@ load_parameters() {
         ;;
     esac
   done < "${CONFIG_FILE}"
+}
+
+# Liefert den Tag des neuesten stabilen Releases (vX.Y.Z, ohne Vorabversionen).
+latest_release_tag() {
+  local tag=""
+  tag="$(curl --fail --silent --location --connect-timeout 15 --max-time 30 \
+    -H 'Accept: application/vnd.github+json' \
+    "https://api.github.com/repos/montag-labs/HomeLab-Portal/releases/latest" 2>/dev/null \
+    | sed -n 's/.*"tag_name": *"\(v[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)".*/\1/p' | head -n 1)" || true
+  if [[ -z "${tag}" ]]; then
+    tag="$(git ls-remote --tags --refs "${REPOSITORY_URL}" 'v*' 2>/dev/null \
+      | sed -n 's#.*refs/tags/\(v[0-9]\{1,\}\.[0-9]\{1,\}\.[0-9]\{1,\}\)$#\1#p' | sort -V | tail -n 1)" || true
+  fi
+  [[ "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || return 1
+  printf '%s\n' "${tag}"
+}
+
+# Setzt INSTALL_REF auf den zu installierenden Tag (Kanal release) oder den Branch (Kanal branch).
+resolve_install_ref() {
+  case "${UPDATE_CHANNEL}" in
+    release)
+      INSTALL_REF="$(latest_release_tag)" || { echo "Neuester Release konnte nicht ermittelt werden." >&2; exit 1; }
+      echo "Neuester stabiler Release: ${INSTALL_REF}"
+      ;;
+    branch) INSTALL_REF="${REPOSITORY_BRANCH}" ;;
+    *) echo "Ungültiger UPDATE_CHANNEL: ${UPDATE_CHANNEL} (erlaubt: release, branch)" >&2; exit 1 ;;
+  esac
 }
 
 while (( $# > 0 )); do
@@ -321,8 +349,13 @@ if [[ -e "${APP_DIR}" ]]; then
   CURRENT_VERSION="$(node -p "require('./package.json').version")"
   echo "Installierte Version: ${CURRENT_VERSION} (${CURRENT_COMMIT:0:12})"
   echo "Prüfe neue Version aus ${REPOSITORY_URL} ..."
-  git fetch --depth 1 origin "${REPOSITORY_BRANCH}"
-  TARGET_COMMIT="$(git rev-parse "origin/${REPOSITORY_BRANCH}")"
+  resolve_install_ref
+  if [[ "${UPDATE_CHANNEL}" == "release" ]]; then
+    git fetch --depth 1 --force origin "refs/tags/${INSTALL_REF}:refs/update-target"
+  else
+    git fetch --depth 1 --force origin "refs/heads/${INSTALL_REF}:refs/update-target"
+  fi
+  TARGET_COMMIT="$(git rev-parse "refs/update-target^{commit}")"
   TARGET_VERSION="$(git show "${TARGET_COMMIT}:package.json" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => console.log(JSON.parse(input).version));')"
   echo "Verfügbare Version: ${TARGET_VERSION} (${TARGET_COMMIT:0:12})"
   if [[ "${CURRENT_COMMIT}" == "${TARGET_COMMIT}" ]]; then
@@ -387,7 +420,8 @@ else
   echo "Das Portal wird auf Port ${HOMELAB_PORT} eingerichtet."
   echo "Klone ${REPOSITORY_URL} ..."
   install -d -m 755 /opt
-  git clone --depth 1 --branch "${REPOSITORY_BRANCH}" "${REPOSITORY_URL}" "${APP_DIR}"
+  resolve_install_ref
+  git clone --depth 1 --branch "${INSTALL_REF}" "${REPOSITORY_URL}" "${APP_DIR}"
   cd "${APP_DIR}"
   echo "Installiere Projektabhängigkeiten ..."
   install_dependencies "${APP_DIR}/client"
