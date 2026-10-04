@@ -19,6 +19,9 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 - Abhängigkeiten aktualisiert, u. a. gridstack 14 (die Option `float: true` des Geräte-Rasters heißt dort `mode: "float"`), vite 8.3, vitest 5.0.3, zod 4.6 und jsdom 30.
 - Der Server beendet sich bei `SIGTERM`/`SIGINT` geordnet (laufende Anfragen werden abgeschlossen, Timeout 10 s).
 - Geräte-Scan in kleinere Module aufgeteilt (`services/scan/`), Verhalten unverändert.
+- LXC-Installation und -Update sowie `update-docker.sh` verwenden den neuesten stabilen Release statt des Stands von `main`; Vorabversionen werden ignoriert und eine neuere installierte Version wird nie ersetzt. Der Kanal `branch` (`UPDATE_CHANNEL=branch`) bleibt für die Entwicklung möglich.
+- Docker-Images erhalten zusätzlich die Tags `X.Y.Z` und `X.Y` (bisher `vX.Y.Z` und `latest`). Nur stabile Tags `vX.Y.Z` lösen Release und Image aus.
+- Der GitHub-Release-Text stammt aus dem Changelog. Vor dem Veröffentlichen prüft die Pipeline Tag, Versionen in den `package.json`, Changelog-Eintrag und eine erfolgreiche CI für den getaggten Commit.
 - Ältere Changelog-Einträge (vor 1.6.0) sind je Minor-Version zusammengefasst nach `docs/changelog-archive.md` verschoben.
 - CI prüft zusätzlich die Test-Typen, produktive Abhängigkeiten per `npm audit` und baut das Docker-Image; Dependabot ist eingerichtet.
 - Neue Tests für Anmeldung, CSRF, Sperre nach Fehlversuchen, Passwortwechsel, Subnetz-Prüfung und die TLS-Option pro App.
