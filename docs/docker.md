@@ -102,7 +102,7 @@ bash scripts/update-docker.sh
 
 Das Script aktualisiert das Repository auf `origin/main`, lädt `montaglabs/homelab-portal:latest` und erstellt den Container neu. Lokale Quellcodeänderungen im Installationsverzeichnis werden dabei verworfen.
 
-Für reproduzierbare Installationen kann in `docker-compose.yml` statt `latest` ein festes Versions-Tag verwendet werden, z. B. `montaglabs/homelab-portal:1.7.0` (Tags entsprechen den Release-Versionen). Dann `pull_policy: always` entfernen und Updates bewusst durch Anpassen des Tags auslösen.
+Für reproduzierbare Installationen kann in `docker-compose.yml` statt `latest` ein festes Versions-Tag verwendet werden, z. B. `montaglabs/homelab-portal:v1.7.0` (Tags entsprechen den Release-Versionen). Dann `pull_policy: always` entfernen und Updates bewusst durch Anpassen des Tags auslösen.
 
 Alternativ:
 
