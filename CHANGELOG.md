@@ -14,6 +14,8 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Geändert
 
+- Der Server beendet sich bei `SIGTERM`/`SIGINT` geordnet (laufende Anfragen werden abgeschlossen, Timeout 10 s).
+- CI prüft zusätzlich die Test-Typen, produktive Abhängigkeiten per `npm audit` und baut das Docker-Image; Dependabot ist eingerichtet.
 - Geräte-Scan in kleinere Module aufgeteilt (`services/scan/`), Verhalten unverändert.
 - Neue Tests für Anmeldung, CSRF, Sperre nach Fehlversuchen, Passwortwechsel und Subnetz-Prüfung.
 
