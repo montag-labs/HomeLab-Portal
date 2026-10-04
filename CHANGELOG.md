@@ -8,15 +8,7 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
-### Behoben
-
-- Build mit gridstack 14: die Option `float: true` des Geräte-Rasters heißt dort `mode: "float"`.
-
-### Sicherheit
-
-- Das Admin-Passwort wird als scrypt-Hash gespeichert. Bestehende Klartext-Dateien werden bei der nächsten erfolgreichen Anmeldung automatisch umgestellt.
-- Die öffentliche Konfiguration (`/api/config`) enthält keine Admin-Einstellungen (Log-Richtlinie) mehr; der vollständige Export läuft über `/api/config/admin`.
-- Bei der Passwort-Anmeldung wird eine bestehende Sitzung verworfen.
+## [1.7.0] - 2026-10-04
 
 ### Hinzugefügt
 
@@ -24,11 +16,18 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ### Geändert
 
-- Ältere Changelog-Einträge (vor 1.6.0) sind je Minor-Version zusammengefasst nach `docs/changelog-archive.md` verschoben.
+- Abhängigkeiten aktualisiert, u. a. gridstack 14 (die Option `float: true` des Geräte-Rasters heißt dort `mode: "float"`), vite 8.3, vitest 5.0.3, zod 4.6 und jsdom 30.
 - Der Server beendet sich bei `SIGTERM`/`SIGINT` geordnet (laufende Anfragen werden abgeschlossen, Timeout 10 s).
-- CI prüft zusätzlich die Test-Typen, produktive Abhängigkeiten per `npm audit` und baut das Docker-Image; Dependabot ist eingerichtet.
 - Geräte-Scan in kleinere Module aufgeteilt (`services/scan/`), Verhalten unverändert.
-- Neue Tests für Anmeldung, CSRF, Sperre nach Fehlversuchen, Passwortwechsel und Subnetz-Prüfung.
+- Ältere Changelog-Einträge (vor 1.6.0) sind je Minor-Version zusammengefasst nach `docs/changelog-archive.md` verschoben.
+- CI prüft zusätzlich die Test-Typen, produktive Abhängigkeiten per `npm audit` und baut das Docker-Image; Dependabot ist eingerichtet.
+- Neue Tests für Anmeldung, CSRF, Sperre nach Fehlversuchen, Passwortwechsel, Subnetz-Prüfung und die TLS-Option pro App.
+
+### Sicherheit
+
+- Das Admin-Passwort wird als scrypt-Hash gespeichert. Bestehende Klartext-Dateien werden bei der nächsten erfolgreichen Anmeldung automatisch umgestellt. Ein Downgrade auf eine ältere Version ist danach nur mit gesetztem `ADMIN_PASSWORD` möglich.
+- Die öffentliche Konfiguration (`/api/config`) enthält keine Admin-Einstellungen (Log-Richtlinie) mehr; der vollständige Export läuft über `/api/config/admin`.
+- Bei der Passwort-Anmeldung wird eine bestehende Sitzung verworfen.
 
 ## [1.6.2] - 2026-09-19
 
