@@ -129,6 +129,6 @@ Vor einem Import:
 | `LOG_DIR` | Verzeichnis der administrativen Logs |
 | `TRUST_PROXY` | Vertraut bei `true` einem vorgeschalteten Proxy |
 | `FORCE_SECURE_COOKIES` | Erzwingt Secure-Cookies |
-| `ALLOW_INSECURE_TLS` | Deaktiviert die Zertifikatsprüfung für Statuschecks |
+| `ALLOW_INSECURE_TLS` | Deaktiviert die Zertifikatsprüfung für alle Statuschecks. Besser pro App im Admin-Bereich setzen („Zertifikatsfehler ignorieren“) |
 
 Betriebsspezifische Pfade und Beispiele stehen in [Docker](docker.md) und [LXC](lxc.md).

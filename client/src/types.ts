@@ -3,6 +3,8 @@ export interface AppEntry {
   name: string;
   domain?: string;
   localIp?: string;
+  domainInsecureTls?: boolean;
+  localIpInsecureTls?: boolean;
   iconUrl?: string;
   iconKey?: string;
   order: number;
