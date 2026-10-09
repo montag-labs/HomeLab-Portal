@@ -75,8 +75,10 @@ Versionen folgen Semantic Versioning. Für einen Release:
 1. Version in Root-, Client- und Server-Paketdateien sowie Lockfiles erhöhen.
 2. `CHANGELOG.md` aktualisieren: Abschnitt `[Unreleased]` nach `[X.Y.Z] - Datum` überführen. Dieser Abschnitt wird zum Text des GitHub-Releases.
 3. Lint und vollständigen Build ausführen.
-4. Als Pull Request nach `main` mergen (die Pflicht-Checks `validate` und `docker` müssen grün sein).
-5. Tag `vX.Y.Z` auf den Merge-Commit setzen und pushen.
+4. Commit `release: vX.Y.Z` auf `main` pushen und warten, bis die CI (`validate` und `docker`) grün ist.
+5. Tag `vX.Y.Z` auf diesen Commit setzen und pushen.
+
+Die Schritte übernimmt der Claude-Code-Skill `/release X.Y.Z`; `/check` führt die CI-Prüfungen lokal aus.
 
 Nur stabile Tags (`vX.Y.Z`) starten die Workflows; Vorabversionen wie `v1.8.0-rc1` lösen nichts aus. Vor dem Veröffentlichen prüft `verify-release.yml`:
 
