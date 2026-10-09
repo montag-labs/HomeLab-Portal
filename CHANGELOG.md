@@ -11,6 +11,11 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 ### Geändert
 
 - Dependabot ist abgeschaltet; Abhängigkeiten werden lokal aktualisiert (siehe `docs/development.md`).
+- Abhängigkeiten aktualisiert, u. a. express 5.3, react 19.3, lucide-react 1.54 und oxlint 1.87.
+
+### Sicherheit
+
+- `compression` 1.8.2 (Denial of Service durch Speicherleck) und `proxy-addr` (IP-Spoofing über IPv4-mapped IPv6) auf behobene Versionen aktualisiert.
 
 ## [1.7.0] - 2026-10-04
 
