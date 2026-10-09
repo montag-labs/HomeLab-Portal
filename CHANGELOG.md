@@ -8,6 +8,10 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Geändert
+
+- Dependabot ist abgeschaltet; Abhängigkeiten werden lokal aktualisiert (siehe `docs/development.md`).
+
 ## [1.7.0] - 2026-10-04
 
 ### Hinzugefügt

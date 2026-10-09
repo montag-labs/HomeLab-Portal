@@ -95,4 +95,8 @@ Erforderliche Repository-Secrets für Docker Hub:
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN`
 
+## Abhängigkeiten aktualisieren
+
+Dependabot ist abgeschaltet, es gibt keine automatischen Update-PRs. Updates laufen lokal über den Projekt-Skill `/deps` (Claude Code): Er prüft `npm outdated`/`npm audit` für `client/` und `server/`, GitHub-Actions-Versionen und das Docker-Basisimage, spielt Patch- und Minor-Updates ein, lässt Lint, Tests und Build laufen und erzeugt einen Commit. Major-Updates erfolgen nur nach Rückfrage. Die CI prüft weiterhin `npm audit --omit=dev --audit-level=high`.
+
 Weitere Regeln stehen in [CONTRIBUTING.md](../CONTRIBUTING.md).
