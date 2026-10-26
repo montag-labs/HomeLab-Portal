@@ -1,6 +1,6 @@
 ---
 name: deps
-description: Abhängigkeiten von HomeLab-Portal lokal prüfen und aktualisieren (npm outdated/audit für client und server, GitHub-Actions-Versionen, Docker-Basisimage). Verwenden, wenn der Nutzer Updates einspielen will oder "/deps" aufruft.
+description: Abhängigkeiten von HomeLab-Portal lokal prüfen und aktualisieren (npm outdated/audit für Root, client und server, GitHub-Actions-Versionen, Docker-Basisimage). Verwenden, wenn der Nutzer Updates einspielen will oder "/deps" aufruft.
 ---
 
 # /deps – lokale Abhängigkeits-Updates
@@ -10,9 +10,9 @@ Ersetzt Dependabot. Es gibt keine Bot-PRs; Updates laufen lokal und enden in ein
 ## Ablauf
 
 1. Arbeitsbaum muss sauber sein (`git status`), sonst nachfragen.
-2. Prüfen, jeweils in `client/` und `server/`:
+2. Prüfen, jeweils im Root-Verzeichnis, in `client/` und in `server/`:
    - `npm outdated`
-   - `npm audit --omit=dev` (Sicherheitsfunde zuerst melden)
+   - `npm audit` inklusive Dev-Abhängigkeiten (Sicherheitsfunde zuerst melden, dabei Produktions- und reine Dev-Abhängigkeiten unterscheiden)
 3. Zusätzlich prüfen: Action-Versionen in `.github/workflows/*.yml` und das Basisimage im `Dockerfile` gegen die aktuellen Releases.
 4. Ergebnis als Tabelle ausgeben, sortiert: **Sicherheitsfix** > **Patch/Minor** > **Major**.
 5. Patch/Minor und Sicherheitsfixes in einem Rutsch einspielen (`npm update` bzw. gezielt `npm install pkg@version`, Lockfile mitnehmen). **Majors nur nach Rückfrage**, einzeln, mit Blick auf den Changelog des Pakets.
@@ -30,4 +30,4 @@ Ersetzt Dependabot. Es gibt keine Bot-PRs; Updates laufen lokal und enden in ein
 
 ## Wöchentlicher Audit-Check
 
-Die geplante Aufgabe `homelab-portal-audit` führt nur `npm audit --omit=dev` aus und meldet High/Critical-Funde. Sie ändert nichts. Eingespielt wird dann hier mit `/deps`.
+Die geplante Aufgabe `homelab-portal-audit` führt nur `npm audit` (Root, `client/`, `server/`, inklusive Dev-Abhängigkeiten) aus und meldet High/Critical-Funde. Sie ändert nichts. Eingespielt wird dann hier mit `/deps`.
