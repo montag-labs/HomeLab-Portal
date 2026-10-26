@@ -8,6 +8,14 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Geändert
+
+- Abhängigkeiten aktualisiert, u. a. react 19.3.1, i18next 26.5, react-i18next 17.1, lucide-react 1.61, vite 8.3.5 und vitest 5.0.5.
+
+### Sicherheit
+
+- `body-parser` 2.4.0 (Denial of Service durch Bytes nach einem komprimierten Request-Body) und `zod` 4.6.7 (Speichererschöpfung bei sehr großen Collections) auf behobene Versionen aktualisiert.
+
 ## [1.7.1] - 2026-10-09
 
 ### Geändert
