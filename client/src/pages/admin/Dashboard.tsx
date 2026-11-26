@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { api } from "../../api";
 import {
   buildDashboardUrl,
+  DASHBOARD_IFRAME_SANDBOX,
   DASHBOARD_PROVIDERS,
   resolveDashboardSettings,
 } from "../../dashboard";
@@ -267,6 +268,7 @@ export function Dashboard() {
                 src={previewUrl}
                 loading="lazy"
                 referrerPolicy="no-referrer"
+                sandbox={DASHBOARD_IFRAME_SANDBOX}
               />
             ) : (
               <div className="dashboard-preview-empty">

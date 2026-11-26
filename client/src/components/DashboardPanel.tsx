@@ -4,7 +4,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { buildDashboardUrl, resolveDashboardSettings } from "../dashboard";
+import { buildDashboardUrl, DASHBOARD_IFRAME_SANDBOX, resolveDashboardSettings } from "../dashboard";
 import { useConfig } from "../hooks/useConfig";
 import { DevicePortalView } from "../devices/DevicePortalView";
 
@@ -75,6 +75,7 @@ export function DashboardPanel({ search = "", reloadKey = 0 }: DashboardPanelPro
           src={dashboardUrl}
           loading="lazy"
           referrerPolicy="no-referrer"
+          sandbox={DASHBOARD_IFRAME_SANDBOX}
           onLoad={() => setLoaded(true)}
         />
       </div>

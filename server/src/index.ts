@@ -9,7 +9,7 @@ import { devRouter } from "./routes/dev.js";
 import { devicesRouter } from "./routes/devices.js";
 import { logsRouter } from "./routes/logs.js";
 import { authRouter } from "./middleware/auth.js";
-import { securityHeaders } from "./middleware/security.js";
+import { securityHeaders, warnAboutUntrustedProxy } from "./middleware/security.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -18,6 +18,7 @@ const PORT = process.env.HOMELAB_PORT ?? process.env.PORT ?? 80;
 app.disable("x-powered-by");
 app.set("trust proxy", process.env.TRUST_PROXY === "true" ? 1 : false);
 app.use(securityHeaders);
+app.use("/api", warnAboutUntrustedProxy);
 app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 app.use("/api", authRouter);

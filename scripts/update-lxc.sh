@@ -6,6 +6,7 @@ readonly ARCHIVE_URL="https://codeload.github.com/montag-labs/HomeLab-Portal/tar
 REPOSITORY_BRANCH="main"
 UPDATE_CHANNEL="release"
 SERVICE_NAME="homelab-portal"
+readonly APP_USER="homelab-portal"
 BACKUP_DIR="/var/backups/homelab-portal"
 LOCK_FILE="/run/homelab-portal-update.lock"
 LOG_DIR="/var/log/homelab-portal"
@@ -188,6 +189,7 @@ if [[ -f server/data/devices-dashboard.json ]]; then
 fi
 
 STAGING_DIR=""
+BUILD_DIR=""
 PREVIOUS_DIR=""
 RUNTIME_SNAPSHOT_DIR=""
 SWITCHED=false
@@ -217,7 +219,7 @@ cleanup_old_data() {
   # Entferne alle alten .previous-* Verzeichnisse
   find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d -name "$(basename "${APP_DIR}").previous-*" -exec rm -rf {} + 2>/dev/null || true
   # Entferne eventuelle alte .staging-* oder .failed Verzeichnisse
-  find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d \( -name "$(basename "${APP_DIR}").staging.*" -o -name "$(basename "${APP_DIR}").staging.*.failed" \) -exec rm -rf {} + 2>/dev/null || true
+  find "$(dirname "${APP_DIR}")" -maxdepth 1 -type d \( -name "$(basename "${APP_DIR}").staging.*" -o -name "$(basename "${APP_DIR}").staging.*.failed" -o -name "$(basename "${APP_DIR}").build.*" \) -exec rm -rf {} + 2>/dev/null || true
   # Temporäre Dateien in /tmp bereinigen
   rm -f /tmp/homelab-portal-*.tar.gz /tmp/homelab-portal-nodesource.sh
   rm -rf /tmp/homelab-portal-runtime.*
@@ -260,6 +262,7 @@ rollback() {
     fi
   fi
   [[ -n "${STAGING_DIR}" && -d "${STAGING_DIR}" ]] && rm -rf "${STAGING_DIR}"
+  [[ -n "${BUILD_DIR}" && -d "${BUILD_DIR}" ]] && rm -rf "${BUILD_DIR}"
   [[ -n "${RUNTIME_SNAPSHOT_DIR}" && -d "${RUNTIME_SNAPSHOT_DIR}" ]] && rm -rf "${RUNTIME_SNAPSHOT_DIR}"
   [[ -n "${SOURCE_ARCHIVE}" ]] && rm -f "${SOURCE_ARCHIVE}"
   return "${exit_code}"
@@ -287,9 +290,6 @@ echo "Baue Update in ${STAGING_DIR} ..."
 write_progress updating 40 "Update wird gebaut" "${TARGET_VERSION}"
 if [[ "${HAS_GIT}" == true ]]; then
   git archive --format=tar "${TARGET_COMMIT}" | tar -x -C "${STAGING_DIR}"
-  cp -a "${APP_DIR}/.git" "${STAGING_DIR}/.git"
-  # Der Checkout soll auf dem installierten Stand stehen, nicht auf dem Vorgänger.
-  git -C "${STAGING_DIR}" update-ref HEAD "${TARGET_COMMIT}"
 else
   tar -xzf "${SOURCE_ARCHIVE}" --strip-components=1 -C "${STAGING_DIR}"
 fi
@@ -304,19 +304,50 @@ retry_command 3 10 npm ci --ignore-scripts --no-audit --no-fund --prefix "${STAG
 write_progress updating 58 "Client-Abhängigkeiten installiert" "${TARGET_VERSION}"
 retry_command 3 10 npm ci --ignore-scripts --no-audit --no-fund --prefix "${STAGING_DIR}/server"
 write_progress updating 66 "Server-Abhängigkeiten installiert" "${TARGET_VERSION}"
-cd "${STAGING_DIR}"
-if [[ -f client/node_modules/esbuild/install.js ]]; then
-  node client/node_modules/esbuild/install.js
+# Der Build führt Code aus Abhängigkeiten aus (vite, tsc, esbuild). Er läuft deshalb als
+# Dienstbenutzer in einer eigenen Kopie ohne Laufzeitdaten; root übernimmt danach nur die
+# Build-Ergebnisse. So kann kompromittierter Build-Code weder als root laufen noch Skripte,
+# .git oder npm-Einstellungen verändern, die root später ausführt.
+BUILD_DIR="$(mktemp -d "${APP_DIR}.build.XXXXXX")"
+tar -C "${STAGING_DIR}" --exclude=./server/data -cf - . | tar -C "${BUILD_DIR}" -xf -
+install -d -m 700 "${BUILD_DIR}/.build-home"
+chown -R "${APP_USER}:${APP_USER}" "${BUILD_DIR}"
+run_build_step() {
+  runuser -u "${APP_USER}" -- env -i PATH="${PATH}" HOME="${BUILD_DIR}/.build-home" \
+    npm_config_cache="${BUILD_DIR}/.build-home/.npm" "$@"
+}
+cd "${BUILD_DIR}"
+if [[ -f "${BUILD_DIR}/client/node_modules/esbuild/install.js" ]]; then
+  run_build_step node client/node_modules/esbuild/install.js
 fi
 write_progress updating 70 "Client-Build vorbereitet" "${TARGET_VERSION}"
-if [[ -f server/node_modules/esbuild/install.js ]]; then
-  node server/node_modules/esbuild/install.js
+if [[ -f "${BUILD_DIR}/server/node_modules/esbuild/install.js" ]]; then
+  run_build_step node server/node_modules/esbuild/install.js
 fi
 write_progress updating 72 "Server-Build vorbereitet" "${TARGET_VERSION}"
 write_progress updating 74 "Anwendung wird kompiliert" "${TARGET_VERSION}"
-npm run build
+run_build_step npm run build
+cd /
+for output in client/dist server/dist; do
+  if [[ ! -d "${BUILD_DIR}/${output}" ]]; then
+    echo "Build-Ergebnis ${output} fehlt." >&2
+    rollback 1
+    exit 1
+  fi
+  rm -rf "${STAGING_DIR:?}/${output}"
+  cp -R "${BUILD_DIR}/${output}" "${STAGING_DIR}/${output}"
+  chown -hR root:root "${STAGING_DIR}/${output}"
+done
+rm -rf "${BUILD_DIR}"
+BUILD_DIR=""
+cd "${STAGING_DIR}"
+if [[ "${HAS_GIT}" == true ]]; then
+  cp -a "${APP_DIR}/.git" "${STAGING_DIR}/.git"
+  # Der Checkout soll auf dem installierten Stand stehen, nicht auf dem Vorgänger.
+  git -C "${STAGING_DIR}" update-ref HEAD "${TARGET_COMMIT}"
+fi
 write_progress updating 78 "Anwendung erfolgreich gebaut" "${TARGET_VERSION}"
-chown -R homelab-portal:homelab-portal server/data "${LOG_DIR}"
+chown -R "${APP_USER}:${APP_USER}" server/data "${LOG_DIR}"
 chmod 755 "${STAGING_DIR}"
 echo "Wechsle auf die erfolgreich gebaute Version ..."
 write_progress updating 88 "Neue Version wird aktiviert" "${TARGET_VERSION}"

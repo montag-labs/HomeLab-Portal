@@ -49,7 +49,7 @@ Unter „Dashboard“ lässt sich eine Monitoring- oder Statusoberfläche direkt
 
 Anbieter auswählen, Anzeigename und vollständige URL eintragen, die Live-Vorschau prüfen und das Dashboard aktivieren. Beim Grafana-Preset können zusätzlich UID, Slug, Zeitraum und Aktualisierungsintervall gesetzt werden. Das aktive Portal-Theme wird weiterhin als Grafana-Themeparameter übergeben.
 
-HomeLab-Portal speichert keine Zugangsdaten. Der Zielserver muss die Einbettung erlauben; blockierende `X-Frame-Options`- oder `Content-Security-Policy`-Header können vom Portal nicht umgangen werden. Die Portal-Toolbar bietet deshalb immer einen Link zum Öffnen in einem eigenen Tab.
+HomeLab-Portal speichert keine Zugangsdaten. Der Zielserver muss die Einbettung erlauben; blockierende `X-Frame-Options`- oder `Content-Security-Policy`-Header können vom Portal nicht umgangen werden. Die Portal-Toolbar bietet deshalb immer einen Link zum Öffnen in einem eigenen Tab. Das Iframe ist per `sandbox` eingeschränkt: Skripte, Formulare, Dialoge, Pop-ups und Downloads funktionieren, ein Dashboard auf einem anderen Host oder Port kann aber nicht die Portalseite selbst umleiten. Läuft das Dashboard unter derselben Adresse wie das Portal (z. B. per Reverse Proxy unter `/grafana`), greift diese Einschränkung nicht.
 
 Anbieterspezifische Hinweise:
 

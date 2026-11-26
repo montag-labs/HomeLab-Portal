@@ -11,6 +11,14 @@ export const DEFAULT_DASHBOARD_SETTINGS: DashboardSettings = {
   refreshInterval: "",
 };
 
+/**
+ * Embedded dashboards (Grafana, Netdata, Uptime Kuma …) need scripts, their own cookies, forms and
+ * popups. For dashboards on another origin the sandbox still stops them from navigating the portal
+ * page itself; a dashboard served from the portal's own origin could lift it.
+ */
+export const DASHBOARD_IFRAME_SANDBOX =
+  "allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals";
+
 export const DASHBOARD_PROVIDERS: DashboardProvider[] = [
   "grafana",
   "netdata",

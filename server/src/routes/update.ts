@@ -1,12 +1,32 @@
 import { Router } from "express";
 import { access, unlink, writeFile } from "node:fs/promises";
 import { getUpdateStatus } from "../services/updateService.js";
-import { requireAdmin } from "../middleware/auth.js";
+import { hasAdminSession, requireAdmin } from "../middleware/auth.js";
+import type { UpdateStatus } from "../types.js";
 
 export const updateRouter = Router();
 
-updateRouter.get("/update", async (_req, res) => {
-  res.json(await getUpdateStatus());
+/**
+ * Visitors see what the portal sidebar and the post-restart check need (version, state, progress).
+ * Release details, error texts and check timestamps stay with admins.
+ */
+export function publicUpdateStatus(status: UpdateStatus): UpdateStatus {
+  const {
+    latestVersion: _latestVersion,
+    releaseUrl: _releaseUrl,
+    releaseName: _releaseName,
+    lastAttemptAt: _lastAttemptAt,
+    nextCheckAt: _nextCheckAt,
+    error: _error,
+    ...rest
+  } = status;
+  return rest;
+}
+
+updateRouter.get("/update", async (req, res) => {
+  const status = await getUpdateStatus();
+  res.setHeader("Cache-Control", "no-store");
+  res.json(hasAdminSession(req) ? status : publicUpdateStatus(status));
 });
 
 updateRouter.use("/update", requireAdmin);

@@ -37,6 +37,24 @@ export function securityHeaders(_request: Request, response: Response, next: Nex
   next();
 }
 
+let proxyWarningShown = false;
+
+/**
+ * Login and status limits are counted per client IP. Behind a reverse proxy without TRUST_PROXY
+ * every visitor shares the proxy's address, so a few failed logins by anyone would lock the admin out.
+ */
+export function warnAboutUntrustedProxy(request: Request, _response: Response, next: NextFunction) {
+  if (!proxyWarningShown && process.env.TRUST_PROXY !== "true" && request.headers["x-forwarded-for"]) {
+    proxyWarningShown = true;
+    console.warn(
+      "[security] Request with X-Forwarded-For received, but TRUST_PROXY is not set. "
+      + "Login and status limits then apply to the proxy address shared by all visitors. "
+      + "Set TRUST_PROXY=true if the portal is only reachable through this proxy.",
+    );
+  }
+  next();
+}
+
 export function limitStatusRequests(request: Request, response: Response, next: NextFunction) {
   const address = request.ip ?? request.socket.remoteAddress ?? "unknown";
   const now = Date.now();

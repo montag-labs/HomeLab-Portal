@@ -135,7 +135,9 @@ function parseCookies(request: Request): Record<string, string> {
     if (separator < 0) continue;
     const key = part.slice(0, separator).trim();
     const value = part.slice(separator + 1).trim();
-    if (key) result[key] = decodeURIComponent(value);
+    if (!key) continue;
+    // Cookies of other apps on the same domain may hold invalid percent-encoding; skip them.
+    try { result[key] = decodeURIComponent(value); } catch { /* ignore malformed cookie */ }
   }
   return result;
 }
@@ -176,6 +178,11 @@ function createAdminSession(
   setBounded(sessions, id, session, MAX_SESSIONS);
   response.setHeader("Set-Cookie", `${COOKIE_NAME}=${encodeURIComponent(id)}; ${cookieOptions(request)}`);
   return session;
+}
+
+/** True when the request carries a valid admin session; for routes that serve more detail to admins. */
+export function hasAdminSession(request: Request): boolean {
+  return Boolean(getSession(request));
 }
 
 export function requireAdmin(request: Request, response: Response, next: NextFunction) {

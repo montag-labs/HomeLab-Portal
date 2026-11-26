@@ -5,3 +5,12 @@ node_modules
 server/data/config.json
 server/data/admin-password
 server/data/oidc.json
+server/data/devices-dashboard.json
+server/data/update-status.json
+server/data/logs
+server/data/*.tmp
+**/.env
+**/.env.*
+debug.md
+plan.md
+next*.md

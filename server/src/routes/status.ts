@@ -147,10 +147,18 @@ export async function getConfiguredUrls(): Promise<{ urls: Set<string>; insecure
   return { urls, insecure };
 }
 
+/** Public responses omit raw error texts, which can reveal internal addresses, ports or TLS details. */
+export function publicReachability({ error: _error, ...details }: ReachabilityDetails): ReachabilityDetails {
+  return details;
+}
+
 statusRouter.get("/statuses", limitStatusRequests, async (_req, res) => {
   const { urls, insecure } = await getConfiguredUrls();
   const results = await checkReachabilities([...urls], insecure);
-  res.json({ checkedAt: new Date().toISOString(), results });
+  res.json({
+    checkedAt: new Date().toISOString(),
+    results: Object.fromEntries(Object.entries(results).map(([url, details]) => [url, publicReachability(details)])),
+  });
 });
 
 statusRouter.get("/status", limitStatusRequests, async (req, res) => {
@@ -164,5 +172,5 @@ statusRouter.get("/status", limitStatusRequests, async (req, res) => {
     return res.status(403).json({ error: "Only configured service URLs can be checked" });
   }
   const result = await checkReachabilityCached(normalizedUrl, insecure.has(normalizedUrl));
-  res.json(result);
+  res.json(publicReachability(result));
 });

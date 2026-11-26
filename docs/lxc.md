@@ -115,7 +115,7 @@ Der Updateablauf:
 2. Sichert `config.json`.
 3. Aktualisiert Node.js auf Version 26.
 4. Ermittelt den neuesten stabilen Release (Vorabversionen werden ignoriert) und holt genau diesen Tag. Im Kanal `branch` wird stattdessen der konfigurierte Branch geholt. Eine bereits installierte oder neuere Version wird nie ersetzt.
-5. Baut Abhängigkeiten, Client und Server in einem Staging-Verzeichnis, während der Dienst weiterläuft.
+5. Baut Abhängigkeiten, Client und Server in einem Staging-Verzeichnis, während der Dienst weiterläuft. Abhängigkeiten werden ohne Paket-Skripte installiert; der eigentliche Build läuft als Dienstbenutzer `homelab-portal` in einer separaten Kopie ohne Laufzeitdaten, root übernimmt danach nur `client/dist` und `server/dist`.
 6. Wechselt nach erfolgreichem Build mit einem kurzen Dienstneustart auf die neue Version und prüft bis zu 30 Sekunden den Healthcheck.
 7. Führt bei einem Fehler nach dem Wechsel ein Rollback auf das vorherige Verzeichnis aus.
 
