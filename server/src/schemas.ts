@@ -1,10 +1,28 @@
 import { z } from "zod";
 
+/** Only http(s) addresses may be linked or opened; other schemes such as javascript: would run code. */
+export function isWebAddress(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return (url.protocol === "http:" || url.protocol === "https:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+const webAddressSchema = z
+  .string()
+  .max(2048)
+  .refine(isWebAddress, { message: "Address must be an http or https URL" })
+  .optional()
+  .or(z.literal(""))
+  .transform((v) => v || undefined);
+
 export const appEntrySchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  domain: z.string().url().optional().or(z.literal("")).transform((v) => v || undefined),
-  localIp: z.string().min(1).optional().or(z.literal("")).transform((v) => v || undefined),
+  domain: webAddressSchema,
+  localIp: webAddressSchema,
   domainInsecureTls: z.boolean().optional().transform((v) => v || undefined),
   localIpInsecureTls: z.boolean().optional().transform((v) => v || undefined),
   iconUrl: z

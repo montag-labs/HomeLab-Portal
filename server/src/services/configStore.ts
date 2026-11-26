@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import type { PortalConfig } from "../types.js";
 import type { LogPolicy } from "../types.js";
 import { randomUUID } from "node:crypto";
-import { portalConfigSchema } from "../schemas.js";
+import { isWebAddress, portalConfigSchema } from "../schemas.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const CONFIG_PATH = path.resolve(__dirname, "../../data/config.json");
@@ -23,6 +23,38 @@ export function normalizeConfig(config: PortalConfig): PortalConfig {
   }
   delete config.settings.grafana;
   return config;
+}
+
+/**
+ * Older configurations may hold app addresses the stricter schema rejects. Addresses without a
+ * scheme get "http://"; anything that still is no http(s) URL (e.g. javascript:) is removed so a
+ * single entry cannot make the whole stored configuration unreadable.
+ */
+export function migrateStoredAddresses(raw: unknown): unknown {
+  const categories = (raw as { categories?: unknown })?.categories;
+  if (!Array.isArray(categories)) return raw;
+  for (const category of categories) {
+    const apps = (category as { apps?: unknown })?.apps;
+    if (!Array.isArray(apps)) continue;
+    for (const app of apps) {
+      if (!app || typeof app !== "object") continue;
+      const entry = app as Record<string, unknown>;
+      for (const field of ["domain", "localIp"] as const) {
+        const value = entry[field];
+        if (typeof value !== "string" || value === "") continue;
+        const trimmed = value.trim();
+        if (isWebAddress(trimmed)) {
+          entry[field] = trimmed;
+        } else if (isWebAddress(`http://${trimmed}`)) {
+          entry[field] = `http://${trimmed}`;
+        } else {
+          console.warn(`[config] Removed unsupported ${field} of app "${String(entry.name)}"`);
+          delete entry[field];
+        }
+      }
+    }
+  }
+  return raw;
 }
 
 // Serializes complete read-modify-write transactions.
@@ -45,7 +77,7 @@ async function ensureConfigExists(): Promise<void> {
 export async function readConfig(): Promise<PortalConfig> {
   await ensureConfigExists();
   const raw = await fs.readFile(CONFIG_PATH, "utf-8");
-  const parsed = portalConfigSchema.safeParse(JSON.parse(raw));
+  const parsed = portalConfigSchema.safeParse(migrateStoredAddresses(JSON.parse(raw)));
   if (!parsed.success) throw new Error("Stored configuration is invalid");
   return normalizeConfig(parsed.data);
 }

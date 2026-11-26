@@ -1,10 +1,7 @@
 import type { AppEntry } from "../types";
 import { getAppIconUrl } from "../iconCatalog";
 import { useReachability } from "../hooks/useReachability";
-
-function resolvePrimaryUrl(app: AppEntry): string | undefined {
-  return app.domain || app.localIp;
-}
+import { safeWebUrl } from "../utils/url";
 
 function initials(name: string): string {
   return name
@@ -16,8 +13,10 @@ function initials(name: string): string {
 }
 
 export function AppCard({ app }: { app: AppEntry }) {
-  const primaryUrl = resolvePrimaryUrl(app);
-  const status = useReachability(app.domain, app.localIp);
+  const domain = safeWebUrl(app.domain);
+  const localIp = safeWebUrl(app.localIp);
+  const primaryUrl = domain || localIp;
+  const status = useReachability(domain, localIp);
   const iconUrl = getAppIconUrl(app);
 
   const openPrimary = () => {
@@ -43,26 +42,26 @@ export function AppCard({ app }: { app: AppEntry }) {
       </div>
       <div className="app-card-body">
         <div className="app-card-name">{app.name}</div>
-        {app.domain && (
+        {domain && (
           <a
             className="app-card-link"
-            href={app.domain}
+            href={domain}
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
-            {app.domain}
+            {domain}
           </a>
         )}
-        {app.localIp && (
+        {localIp && (
           <a
             className="app-card-link"
-            href={app.localIp}
+            href={localIp}
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
           >
-            {app.localIp}
+            {localIp}
           </a>
         )}
       </div>

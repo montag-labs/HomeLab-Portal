@@ -8,6 +8,10 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+### Sicherheit
+
+- App-Adressen (Domain und lokale Adresse) akzeptieren nur noch `http://`- und `https://`-URLs. Bisher konnten über das Admin-Formular oder einen Konfigurationsimport `javascript:`-Links gespeichert werden; die Content-Security-Policy verhinderte die Ausführung im Produktivbetrieb, die Portalseite rendert solche Adressen jetzt aber gar nicht mehr. Ältere Einträge ohne Schema werden beim Laden zu `http://…` ergänzt.
+
 ## [1.7.2] - 2026-10-26
 
 ### Geändert

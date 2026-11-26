@@ -36,6 +36,8 @@ Unter „Kategorien & Apps“ lassen sich:
 
 Ein Klick auf die App-Karte öffnet bevorzugt die externe Domain und verwendet die lokale Adresse, wenn keine Domain konfiguriert ist. Beide Adressen werden für den gemeinsamen Erreichbarkeitsstatus geprüft und separat als Links angezeigt.
 
+Domain und lokale Adresse müssen vollständige `http://`- oder `https://`-URLs sein; andere Schemata wie `javascript:` oder `data:` werden abgelehnt, auch beim Import einer kompletten Konfiguration. Bestehende Einträge ohne Schema (z. B. `192.168.1.10:8080`) werden beim Laden zu `http://…` ergänzt, nicht zulässige Adressen werden entfernt und im Service-Log vermerkt.
+
 ## Dashboards
 
 Unter „Dashboard“ lässt sich eine Monitoring- oder Statusoberfläche direkt in das Portal einbetten. Der Dashboard-Hub bietet vier Varianten:
