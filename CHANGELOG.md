@@ -8,6 +8,19 @@ und die Versionierung folgt [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
 
+## [1.7.4] - 2026-11-26
+
+### Sicherheit
+
+- LXC-Update: Der Build (vite, tsc, esbuild) läuft nicht mehr als root, sondern als Dienstbenutzer in einer separaten Kopie ohne Laufzeitdaten. root übernimmt danach nur die Build-Ergebnisse; Skripte und `.git` stammen weiterhin unverändert aus der Quelle.
+- Öffentliches `GET /api/update` liefert ohne Admin-Sitzung nur noch Version, Status und Fortschritt; Release-Details, Fehlertexte und Prüfzeitpunkte sehen nur Admins.
+- Öffentliche Statusprüfungen (`/api/statuses`, `/api/status`) geben keine rohen Fehlermeldungen mehr aus, die interne Adressen, Ports oder TLS-Details verraten konnten.
+- Eingebettete Dashboards laufen in einem `sandbox`-Iframe; Dashboards auf einem anderen Host oder Port können die Portalseite nicht mehr umleiten.
+- Der Server warnt einmalig im Log, wenn er hinter einem Proxy ohne `TRUST_PROXY` läuft; die Login-Sperre gilt dann für alle Besucher gemeinsam.
+- Fehlerhaft kodierte Cookies anderer Anwendungen auf derselben Domain führen nicht mehr zu Serverfehlern.
+- Hinweis: Das LXC-Update benötigt während des Builds kurzzeitig zusätzlichen Speicherplatz für eine Kopie der Abhängigkeiten.
+- `.dockerignore` schließt weitere Laufzeitdaten (`devices-dashboard.json`, `update-status.json`, Logs), `.env`-Dateien und lokale Notizen aus lokal gebauten Images aus.
+
 ## [1.7.3] - 2026-11-26
 
 ### Sicherheit
